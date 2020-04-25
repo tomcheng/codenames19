@@ -1,4 +1,4 @@
 {
   "name": "Codenames19",
-  "image": "heroku/node"
+  "image": "heroku/nodejs"
 }
