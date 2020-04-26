@@ -1,10 +1,12 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import { useStoredState } from "./hooks";
 import PropTypes from "prop-types";
+import Lobby from "./Lobby";
 import Room from "./Room";
 
 const USER_ID_KEY = "c19-user-id";
 const ROOM_ID_KEY = "c19-room-id";
+const NAME_KEY = "c19-name";
 
 const reducer = (state, action) => {
   const { type, payload } = action;
@@ -23,57 +25,66 @@ const reducer = (state, action) => {
 };
 
 const App = ({ socket }) => {
-  const [name, setName] = useState("");
+  const [name, setName] = useStoredState(NAME_KEY);
   const [userID, setUserID] = useStoredState(USER_ID_KEY);
   const [roomID, setRoomID] = useStoredState(ROOM_ID_KEY);
   const [state, dispatch] = useReducer(reducer, { room: null, users: null });
+  const [invalidCode, setInvalidCode] = useState(false);
+
+  /*** EFFECTS ***/
 
   useEffect(() => {
-    console.log("roomID", roomID);
-    socket.on("user created", ({ userID: serverUserID }) => {
-      setUserID(serverUserID);
-    });
-
-    socket.on("room joined", (room) => {
+    socket.on("room joined", ({ room, user }) => {
       dispatch({ type: "join-room", payload: room });
       setRoomID(room.id);
+      setUserID(user.id);
+      setName(user.name);
     });
 
     socket.on("room not found", () => {
       setRoomID(null);
     });
 
-    if (roomID) {
-      socket.emit("join room", { roomID });
+    socket.on("user not found", () => {
+      setUserID(null);
+    });
+
+    socket.on("room code not found", () => {
+      setInvalidCode(true);
+    });
+  }, [socket, setName, setRoomID, setUserID]);
+
+  useEffect(() => {
+    if (roomID && !state.room) {
+      socket.emit("rejoin room", { roomID, userID });
     }
-  }, []);
+  }, [socket, roomID, userID, state.room]);
 
-  if (state.room) {
-    return (
-      <Room key={state.room.code} code={state.room.code} users={state.users} />
-    );
-  }
+  /*** CALLBACKS ***/
 
-  return (
-    <div>
-      <form
-        onSubmit={(evt) => {
-          evt.preventDefault();
-          socket.emit("create room", { name, userID });
-        }}
-      >
-        <label htmlFor="name">Name:</label>
-        <input
-          id="name"
-          name="name"
-          value={name}
-          onChange={(evt) => {
-            setName(evt.target.value);
-          }}
-        />
-        <button type="submit">Create Room</button>
-      </form>
-    </div>
+  const handleCreateRoom = useCallback(
+    ({ name }) => {
+      socket.emit("create room", { name, userID });
+    },
+    [socket, userID]
+  );
+
+  const handleJoinRoom = useCallback(
+    ({ code, name }) => {
+      socket.emit("join room", { code, name, userID });
+    },
+    [socket, userID]
+  );
+
+  return state.room ? (
+    <Room key={state.room.code} code={state.room.code} users={state.users} />
+  ) : (
+    <Lobby
+      initialName={name || ""}
+      invalidCode={invalidCode}
+      onCreateRoom={handleCreateRoom}
+      onJoinRoom={handleJoinRoom}
+    />
   );
 };
 

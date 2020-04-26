@@ -35,6 +35,10 @@ const getRoomCode = () => {
   return code;
 };
 
+const getRoomByCode = (code) => {
+  return Object.values(rooms).find((room) => room.code === code) || null;
+};
+
 const sanitizeRoom = (room) => ({
   ...room,
   users: [...room.users].map((id) => users[id]),
@@ -71,26 +75,43 @@ io.on("connection", (socket) => {
     socket.userID = user.id;
     socket.roomID = room.id;
 
-    socket.emit("user created", { userID: user.id });
-    socket.emit("room joined", sanitizeRoom(room));
+    socket.emit("room joined", { room: sanitizeRoom(room), user });
   });
 
-  socket.on("join room", ({ roomID, userID }) => {
-    if (!userID || users[userID]) {
-      const newUserID = uuid.v4();
-      users[newUserID] = {
-        id: newUserID,
-        name: "Someone",
-      };
+  socket.on("join room", ({ code, name, userID: existingUserID }) => {
+    const user = { id: existingUserID || uuid.v4(), name };
+
+    users[user.id] = user;
+
+    const room = getRoomByCode(code);
+
+    if (!room) {
+      socket.emit("room code not found");
+      return;
     }
 
-    if (!rooms[roomID]) {
+    room.users.add(user.id);
+
+    socket.emit("room joined", { room: sanitizeRoom(room), user });
+  });
+
+  socket.on("rejoin room", ({ roomID, userID }) => {
+    const user = users[userID];
+    const room = rooms[roomID];
+
+    if (!user) {
+      socket.emit("user not found");
+      return;
+    }
+
+    if (!room) {
       socket.emit("room not found");
       return;
     }
 
-    rooms[roomID].users.add(userID);
-    socket.emit("room joined", sanitizeRoom(rooms[roomID]));
+    room.users.add(user.id);
+
+    socket.emit("room joined", { room: sanitizeRoom(room), user });
   });
 
   socket.on("disconnect", () => {
