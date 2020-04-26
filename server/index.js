@@ -39,11 +39,6 @@ const getRoomByCode = (code) => {
   return Object.values(rooms).find((room) => room.code === code) || null;
 };
 
-const sanitizeRoom = (room) => ({
-  ...room,
-  users: [...room.users].map((id) => users[id]),
-});
-
 const isProduction = process.env.NODE_ENV === "production";
 
 const PORT = process.env.PORT || 5000;
@@ -60,6 +55,18 @@ if (isProduction) {
 }
 
 io.on("connection", (socket) => {
+  const joinRoom = ({ room, user }) => {
+    socket.userID = user.id;
+    socket.join(room.id, () => {
+      const usersInRoom = _.compact(
+        Object.keys(io.sockets.adapter.rooms[room.id].sockets).map((id) => {
+          const socket = io.sockets.connected[id];
+          return users[socket.userID];
+        })
+      );
+      socket.emit("room joined", { room, users: usersInRoom, userID: user.id });
+    });
+  };
   socket.on("create room", ({ name, userID: existingUserID }) => {
     const user = {
       id: existingUserID || uuid.v4(),
@@ -68,14 +75,12 @@ io.on("connection", (socket) => {
     const room = {
       id: uuid.v4(),
       code: getRoomCode(),
-      users: new Set([user.id]),
     };
+
     users[user.id] = user;
     rooms[room.id] = room;
-    socket.userID = user.id;
-    socket.roomID = room.id;
 
-    socket.emit("room joined", { room: sanitizeRoom(room), user });
+    joinRoom({ room, user });
   });
 
   socket.on("join room", ({ code, name, userID: existingUserID }) => {
@@ -90,9 +95,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    room.users.add(user.id);
-
-    socket.emit("room joined", { room: sanitizeRoom(room), user });
+    joinRoom({ room, user });
   });
 
   socket.on("rejoin room", ({ roomID, userID }) => {
@@ -109,22 +112,10 @@ io.on("connection", (socket) => {
       return;
     }
 
-    room.users.add(user.id);
-
-    socket.emit("room joined", { room: sanitizeRoom(room), user });
+    joinRoom({ room, user });
   });
 
-  socket.on("disconnect", () => {
-    if (!socket.userID) {
-      return;
-    }
-
-    rooms[socket.roomID].users.delete(socket.userID);
-
-    if (rooms[socket.roomID].users.size === 0) {
-      rooms = _.omit(rooms, socket.roomID);
-    }
-  });
+  socket.on("disconnect", () => {});
 });
 
 http.listen(PORT, () => {

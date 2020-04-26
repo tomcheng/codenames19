@@ -10,12 +10,13 @@ const NAME_KEY = "c19-name";
 
 const reducer = (state, action) => {
   const { type, payload } = action;
+
   switch (type) {
     case "join-room":
       return {
         ...state,
         room: {
-          code: payload.code,
+          code: payload.room.code,
         },
         users: payload.users,
       };
@@ -34,11 +35,11 @@ const App = ({ socket }) => {
   /*** EFFECTS ***/
 
   useEffect(() => {
-    socket.on("room joined", ({ room, user }) => {
-      dispatch({ type: "join-room", payload: room });
+    socket.on("room joined", ({ room, users, userID }) => {
+      dispatch({ type: "join-room", payload: { room, users } });
       setRoomID(room.id);
-      setUserID(user.id);
-      setName(user.name);
+      setUserID(userID);
+      setName(users.find((user) => user.id === userID).name);
     });
 
     socket.on("room not found", () => {
