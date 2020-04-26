@@ -129,9 +129,13 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     if (socket.roomID) {
-      socket
-        .to(socket.roomID)
-        .emit("user left", { users: getUsersInRoom(socket.roomID) });
+      if (io.sockets.adapter.rooms[socket.roomID]) {
+        socket
+          .to(socket.roomID)
+          .emit("user left", { users: getUsersInRoom(socket.roomID) });
+      } else {
+        rooms = _.omit(rooms, socket.roomID);
+      }
     }
   });
 });
