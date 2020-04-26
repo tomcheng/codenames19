@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Room = ({ users }) => {
+const SelectTeams = ({ users }) => {
   return (
     <div>
       <div>
@@ -13,7 +13,7 @@ const Room = ({ users }) => {
   );
 };
 
-Room.propTypes = {
+SelectTeams.propTypes = {
   users: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -22,4 +22,4 @@ Room.propTypes = {
   ).isRequired,
 };
 
-export default Room;
+export default SelectTeams;

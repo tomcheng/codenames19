@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import background from "../assets/so-white.png";
 import AppHeader from "./AppHeader";
 import Lobby from "./Lobby";
-import Room from "./Room";
+import SelectTeams from "./SelectTeams";
 
 const AppContainer = styled.div`
   background-image: url(${background});
@@ -103,7 +103,7 @@ const App = ({ socket }) => {
       <AppHeader roomCode={state.room?.code} />
       <AppBody>
         {state.room ? (
-          <Room
+          <SelectTeams
             key={state.room.code}
             code={state.room.code}
             users={state.users}
