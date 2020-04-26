@@ -37,7 +37,7 @@ const Text = styled.div`
 `;
 
 Text.propTypes = {
-  preset: PropTypes.oneOf(["app-title", "label"]).isRequired,
+  preset: PropTypes.oneOf(["app-title", "document-title", "label"]).isRequired,
   color: PropTypes.oneOf(["danger"]),
 };
 

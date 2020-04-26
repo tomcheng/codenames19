@@ -8,7 +8,7 @@ import Box from "./Box";
 import Text from "./Text";
 
 const Container = styled.div`
-  width: 400px;
+  max-width: 400px;
   padding-top: 50px;
   margin: 0 auto;
 `;

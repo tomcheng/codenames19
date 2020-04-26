@@ -11,7 +11,7 @@ const Container = styled.div`
 const AppHeader = ({ roomCode }) => {
   return (
     <Container>
-      <Grid align="center">
+      <Grid align="center" spacing="normal">
         <GridItem isFlexible>
           <Text preset="app-title">Codenames-19.</Text>
         </GridItem>
