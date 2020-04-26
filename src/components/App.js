@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useStoredState } from "../hooks";
 import PropTypes from "prop-types";
 import background from "../assets/so-white.png";
+import AppHeader from "./AppHeader";
 import Lobby from "./Lobby";
 import Room from "./Room";
 
@@ -11,13 +12,6 @@ const AppContainer = styled.div`
   background-repeat: repeat;
   height: 100vh;
   overflow: auto;
-`;
-
-const AppHeader = styled.div`
-  padding: 10px 20px;
-  letter-spacing: 3px;
-  font-size: 15px;
-  font-weight: bold;
 `;
 
 const AppBody = styled.div`
@@ -106,7 +100,7 @@ const App = ({ socket }) => {
 
   return (
     <AppContainer>
-      <AppHeader>CODENAMES-19.</AppHeader>
+      <AppHeader roomCode={state.room?.code} />
       <AppBody>
         {state.room ? (
           <Room

@@ -2,9 +2,10 @@ import React, { useRef, useState } from "react";
 import { v4 } from "uuid";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import Box from "./Box";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
+import Box from "./Box";
+import Text from "./Text";
 
 const Container = styled.div`
   width: 400px;
@@ -37,16 +38,6 @@ const Input = styled.input`
   margin-left: -2px;
   margin-right: -2px;
   outline: 0;
-`;
-
-const Label = styled.label`
-  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
-  display: block;
-`;
-
-const Error = styled(Label)`
-  color: #bf0000;
 `;
 
 const Button = styled.button`
@@ -91,7 +82,9 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
         <Box border>
           <InputContainer borderBottom pad="tight">
             <div>
-              <Label htmlFor={randomNameName}>First Name</Label>
+              <Text as="label" htmlFor={randomNameName} preset="label">
+                First Name
+              </Text>
             </div>
             <div>
               <Input
@@ -115,7 +108,8 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
                 justifyContent: "center",
               }}
             >
-              <Label
+              <Text
+                preset="label"
                 onClick={() => {
                   setIsNew(true);
                 }}
@@ -124,8 +118,9 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
                   <FontAwesomeIcon icon={isNew ? faCheckSquare : faSquare} />
                 </span>
                 Start New Mission
-              </Label>
-              <Label
+              </Text>
+              <Text
+                preset="label"
                 onClick={() => {
                   setIsNew(false);
                   codeInputRef.current.focus();
@@ -135,10 +130,12 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
                   <FontAwesomeIcon icon={isNew ? faSquare : faCheckSquare} />
                 </span>
                 Join Mission
-              </Label>
+              </Text>
             </Box>
             <InputContainer pad="tight" width={120} opacity={isNew ? 0.5 : 1}>
-              <Label>Code</Label>
+              <Text as="label" htmlFor={randomCodeName} preset="label">
+                Code
+              </Text>
               <Input
                 ref={codeInputRef}
                 id="code"
@@ -164,9 +161,13 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
               style={{ flexGrow: 1, display: "flex", alignItems: "center" }}
             >
               {isMissingName ? (
-                <Error>Error: First Name is required</Error>
+                <Text color="danger" preset="label">
+                  Error: First Name is required
+                </Text>
               ) : invalidCode ? (
-                <Error>Error: Invalid mission code</Error>
+                <Text color="danger" preset="label">
+                  Error: Invalid mission code
+                </Text>
               ) : null}
             </Box>
             <Box pad="tight" padY="normal">
