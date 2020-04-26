@@ -89,7 +89,7 @@ io.on("connection", (socket) => {
     const room = {
       id: uuid.v4(),
       code: getUniqueRoomCode(),
-      teamsPicked: false,
+      teamsLockedIn: false,
     };
 
     users[user.id] = user;
@@ -133,8 +133,13 @@ io.on("connection", (socket) => {
   socket.on("select team", ({ userID, team }) => {
     users[userID].team = team;
     const room = rooms[socket.roomID];
-
     io.in(room.id).emit("users updated", { users: getUsersInRoom(room) });
+  });
+
+  socket.on("lock in teams", () => {
+    const room = rooms[socket.roomID];
+    room.teamsLockedIn = true;
+    io.in(room.id).emit("room updated", { room });
   });
 
   socket.on("disconnect", () => {

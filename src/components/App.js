@@ -4,7 +4,9 @@ import { useStoredState } from "../hooks";
 import PropTypes from "prop-types";
 import background from "../assets/so-white.png";
 import AppHeader from "./AppHeader";
+import DocumentWrapper from "./DocumentWrapper";
 import Lobby from "./Lobby";
+import SelectSpyMaster from "./SelectSpyMaster";
 import SelectTeams from "./SelectTeams";
 
 const AppContainer = styled.div`
@@ -31,6 +33,11 @@ const reducer = (state, action) => {
         ...state,
         room: payload.room,
         users: payload.users,
+      };
+    case "update-room":
+      return {
+        ...state,
+        room: payload.room,
       };
     case "update-users":
       return {
@@ -76,6 +83,10 @@ const App = ({ socket }) => {
       dispatch({ type: "update-users", payload: { users } });
     });
 
+    socket.on("room updated", ({ room }) => {
+      dispatch({ type: "update-room", payload: { room } });
+    });
+
     socket.on("room not found", () => {
       setRoomID(null);
     });
@@ -118,19 +129,51 @@ const App = ({ socket }) => {
     [socket]
   );
 
+  const handleLockInTeams = useCallback(() => {
+    socket.emit("lock in teams");
+  }, [socket]);
+
+  const handleSelectSpyMaster = useCallback(
+    ({ userID }) => {
+      socket.emit("select spymaster", { userID });
+    },
+    [socket]
+  );
+
+  const handleLockInSpyMaster = useCallback(() => {
+    socket.emit("lock in spymaster");
+  }, [socket]);
+
   return (
     <AppContainer>
       <AppHeader roomCode={state.room?.code} />
       <AppBody>
-        {state.room ? (
-          <SelectTeams users={state.users} onSelectTeam={handleSelectTeam} />
+        {!state.room ? (
+          <DocumentWrapper title="Enlistment/Re-Enlistment Document">
+            <Lobby
+              initialName={name || ""}
+              invalidCode={invalidCode}
+              onCreateRoom={handleCreateRoom}
+              onJoinRoom={handleJoinRoom}
+            />
+          </DocumentWrapper>
+        ) : !state.room.teamsLockedIn ? (
+          <DocumentWrapper title="Declaration of Allegiances">
+            <SelectTeams
+              users={state.users}
+              onLockInTeams={handleLockInTeams}
+              onSelectTeam={handleSelectTeam}
+            />
+          </DocumentWrapper>
         ) : (
-          <Lobby
-            initialName={name || ""}
-            invalidCode={invalidCode}
-            onCreateRoom={handleCreateRoom}
-            onJoinRoom={handleJoinRoom}
-          />
+          <DocumentWrapper title="Spy Master Nomination Form">
+            <SelectSpyMaster
+              users={state.users}
+              userID={userID}
+              onLockInSpyMaster={handleLockInSpyMaster}
+              onSelectSpyMaster={handleSelectSpyMaster}
+            />
+          </DocumentWrapper>
         )}
       </AppBody>
     </AppContainer>
