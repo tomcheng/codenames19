@@ -6,21 +6,11 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
 const isProduction = process.env.NODE_ENV === "production";
-
 const socket = isProduction ? io() : io("http://localhost:5000");
-
-const onTest = () => {
-  console.log("ON TEST");
-  socket.emit("chat message", "HELLOOOOOO!");
-};
-
-socket.on("chat message", function (msg) {
-  console.log("msg", msg);
-});
 
 ReactDOM.render(
   <React.StrictMode>
-    <App onTest={onTest} />
+    <App socket={socket} />
   </React.StrictMode>,
   document.getElementById("root")
 );
