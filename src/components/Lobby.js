@@ -79,29 +79,21 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
             justifyContent="center"
             pad="tight"
           >
-            <Text
-              preset="label"
+            <div
               onClick={() => {
                 setIsNew(true);
               }}
             >
-              <span style={{ marginRight: 5 }}>
-                <Checkbox checked={isNew} />
-              </span>
-              Start New Mission
-            </Text>
-            <Text
-              preset="label"
+              <Checkbox checked={isNew} label="Start New Mission" />
+            </div>
+            <div
               onClick={() => {
                 setIsNew(false);
                 codeInputRef.current.focus();
               }}
             >
-              <span style={{ marginRight: 5 }}>
-                <Checkbox checked={!isNew} />
-              </span>
-              Join Mission
-            </Text>
+              <Checkbox checked={!isNew} label="Join Mission" />
+            </div>
           </Box>
           <InputContainer pad="tight" width={120} opacity={isNew ? 0.5 : 1}>
             <Text as="label" htmlFor={randomCodeName} preset="label">

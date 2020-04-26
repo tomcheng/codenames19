@@ -50,10 +50,12 @@ const reducer = (state, action) => {
 };
 
 // const INITIAL_STATE = {
-//   room: { code: "AAAA" },
+//   room: { code: "AAAA", teamsLockedIn: true },
 //   users: [
-//     { name: "Thomas", id: "asdf" },
-//     { name: "Michelle", id: "skjdfh" },
+//     { name: "Thomas", id: "30a9e007-e86d-4cc9-9743-9b2e7dfd1316", team: "A" },
+//     { name: "Michelle", id: "skjdfh", team: "A" },
+//     { name: "Avrum", id: "ldkg", team: "B" },
+//     { name: "Alda", id: "fdkjbg", team: "B" },
 //   ],
 // };
 
@@ -165,15 +167,19 @@ const App = ({ socket }) => {
               onSelectTeam={handleSelectTeam}
             />
           </DocumentWrapper>
-        ) : (
+        ) : !state.room.spymasters.A.lockedIn ||
+          !state.room.spymasters.B.lockedIn ? (
           <DocumentWrapper title="Spy Master Nomination Form">
             <SelectSpyMaster
+              spymasters={state.room.spymasters}
               users={state.users}
               userID={userID}
               onLockInSpyMaster={handleLockInSpyMaster}
               onSelectSpyMaster={handleSelectSpyMaster}
             />
           </DocumentWrapper>
+        ) : (
+          <div>Game goes here.</div>
         )}
       </AppBody>
     </AppContainer>

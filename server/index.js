@@ -89,7 +89,12 @@ io.on("connection", (socket) => {
     const room = {
       id: uuid.v4(),
       code: getUniqueRoomCode(),
+      spymasters: {
+        A: { userID: null, lockedIn: false },
+        B: { userID: null, lockedIn: false },
+      },
       teamsLockedIn: false,
+      spymastersLockedIn: false,
     };
 
     users[user.id] = user;
@@ -139,6 +144,36 @@ io.on("connection", (socket) => {
   socket.on("lock in teams", () => {
     const room = rooms[socket.roomID];
     room.teamsLockedIn = true;
+    io.in(room.id).emit("room updated", { room });
+  });
+
+  socket.on("select spymaster", ({ userID }) => {
+    const room = rooms[socket.roomID];
+    const user = users[userID];
+
+    room.spymasters = {
+      ...room.spymasters,
+      [user.team]: {
+        ...room.spymasters[user.team],
+        userID: user.id,
+      },
+    };
+
+    io.in(room.id).emit("room updated", { room });
+  });
+
+  socket.on("lock in spymaster", () => {
+    const room = rooms[socket.roomID];
+    const user = users[socket.userID];
+
+    room.spymasters = {
+      ...room.spymasters,
+      [user.team]: {
+        ...room.spymasters[user.team],
+        lockedIn: true,
+      },
+    };
+
     io.in(room.id).emit("room updated", { room });
   });
 
