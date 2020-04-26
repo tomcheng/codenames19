@@ -71,109 +71,110 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
   return (
     <Container>
       <FormTitle>ENLISTMENT/RE-ENLISTMENT DOCUMENT</FormTitle>
-      <Box border>
-        <InputContainer borderBottom pad="tight">
-          <div>
-            <Label htmlFor={randomNameName}>First Name</Label>
-          </div>
-          <div>
-            <Input
-              id="name"
-              name={randomNameName}
-              value={name}
-              onChange={(evt) => {
-                setName(evt.target.value);
-              }}
-            />
-          </div>
-        </InputContainer>
-        <Box borderBottom style={{ display: "flex" }}>
-          <Box
-            borderRight
-            pad="tight"
-            style={{
-              flexGrow: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            <Label
-              onClick={() => {
-                setIsNew(true);
-              }}
-            >
-              <span style={{ marginRight: 5 }}>
-                <FontAwesomeIcon icon={isNew ? faCheckSquare : faSquare} />
-              </span>
-              Start New Mission
-            </Label>
-            <Label
-              onClick={() => {
-                setIsNew(false);
-                codeInputRef.current.focus();
-              }}
-            >
-              <span style={{ marginRight: 5 }}>
-                <FontAwesomeIcon icon={isNew ? faSquare : faCheckSquare} />
-              </span>
-              Join Mission
-            </Label>
-          </Box>
-          <InputContainer pad="tight" width={120} opacity={isNew ? 0.5 : 1}>
-            <Label>Code</Label>
-            <Input
-              ref={codeInputRef}
-              id="code"
-              name={randomCodeName}
-              value={code}
-              onChange={(evt) => {
-                if (isNew) {
-                  setIsNew(false);
-                }
-                setCode(
-                  evt.target.value
-                    .toUpperCase()
-                    .replace(/[^A-Z]/g, "")
-                    .slice(0, 4)
-                );
-              }}
-            />
+      <form
+        onSubmit={(evt) => {
+          evt.preventDefault();
+          if (name.trim() === "") {
+            setIsMissingName(true);
+            return;
+          }
+
+          setIsMissingName(false);
+
+          if (isNew) {
+            onCreateRoom({ name });
+          } else {
+            onJoinRoom({ code, name });
+          }
+        }}
+      >
+        <Box border>
+          <InputContainer borderBottom pad="tight">
+            <div>
+              <Label htmlFor={randomNameName}>First Name</Label>
+            </div>
+            <div>
+              <Input
+                id="name"
+                name={randomNameName}
+                value={name}
+                onChange={(evt) => {
+                  setName(evt.target.value);
+                }}
+              />
+            </div>
           </InputContainer>
-        </Box>
-        <Box style={{ display: "flex" }}>
-          <Box
-            pad="tight"
-            style={{ flexGrow: 1, display: "flex", alignItems: "center" }}
-          >
-            {isMissingName ? (
-              <Error>Error: First Name is required</Error>
-            ) : invalidCode ? (
-              <Error>Error: Invalid mission code</Error>
-            ) : null}
-          </Box>
-          <Box pad="tight" padY="normal">
-            <Button
-              onClick={() => {
-                if (name.trim() === "") {
-                  setIsMissingName(true);
-                  return;
-                }
-
-                setIsMissingName(false);
-
-                if (isNew) {
-                  onCreateRoom({ name });
-                } else {
-                  onJoinRoom({ code, name });
-                }
+          <Box borderBottom style={{ display: "flex" }}>
+            <Box
+              borderRight
+              pad="tight"
+              style={{
+                flexGrow: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
               }}
             >
-              SUBMIT
-            </Button>
+              <Label
+                onClick={() => {
+                  setIsNew(true);
+                }}
+              >
+                <span style={{ marginRight: 5 }}>
+                  <FontAwesomeIcon icon={isNew ? faCheckSquare : faSquare} />
+                </span>
+                Start New Mission
+              </Label>
+              <Label
+                onClick={() => {
+                  setIsNew(false);
+                  codeInputRef.current.focus();
+                }}
+              >
+                <span style={{ marginRight: 5 }}>
+                  <FontAwesomeIcon icon={isNew ? faSquare : faCheckSquare} />
+                </span>
+                Join Mission
+              </Label>
+            </Box>
+            <InputContainer pad="tight" width={120} opacity={isNew ? 0.5 : 1}>
+              <Label>Code</Label>
+              <Input
+                ref={codeInputRef}
+                id="code"
+                name={randomCodeName}
+                value={code}
+                onChange={(evt) => {
+                  if (isNew) {
+                    setIsNew(false);
+                  }
+                  setCode(
+                    evt.target.value
+                      .toUpperCase()
+                      .replace(/[^A-Z]/g, "")
+                      .slice(0, 4)
+                  );
+                }}
+              />
+            </InputContainer>
+          </Box>
+          <Box style={{ display: "flex" }}>
+            <Box
+              pad="tight"
+              style={{ flexGrow: 1, display: "flex", alignItems: "center" }}
+            >
+              {isMissingName ? (
+                <Error>Error: First Name is required</Error>
+              ) : invalidCode ? (
+                <Error>Error: Invalid mission code</Error>
+              ) : null}
+            </Box>
+            <Box pad="tight" padY="normal">
+              <Button type="submit">SUBMIT</Button>
+            </Box>
           </Box>
         </Box>
-      </Box>
+      </form>
     </Container>
   );
 };
