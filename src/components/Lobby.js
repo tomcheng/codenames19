@@ -15,7 +15,7 @@ const Container = styled.div`
 const FormTitle = styled.div`
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 15px;
   text-align: center;
   padding-bottom: 10px;
 `;
