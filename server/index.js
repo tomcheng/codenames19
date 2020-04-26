@@ -85,7 +85,7 @@ const joinRoom = ({ room, user }, socket) => {
 
 io.on("connection", (socket) => {
   socket.on("create room", ({ name, userID: existingUserID }) => {
-    const user = { id: existingUserID || uuid.v4(), name };
+    const user = { id: existingUserID || uuid.v4(), name, team: null };
     const room = {
       id: uuid.v4(),
       code: getUniqueRoomCode(),
@@ -99,7 +99,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("join room", ({ code, name, userID: existingUserID }) => {
-    const user = { id: existingUserID || uuid.v4(), name };
+    const user = { id: existingUserID || uuid.v4(), name, team: null };
 
     users[user.id] = user;
 
@@ -128,6 +128,13 @@ io.on("connection", (socket) => {
     }
 
     joinRoom({ room, user }, socket);
+  });
+
+  socket.on("select team", ({ userID, team }) => {
+    users[userID].team = team;
+    const room = rooms[socket.roomID];
+
+    io.in(room.id).emit("users updated", { users: getUsersInRoom(room) });
   });
 
   socket.on("disconnect", () => {

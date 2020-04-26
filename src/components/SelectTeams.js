@@ -12,7 +12,7 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
-const SelectTeams = ({ users }) => {
+const SelectTeams = ({ users, onSelectTeam }) => {
   return (
     <Container>
       <Box padBottom="normal" textAlign="center">
@@ -31,16 +31,34 @@ const SelectTeams = ({ users }) => {
           </Box>
         </Box>
         <Box borderBottom padY="tight">
-          {users.map(({ id, name }) => (
+          {users.map(({ id, name, team }) => (
             <Box key={id} flex>
               <Box flexible pad="tight">
                 <Text preset="label">{name}</Text>
               </Box>
-              <Box pad="tight" textAlign="center" width={70}>
-                <Checkbox checked />
+              <Box
+                pad="tight"
+                textAlign="center"
+                width={70}
+                onClick={() => {
+                  if (team !== "A") {
+                    onSelectTeam({ userID: id, team: "A" });
+                  }
+                }}
+              >
+                <Checkbox checked={team === "A"} />
               </Box>
-              <Box pad="tight" textAlign="center" width={70}>
-                <Checkbox checked={false} />
+              <Box
+                pad="tight"
+                textAlign="center"
+                width={70}
+                onClick={() => {
+                  if (team !== "B") {
+                    onSelectTeam({ userID: id, team: "B" });
+                  }
+                }}
+              >
+                <Checkbox checked={team === "B"} />
               </Box>
             </Box>
           ))}
@@ -59,8 +77,10 @@ SelectTeams.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
+      team: PropTypes.string,
     })
   ).isRequired,
+  onSelectTeam: PropTypes.func.isRequired,
 };
 
 export default SelectTeams;

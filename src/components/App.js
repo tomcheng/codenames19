@@ -111,16 +111,19 @@ const App = ({ socket }) => {
     [socket, userID]
   );
 
+  const handleSelectTeam = useCallback(
+    ({ userID, team }) => {
+      socket.emit("select team", { userID, team });
+    },
+    [socket]
+  );
+
   return (
     <AppContainer>
       <AppHeader roomCode={state.room?.code} />
       <AppBody>
         {state.room ? (
-          <SelectTeams
-            key={state.room.code}
-            code={state.room.code}
-            users={state.users}
-          />
+          <SelectTeams users={state.users} onSelectTeam={handleSelectTeam} />
         ) : (
           <Lobby
             initialName={name || ""}
