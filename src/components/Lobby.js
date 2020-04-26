@@ -13,14 +13,6 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
-const FormTitle = styled.div`
-  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 700;
-  font-size: 15px;
-  text-align: center;
-  padding-bottom: 10px;
-`;
-
 const InputContainer = styled(Box)`
   transition: background-color 0.15s ease-in-out;
   :focus-within {
@@ -61,7 +53,9 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
 
   return (
     <Container>
-      <FormTitle>ENLISTMENT/RE-ENLISTMENT DOCUMENT</FormTitle>
+      <Box textAlign="center" padBottom="normal">
+        <Text preset="document-title">Enlistment/Re-Enlistment Document</Text>
+      </Box>
       <form
         onSubmit={(evt) => {
           evt.preventDefault();

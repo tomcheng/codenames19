@@ -13,6 +13,14 @@ const getPresetStyles = (props) => {
   font-size: 15px;
   font-weight: bold;
   letter-spacing: 3px;
+  text-transform: uppercase;
+`;
+    case "document-title":
+      return `  
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
 `;
     default:
       return "";

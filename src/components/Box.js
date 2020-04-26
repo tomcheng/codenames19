@@ -2,6 +2,11 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { BORDER_COLOR } from "../tokens";
 
+const SPACING_Y = {
+  tight: "4px",
+  normal: "8px",
+};
+
 const Box = styled.div`
   border: ${(props) => props.border && `1px solid ${BORDER_COLOR}`};
   border-bottom: ${(props) =>
@@ -10,8 +15,9 @@ const Box = styled.div`
   border-right: ${(props) => props.borderRight && `1px solid ${BORDER_COLOR}`};
   opacity: ${(props) => typeof props.opacity === "number" && props.opacity};
   padding: ${(props) => (props.pad === "tight" ? "4px 8px" : null)};
-  padding-top: ${(props) => (props.padY === "normal" ? "8px" : null)};
-  padding-bottom: ${(props) => (props.padY === "normal" ? "8px" : null)};
+  padding-top: ${(props) => SPACING_Y[props.padTop || props.padY]};
+  padding-bottom: ${(props) => SPACING_Y[props.padBottom || props.padY]};
+  text-align: ${(props) => props.textAlign};
   width: ${(props) =>
     typeof props.width === "number" ? `${props.width}px` : props.width};
 `;
@@ -24,6 +30,8 @@ Box.propTypes = {
   opacity: PropTypes.number,
   pad: PropTypes.oneOf(["tight", "normal"]),
   padY: PropTypes.oneOf(["tight", "normal"]),
+  padBottom: PropTypes.oneOf(["tight", "normal"]),
+  textAlign: PropTypes.oneOf(["center"]),
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
