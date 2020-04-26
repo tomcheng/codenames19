@@ -66,12 +66,16 @@ if (isProduction) {
 io.on("connection", (socket) => {
   const joinRoom = ({ room, user }) => {
     socket.userID = user.id;
+    socket.roomID = room.id;
+
     socket.join(room.id, () => {
+      const usersInRoom = getUsersInRoom(room.id);
       socket.emit("room joined", {
         room,
-        users: getUsersInRoom(room.id),
+        users: usersInRoom,
         userID: user.id,
       });
+      socket.to(room.id).emit("user joined", { users: usersInRoom });
     });
   };
 
@@ -123,7 +127,13 @@ io.on("connection", (socket) => {
     joinRoom({ room, user });
   });
 
-  socket.on("disconnect", () => {});
+  socket.on("disconnect", () => {
+    if (socket.roomID) {
+      socket
+        .to(socket.roomID)
+        .emit("user left", { users: getUsersInRoom(socket.roomID) });
+    }
+  });
 });
 
 http.listen(PORT, () => {

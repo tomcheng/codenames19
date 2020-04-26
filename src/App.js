@@ -20,6 +20,11 @@ const reducer = (state, action) => {
         },
         users: payload.users,
       };
+    case "update-users":
+      return {
+        ...state,
+        users: payload.users,
+      };
     default:
       throw new Error();
   }
@@ -40,6 +45,14 @@ const App = ({ socket }) => {
       setRoomID(room.id);
       setUserID(userID);
       setName(users.find((user) => user.id === userID).name);
+    });
+
+    socket.on("user joined", ({ users }) => {
+      dispatch({ type: "update-users", payload: { users } });
+    });
+
+    socket.on("user left", ({ users }) => {
+      dispatch({ type: "update-users", payload: { users } });
     });
 
     socket.on("room not found", () => {
