@@ -39,6 +39,15 @@ const getRoomByCode = (code) => {
   return Object.values(rooms).find((room) => room.code === code) || null;
 };
 
+const getUsersInRoom = (roomID) =>
+  _.compact(
+    _.uniq(
+      Object.keys(io.sockets.adapter.rooms[roomID].sockets).map(
+        (id) => io.sockets.connected[id].userID
+      )
+    ).map((userID) => users[userID])
+  );
+
 const isProduction = process.env.NODE_ENV === "production";
 
 const PORT = process.env.PORT || 5000;
@@ -58,15 +67,14 @@ io.on("connection", (socket) => {
   const joinRoom = ({ room, user }) => {
     socket.userID = user.id;
     socket.join(room.id, () => {
-      const usersInRoom = _.compact(
-        Object.keys(io.sockets.adapter.rooms[room.id].sockets).map((id) => {
-          const socket = io.sockets.connected[id];
-          return users[socket.userID];
-        })
-      );
-      socket.emit("room joined", { room, users: usersInRoom, userID: user.id });
+      socket.emit("room joined", {
+        room,
+        users: getUsersInRoom(room.id),
+        userID: user.id,
+      });
     });
   };
+
   socket.on("create room", ({ name, userID: existingUserID }) => {
     const user = {
       id: existingUserID || uuid.v4(),
