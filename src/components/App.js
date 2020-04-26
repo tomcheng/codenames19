@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import styled from "styled-components";
-import { useStoredState } from "./hooks";
+import { useStoredState } from "../hooks";
 import PropTypes from "prop-types";
-import background from "./so-white.png";
+import background from "../assets/so-white.png";
 import Lobby from "./Lobby";
 import Room from "./Room";
 
@@ -16,11 +16,12 @@ const AppContainer = styled.div`
 const AppHeader = styled.div`
   padding: 10px 20px;
   letter-spacing: 3px;
+  font-size: 15px;
   font-weight: bold;
 `;
 
 const AppBody = styled.div`
-  padding: 80px 20px 20px;
+  padding: 10px 20px;
 `;
 
 const USER_ID_KEY = "c19-user-id";

@@ -3,5 +3,14 @@ body {
   font-family: "Roboto Slab", "courier", monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 15px;
+  font-size: 17px;
+  line-height: 20px;
+  color: #222;
+}
+
+* {
+  box-sizing: border-box;
+  border: 0;
+  margin: 0;
+  padding: 0;
 }
