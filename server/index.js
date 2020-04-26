@@ -31,29 +31,20 @@ http.listen(PORT, () => {
 /*** ROOM LOGIC ***/
 
 const _ = require("lodash");
-const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const utils = require("./utils");
 
 let rooms = {};
 let users = {};
 
-const getCode = () => {
-  return (
-    _.sample(ALPHABET) +
-    _.sample(ALPHABET) +
-    _.sample(ALPHABET) +
-    _.sample(ALPHABET)
-  );
-};
-
 const getUniqueRoomCode = () => {
-  let code = getCode();
+  let code = utils.generateRoomCode();
 
   while (
     Object.values(rooms)
       .map((room) => room.code)
       .includes(code)
   ) {
-    code = getCode();
+    code = utils.generateRoomCode();
   }
 
   return code;
