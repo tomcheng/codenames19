@@ -1,8 +1,27 @@
 import React, { useCallback, useEffect, useReducer, useState } from "react";
+import styled from "styled-components";
 import { useStoredState } from "./hooks";
 import PropTypes from "prop-types";
+import background from "./so-white.png";
 import Lobby from "./Lobby";
 import Room from "./Room";
+
+const AppContainer = styled.div`
+  background-image: url(${background});
+  background-repeat: repeat;
+  height: 100vh;
+  overflow: auto;
+`;
+
+const AppHeader = styled.div`
+  padding: 10px 20px;
+  letter-spacing: 3px;
+  font-weight: bold;
+`;
+
+const AppBody = styled.div`
+  padding: 80px 20px 20px;
+`;
 
 const USER_ID_KEY = "c19-user-id";
 const ROOM_ID_KEY = "c19-room-id";
@@ -85,22 +104,25 @@ const App = ({ socket }) => {
   );
 
   return (
-    <div>
-      {state.room ? (
-        <Room
-          key={state.room.code}
-          code={state.room.code}
-          users={state.users}
-        />
-      ) : (
-        <Lobby
-          initialName={name || ""}
-          invalidCode={invalidCode}
-          onCreateRoom={handleCreateRoom}
-          onJoinRoom={handleJoinRoom}
-        />
-      )}
-    </div>
+    <AppContainer>
+      <AppHeader>CODENAMES-19.</AppHeader>
+      <AppBody>
+        {state.room ? (
+          <Room
+            key={state.room.code}
+            code={state.room.code}
+            users={state.users}
+          />
+        ) : (
+          <Lobby
+            initialName={name || ""}
+            invalidCode={invalidCode}
+            onCreateRoom={handleCreateRoom}
+            onJoinRoom={handleJoinRoom}
+          />
+        )}
+      </AppBody>
+    </AppContainer>
   );
 };
 
