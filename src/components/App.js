@@ -42,11 +42,24 @@ const reducer = (state, action) => {
   }
 };
 
+// const INITIAL_STATE = {
+//   room: { code: "AAAA" },
+//   users: [
+//     { name: "Thomas", id: "asdf" },
+//     { name: "Michelle", id: "skjdfh" },
+//   ],
+// };
+
+const INITIAL_STATE = {
+  room: null,
+  users: null,
+};
+
 const App = ({ socket }) => {
   const [name, setName] = useStoredState(NAME_KEY);
   const [userID, setUserID] = useStoredState(USER_ID_KEY);
   const [roomID, setRoomID] = useStoredState(ROOM_ID_KEY);
-  const [state, dispatch] = useReducer(reducer, { room: null, users: null });
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const [invalidCode, setInvalidCode] = useState(false);
 
   /*** EFFECTS ***/

@@ -34,11 +34,14 @@ const Text = styled.div`
   font-size: 17px;
   ${getPresetStyles};
   color: ${(props) => (props.color === "danger" ? "#bf0000" : null)};
+  flex-grow: ${props => props.flexible ? 1 : null};
+  flex-shrink: ${props => props.flexible ? 1 : null};
 `;
 
 Text.propTypes = {
   preset: PropTypes.oneOf(["app-title", "document-title", "label"]).isRequired,
   color: PropTypes.oneOf(["danger"]),
+  flexible: PropTypes.bool,
 };
 
 export default Text;

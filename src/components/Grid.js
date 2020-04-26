@@ -29,15 +29,15 @@ Grid.propTypes = {
   align: PropTypes.oneOf(["center"]),
 };
 
-export const GridItem = ({ children, isFlexible }) => {
+export const GridItem = ({ children, flexible }) => {
   return (
     <GridContext.Consumer>
       {(value) => (
         <div
           style={{
             padding: `0 ${0.5 * SPACINGS[value]}px`,
-            flexGrow: isFlexible ? 1 : null,
-            flexShrink: isFlexible ? 1 : null,
+            flexGrow: flexible ? 1 : null,
+            flexShrink: flexible ? 1 : null,
           }}
         >
           {children}
@@ -48,5 +48,5 @@ export const GridItem = ({ children, isFlexible }) => {
 };
 
 GridItem.propTypes = {
-  isFlexible: PropTypes.bool,
+  flexible: PropTypes.bool,
 };

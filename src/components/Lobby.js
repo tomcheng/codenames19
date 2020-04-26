@@ -2,9 +2,9 @@ import React, { useRef, useState } from "react";
 import { v4 } from "uuid";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
 import Box from "./Box";
+import Button from "./Button";
+import Checkbox from "./Checkbox";
 import Text from "./Text";
 
 const Container = styled.div`
@@ -30,15 +30,6 @@ const Input = styled.input`
   margin-left: -2px;
   margin-right: -2px;
   outline: 0;
-`;
-
-const Button = styled.button`
-  padding: 8px 16px;
-  background-color: #222;
-  color: #fff;
-  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: bold;
-  font-size: 13px;
 `;
 
 const randomNameName = v4();
@@ -75,11 +66,9 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
       >
         <Box border>
           <InputContainer borderBottom pad="tight">
-            <div>
-              <Text as="label" htmlFor={randomNameName} preset="label">
-                First Name
-              </Text>
-            </div>
+            <Text as="label" htmlFor={randomNameName} preset="label">
+              First Name
+            </Text>
             <div>
               <Input
                 id="name"
@@ -94,13 +83,11 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
           <Box borderBottom style={{ display: "flex" }}>
             <Box
               borderRight
+              flex
+              flexDirection="column"
+              flexible
+              justifyContent="center"
               pad="tight"
-              style={{
-                flexGrow: 1,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
             >
               <Text
                 preset="label"
@@ -109,7 +96,7 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
                 }}
               >
                 <span style={{ marginRight: 5 }}>
-                  <FontAwesomeIcon icon={isNew ? faCheckSquare : faSquare} />
+                  <Checkbox checked={isNew} />
                 </span>
                 Start New Mission
               </Text>
@@ -121,7 +108,7 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
                 }}
               >
                 <span style={{ marginRight: 5 }}>
-                  <FontAwesomeIcon icon={isNew ? faSquare : faCheckSquare} />
+                  <Checkbox checked={!isNew} />
                 </span>
                 Join Mission
               </Text>
@@ -149,11 +136,8 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
               />
             </InputContainer>
           </Box>
-          <Box style={{ display: "flex" }}>
-            <Box
-              pad="tight"
-              style={{ flexGrow: 1, display: "flex", alignItems: "center" }}
-            >
+          <Box alignItems="center" flex pad="tight" padY="normal">
+            <Box flexible>
               {isMissingName ? (
                 <Text color="danger" preset="label">
                   Error: First Name is required
@@ -164,9 +148,7 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
                 </Text>
               ) : null}
             </Box>
-            <Box pad="tight" padY="normal">
-              <Button type="submit">SUBMIT</Button>
-            </Box>
+            <Button type="submit">SUBMIT</Button>
           </Box>
         </Box>
       </form>

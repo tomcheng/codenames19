@@ -8,11 +8,17 @@ const SPACING_Y = {
 };
 
 const Box = styled.div`
+  align-items: ${(props) => props.alignItems};
   border: ${(props) => props.border && `1px solid ${BORDER_COLOR}`};
   border-bottom: ${(props) =>
     props.borderBottom && `1px solid ${BORDER_COLOR}`};
   border-left: ${(props) => props.borderLeft && `1px solid ${BORDER_COLOR}`};
   border-right: ${(props) => props.borderRight && `1px solid ${BORDER_COLOR}`};
+  display: ${(props) => (props.flex ? "flex" : null)};
+  flex-direction: ${(props) => props.flexDirection};
+  flex-grow: ${(props) => (props.flexible ? 1 : null)};
+  flex-shrink: ${(props) => (props.flexible ? 1 : null)};
+  justify-content: ${(props) => props.justifyContent};
   opacity: ${(props) => typeof props.opacity === "number" && props.opacity};
   padding: ${(props) => (props.pad === "tight" ? "4px 8px" : null)};
   padding-top: ${(props) => SPACING_Y[props.padTop || props.padY]};
@@ -23,10 +29,15 @@ const Box = styled.div`
 `;
 
 Box.propTypes = {
+  alignItems: PropTypes.oneOf(["center"]),
   border: PropTypes.bool,
   borderBottom: PropTypes.bool,
   borderLeft: PropTypes.bool,
   borderRight: PropTypes.bool,
+  flex: PropTypes.bool,
+  flexDirection: PropTypes.oneOf(["column", "row"]),
+  flexible: PropTypes.bool,
+  justifyContent: PropTypes.oneOf(["center", "space-between"]),
   opacity: PropTypes.number,
   pad: PropTypes.oneOf(["tight", "normal"]),
   padY: PropTypes.oneOf(["tight", "normal"]),

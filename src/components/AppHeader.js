@@ -12,7 +12,7 @@ const AppHeader = ({ roomCode }) => {
   return (
     <Container>
       <Grid align="center" spacing="normal">
-        <GridItem isFlexible>
+        <GridItem flexible>
           <Text preset="app-title">Codenames-19.</Text>
         </GridItem>
         {roomCode && (
