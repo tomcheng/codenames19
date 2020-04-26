@@ -15,9 +15,7 @@ const reducer = (state, action) => {
     case "join-room":
       return {
         ...state,
-        room: {
-          code: payload.room.code,
-        },
+        room: payload.room,
         users: payload.users,
       };
     case "update-users":
@@ -47,11 +45,7 @@ const App = ({ socket }) => {
       setName(users.find((user) => user.id === userID).name);
     });
 
-    socket.on("user joined", ({ users }) => {
-      dispatch({ type: "update-users", payload: { users } });
-    });
-
-    socket.on("user left", ({ users }) => {
+    socket.on("users updated", ({ users }) => {
       dispatch({ type: "update-users", payload: { users } });
     });
 
@@ -90,15 +84,23 @@ const App = ({ socket }) => {
     [socket, userID]
   );
 
-  return state.room ? (
-    <Room key={state.room.code} code={state.room.code} users={state.users} />
-  ) : (
-    <Lobby
-      initialName={name || ""}
-      invalidCode={invalidCode}
-      onCreateRoom={handleCreateRoom}
-      onJoinRoom={handleJoinRoom}
-    />
+  return (
+    <div>
+      {state.room ? (
+        <Room
+          key={state.room.code}
+          code={state.room.code}
+          users={state.users}
+        />
+      ) : (
+        <Lobby
+          initialName={name || ""}
+          invalidCode={invalidCode}
+          onCreateRoom={handleCreateRoom}
+          onJoinRoom={handleJoinRoom}
+        />
+      )}
+    </div>
   );
 };
 

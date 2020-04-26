@@ -1,12 +1,36 @@
 require("dotenv").config();
 const path = require("path");
 const uuid = require("uuid");
-const _ = require("lodash");
 
 const express = require("express");
 const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
+
+/*** SERVE UP THE PAGE ***/
+
+const isProduction = process.env.NODE_ENV === "production";
+
+const PORT = process.env.PORT || 5000;
+
+if (isProduction) {
+  console.log("=== RUNNING PRODUCTION MODE ===");
+  app.use(express.static(path.resolve(__dirname, "../build")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../build"));
+  });
+} else {
+  console.log("=== RUNNING DEVELOPMENT MODE ===");
+}
+
+http.listen(PORT, () => {
+  console.log(`listening on port ${PORT}`);
+});
+
+/*** ROOM LOGIC ***/
+
+const _ = require("lodash");
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 let rooms = {};
@@ -21,7 +45,7 @@ const getCode = () => {
   );
 };
 
-const getRoomCode = () => {
+const getUniqueRoomCode = () => {
   let code = getCode();
 
   while (
@@ -39,60 +63,48 @@ const getRoomByCode = (code) => {
   return Object.values(rooms).find((room) => room.code === code) || null;
 };
 
-const getUsersInRoom = (roomID) =>
-  _.compact(
+const getUsersInRoom = (room) => {
+  if (!io.sockets.adapter.rooms[room.id]) {
+    return [];
+  }
+
+  return _.compact(
     _.uniq(
-      Object.keys(io.sockets.adapter.rooms[roomID].sockets).map(
+      Object.keys(io.sockets.adapter.rooms[room.id].sockets).map(
         (id) => io.sockets.connected[id].userID
       )
     ).map((userID) => users[userID])
   );
+};
 
-const isProduction = process.env.NODE_ENV === "production";
+const joinRoom = ({ room, user }, socket) => {
+  socket.userID = user.id;
+  socket.roomID = room.id;
 
-const PORT = process.env.PORT || 5000;
-
-if (isProduction) {
-  console.log("=== RUNNING PRODUCTION MODE ===");
-  app.use(express.static(path.resolve(__dirname, "../build")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../build"));
+  socket.join(room.id, () => {
+    const usersInRoom = getUsersInRoom(room);
+    socket.emit("room joined", {
+      room,
+      users: usersInRoom,
+      userID: user.id,
+    });
+    socket.to(room.id).emit("users updated", { users: usersInRoom });
   });
-} else {
-  console.log("=== RUNNING DEVELOPMENT MODE ===");
-}
+};
 
 io.on("connection", (socket) => {
-  const joinRoom = ({ room, user }) => {
-    socket.userID = user.id;
-    socket.roomID = room.id;
-
-    socket.join(room.id, () => {
-      const usersInRoom = getUsersInRoom(room.id);
-      socket.emit("room joined", {
-        room,
-        users: usersInRoom,
-        userID: user.id,
-      });
-      socket.to(room.id).emit("user joined", { users: usersInRoom });
-    });
-  };
-
   socket.on("create room", ({ name, userID: existingUserID }) => {
-    const user = {
-      id: existingUserID || uuid.v4(),
-      name,
-    };
+    const user = { id: existingUserID || uuid.v4(), name };
     const room = {
       id: uuid.v4(),
-      code: getRoomCode(),
+      code: getUniqueRoomCode(),
+      teamsPicked: false,
     };
 
     users[user.id] = user;
     rooms[room.id] = room;
 
-    joinRoom({ room, user });
+    joinRoom({ room, user }, socket);
   });
 
   socket.on("join room", ({ code, name, userID: existingUserID }) => {
@@ -107,7 +119,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    joinRoom({ room, user });
+    joinRoom({ room, user }, socket);
   });
 
   socket.on("rejoin room", ({ roomID, userID }) => {
@@ -124,22 +136,18 @@ io.on("connection", (socket) => {
       return;
     }
 
-    joinRoom({ room, user });
+    joinRoom({ room, user }, socket);
   });
 
   socket.on("disconnect", () => {
-    if (socket.roomID) {
-      if (io.sockets.adapter.rooms[socket.roomID]) {
-        socket
-          .to(socket.roomID)
-          .emit("user left", { users: getUsersInRoom(socket.roomID) });
-      } else {
-        rooms = _.omit(rooms, socket.roomID);
-      }
+    if (!socket.roomID) return;
+
+    const usersLeft = getUsersInRoom(rooms[socket.roomID]);
+
+    if (usersLeft.length) {
+      socket.to(socket.roomID).emit("users updated", { users: usersLeft });
+    } else {
+      rooms = _.omit(rooms, socket.roomID);
     }
   });
-});
-
-http.listen(PORT, () => {
-  console.log(`listening on port ${PORT}`);
 });
