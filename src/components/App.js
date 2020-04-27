@@ -179,7 +179,11 @@ const App = ({ socket }) => {
             />
           </DocumentWrapper>
         ) : (
-          <div>Game goes here.</div>
+          <div>
+            {state.room.words.map((word) => (
+              <div key={word}>{word}</div>
+            ))}
+          </div>
         )}
       </AppBody>
     </AppContainer>

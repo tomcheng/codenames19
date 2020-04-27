@@ -32,6 +32,7 @@ http.listen(PORT, () => {
 
 const _ = require("lodash");
 const utils = require("./utils");
+const { getWords } = require("./words");
 
 let rooms = {};
 let users = {};
@@ -95,6 +96,7 @@ io.on("connection", (socket) => {
       },
       teamsLockedIn: false,
       spymastersLockedIn: false,
+      words: null,
     };
 
     users[user.id] = user;
@@ -173,6 +175,10 @@ io.on("connection", (socket) => {
         lockedIn: true,
       },
     };
+
+    if (room.spymasters.A.lockedIn && room.spymasters.B.lockedIn) {
+      room.words = getWords();
+    }
 
     io.in(room.id).emit("room updated", { room });
   });
