@@ -61,6 +61,7 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
           </Text>
           <div>
             <Input
+              autoFocus
               id="name"
               name={randomNameName}
               value={name}
