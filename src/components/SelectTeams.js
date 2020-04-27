@@ -9,17 +9,17 @@ const SelectTeams = ({ users, onLockInTeams, onSelectTeam }) => {
   return (
     <Box border>
       <Box borderBottom flex>
-        <Box flexible pad="tight" padY="normal">
+        <Box flexible pad="tight">
           <Text preset="label">Agent</Text>
         </Box>
-        <Box pad="tight" padY="normal" textAlign="center" width={70}>
+        <Box pad="tight" textAlign="center" width={70}>
           <Text preset="label">Group A</Text>
         </Box>
-        <Box pad="tight" padY="normal" textAlign="center" width={70}>
+        <Box pad="tight" textAlign="center" width={70}>
           <Text preset="label">Group B</Text>
         </Box>
       </Box>
-      <Box borderBottom padY="tight">
+      <Box borderBottom padY="x-tight">
         {users.map(({ id, name, team }) => (
           <Box key={id} flex>
             <Box flexible pad="tight">
@@ -52,7 +52,7 @@ const SelectTeams = ({ users, onLockInTeams, onSelectTeam }) => {
           </Box>
         ))}
       </Box>
-      <Box alignItems="center" flex pad="tight" padY="normal">
+      <Box alignItems="center" flex pad="tight">
         <Box flexible />
         <Button onClick={onLockInTeams}>SUBMIT</Button>
       </Box>

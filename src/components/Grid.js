@@ -36,6 +36,7 @@ export const GridItem = ({ children, flexible }) => {
         <div
           style={{
             padding: `0 ${0.5 * SPACINGS[value]}px`,
+            flexBasis: flexible ? 0 : null,
             flexGrow: flexible ? 1 : null,
             flexShrink: flexible ? 1 : null,
           }}

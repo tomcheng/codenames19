@@ -69,6 +69,26 @@ const getUsersInRoom = (room) => {
   );
 };
 
+const getInitialWords = () => {
+  const words = getWords();
+  const shuffledWords = _.shuffle(words);
+  const teamAWords = shuffledWords.slice(0, 9);
+  const teamBWords = shuffledWords.slice(9, 17);
+  const bomb = shuffledWords[17];
+
+  return words.map((word) => ({
+    word,
+    type: teamAWords.includes(word)
+      ? "A"
+      : teamBWords.includes(word)
+      ? "B"
+      : word === bomb
+      ? "bomb"
+      : "neutral",
+    flipped: false,
+  }));
+};
+
 const joinRoom = ({ room, user }, socket) => {
   socket.userID = user.id;
   socket.roomID = room.id;
@@ -177,7 +197,7 @@ io.on("connection", (socket) => {
     };
 
     if (room.spymasters.A.lockedIn && room.spymasters.B.lockedIn) {
-      room.words = getWords();
+      room.words = getInitialWords();
     }
 
     io.in(room.id).emit("room updated", { room });

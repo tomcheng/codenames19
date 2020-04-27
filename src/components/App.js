@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import background from "../assets/so-white.png";
 import AppHeader from "./AppHeader";
 import DocumentWrapper from "./DocumentWrapper";
+import Game from "./Game";
 import Lobby from "./Lobby";
 import SelectSpyMaster from "./SelectSpyMaster";
 import SelectTeams from "./SelectTeams";
@@ -49,15 +50,54 @@ const reducer = (state, action) => {
   }
 };
 
-// const INITIAL_STATE = {
-//   room: { code: "AAAA", teamsLockedIn: true },
-//   users: [
-//     { name: "Thomas", id: "30a9e007-e86d-4cc9-9743-9b2e7dfd1316", team: "A" },
-//     { name: "Michelle", id: "skjdfh", team: "A" },
-//     { name: "Avrum", id: "ldkg", team: "B" },
-//     { name: "Alda", id: "fdkjbg", team: "B" },
-//   ],
-// };
+const savedUserID = JSON.parse(localStorage.getItem(USER_ID_KEY));
+
+// eslint-disable-next-line
+const MOCK_STATE = {
+  room: {
+    id: "33ca06c2-2574-4919-80c0-1a8ce1bf6542",
+    code: "OTZS",
+    spymasters: {
+      A: { userID: savedUserID, lockedIn: true },
+      B: { userID: "06d5fcd5-4066-46de-aa34-12e89bcf2348", lockedIn: true },
+    },
+    teamsLockedIn: true,
+    spymastersLockedIn: false,
+    words: [
+      { word: "River", type: "A", flipped: false },
+      { word: "House", type: "B", flipped: false },
+      { word: "Smuggler", type: "B", flipped: false },
+      { word: "Iceland", type: "neutral", flipped: false },
+      { word: "Center", type: "neutral", flipped: false },
+      { word: "Tank", type: "B", flipped: false },
+      { word: "Litter", type: "neutral", flipped: false },
+      { word: "Astronaut", type: "A", flipped: false },
+      { word: "Table", type: "neutral", flipped: false },
+      { word: "Pan", type: "A", flipped: false },
+      { word: "Pitch", type: "B", flipped: false },
+      { word: "Banana", type: "neutral", flipped: false },
+      { word: "Ranch", type: "A", flipped: false },
+      { word: "Jellyfish", type: "B", flipped: false },
+      { word: "Tail", type: "A", flipped: false },
+      { word: "Homer", type: "B", flipped: false },
+      { word: "String", type: "B", flipped: false },
+      { word: "Bear", type: "neutral", flipped: false },
+      { word: "Crab", type: "A", flipped: false },
+      { word: "Avalanche", type: "neutral", flipped: false },
+      { word: "Smoothie", type: "A", flipped: false },
+      { word: "Saw", type: "A", flipped: false },
+      { word: "Guitar", type: "bomb", flipped: false },
+      { word: "Comic", type: "B", flipped: false },
+      { word: "Cloak", type: "A", flipped: false },
+    ],
+  },
+  users: [
+    { id: savedUserID, name: "Thomas", team: "A" },
+    { id: "06d5fcd5-4066-46de-aa34-12e89bcf2348", name: "Michelle", team: "B" },
+    { id: "foo", name: "Avrum", team: "A" },
+    { id: "bar", name: "Alda", team: "B" },
+  ],
+};
 
 const INITIAL_STATE = {
   room: null,
@@ -179,11 +219,12 @@ const App = ({ socket }) => {
             />
           </DocumentWrapper>
         ) : (
-          <div>
-            {state.room.words.map((word) => (
-              <div key={word}>{word}</div>
-            ))}
-          </div>
+          <Game
+            spymasters={state.room.spymasters}
+            users={state.users}
+            userID={userID}
+            words={state.room.words}
+          />
         )}
       </AppBody>
     </AppContainer>

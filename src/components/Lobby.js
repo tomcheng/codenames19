@@ -55,7 +55,7 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
       }}
     >
       <Box border>
-        <InputContainer borderBottom pad="tight">
+        <InputContainer borderBottom pad="tight" padY="x-tight">
           <Text as="label" htmlFor={randomNameName} preset="label">
             First Name
           </Text>
@@ -95,7 +95,12 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
               <Checkbox checked={!isNew} label="Join Mission" />
             </div>
           </Box>
-          <InputContainer pad="tight" width={120} opacity={isNew ? 0.5 : 1}>
+          <InputContainer
+            pad="tight"
+            padY="x-tight"
+            width={120}
+            opacity={isNew ? 0.5 : 1}
+          >
             <Text as="label" htmlFor={randomCodeName} preset="label">
               Code
             </Text>
@@ -118,7 +123,7 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
             />
           </InputContainer>
         </Box>
-        <Box alignItems="center" flex pad="tight" padY="normal">
+        <Box alignItems="center" flex pad="tight">
           <Box flexible>
             {isMissingName ? (
               <Text color="danger" preset="label">

@@ -17,7 +17,7 @@ const SelectSpyMaster = ({
 
   return (
     <Box border>
-      <Box borderBottom pad="tight" padY="normal">
+      <Box borderBottom pad="tight">
         <Text preset="label">Agent</Text>
       </Box>
       <Box padY="tight" borderBottom>
@@ -39,7 +39,7 @@ const SelectSpyMaster = ({
           </Box>
         ))}
       </Box>
-      <Box alignItems="center" flex pad="tight" padY="normal">
+      <Box alignItems="center" flex pad="tight">
         <Box flexible />
         <Button onClick={onLockInSpyMaster}>SUBMIT</Button>
       </Box>
