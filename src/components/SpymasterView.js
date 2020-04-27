@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Box from "./Box";
 import Text from "./Text";
 
@@ -45,6 +46,16 @@ const SpymasterView = ({ words, yourTeam }) => {
       </Box>
     </Box>
   );
+};
+
+SpymasterView.propTypes = {
+  words: PropTypes.arrayOf(
+    PropTypes.shape({
+      type: PropTypes.oneOf(["A", "B", "neutral", "bomb"]).isRequired,
+      word: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  yourTeam: PropTypes.oneOf(["A", "B"]).isRequired,
 };
 
 export default SpymasterView;

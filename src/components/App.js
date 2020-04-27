@@ -58,7 +58,7 @@ const MOCK_STATE = {
     id: "33ca06c2-2574-4919-80c0-1a8ce1bf6542",
     code: "OTZS",
     spymasters: {
-      A: { userID: savedUserID, lockedIn: true },
+      A: { userID: "foo", lockedIn: true },
       B: { userID: "06d5fcd5-4066-46de-aa34-12e89bcf2348", lockedIn: true },
     },
     teamsLockedIn: true,
