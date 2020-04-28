@@ -89,6 +89,31 @@ const getInitialWords = () => {
   }));
 };
 
+const createRoom = () => {
+  return {
+    id: uuid.v4(),
+    roomCode: getUniqueRoomCode(),
+    teamsSet: false,
+    spymasterA: null,
+    spymasterB: null,
+    words: null,
+    round: null,
+    turn: null,
+    stage: null,
+    currentCode: null,
+    currentNumber: null,
+    guesses: [],
+    guessesLeft: null,
+  };
+};
+
+const startGame = (room) => {
+  room.words = getInitialWords();
+  room.round = 1;
+  room.turn = "A";
+  room.stage = "writing";
+};
+
 const joinRoom = ({ room, user }, socket) => {
   socket.userID = user.id;
   socket.roomID = room.id;
@@ -107,21 +132,7 @@ const joinRoom = ({ room, user }, socket) => {
 io.on("connection", (socket) => {
   socket.on("create room", ({ name, userID: existingUserID }) => {
     const user = { id: existingUserID || uuid.v4(), name, team: null };
-    const room = {
-      id: uuid.v4(),
-      roomCode: getUniqueRoomCode(),
-      teamsSet: false,
-      spymasterA: null,
-      spymasterB: null,
-      words: null,
-      round: 1,
-      turn: "A",
-      stage: "writing",
-      currentCode: null,
-      currentNumber: null,
-      guesses: [],
-      guessesLeft: 0,
-    };
+    const room = createRoom();
 
     users[user.id] = user;
     rooms[room.id] = room;
@@ -180,7 +191,7 @@ io.on("connection", (socket) => {
     room[user.team === "A" ? "spymasterA" : "spymasterB"] = user.id;
 
     if (room.spymasterA && room.spymasterB) {
-      room.words = getInitialWords();
+      startGame(room);
     }
 
     io.in(room.id).emit("room updated", { room });
