@@ -7,6 +7,7 @@ const SPACING = {
   tight: "8px",
   normal: "16px",
   loose: "24px",
+  "x-loose": "32px",
 };
 
 const Box = styled.div`
@@ -45,13 +46,19 @@ Box.propTypes = {
   flexible: PropTypes.bool,
   justifyContent: PropTypes.oneOf(["center", "space-between"]),
   opacity: PropTypes.number,
-  pad: PropTypes.oneOf(["x-tight", "tight", "normal", "loose"]),
-  padX: PropTypes.oneOf(["x-tight", "tight", "normal", "loose"]),
-  padY: PropTypes.oneOf(["x-tight", "tight", "normal", "loose"]),
-  padLeft: PropTypes.oneOf(["x-tight", "tight", "normal", "loose"]),
-  padRight: PropTypes.oneOf(["x-tight", "tight", "normal", "loose"]),
-  padTop: PropTypes.oneOf(["x-tight", "tight", "normal", "loose"]),
-  padBottom: PropTypes.oneOf(["x-tight", "tight", "normal", "loose"]),
+  pad: PropTypes.oneOf(["x-tight", "tight", "normal", "loose", "x-loose"]),
+  padX: PropTypes.oneOf(["x-tight", "tight", "normal", "loose", "x-loose"]),
+  padY: PropTypes.oneOf(["x-tight", "tight", "normal", "loose", "x-loose"]),
+  padLeft: PropTypes.oneOf(["x-tight", "tight", "normal", "loose", "x-loose"]),
+  padRight: PropTypes.oneOf(["x-tight", "tight", "normal", "loose", "x-loose"]),
+  padTop: PropTypes.oneOf(["x-tight", "tight", "normal", "loose", "x-loose"]),
+  padBottom: PropTypes.oneOf([
+    "x-tight",
+    "tight",
+    "normal",
+    "loose",
+    "x-loose",
+  ]),
   textAlign: PropTypes.oneOf(["center"]),
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
