@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import Box from "./Box";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
+import Input from "./Input";
 import Text from "./Text";
 
 const InputContainer = styled(Box)`
@@ -12,18 +13,6 @@ const InputContainer = styled(Box)`
   :focus-within {
     background-color: #f5f5f5;
   }
-`;
-
-const Input = styled.input`
-  width: 100%;
-  background-color: transparent;
-  font-size: inherit;
-  font-family: inherit;
-  border-radius: 2px;
-  padding: 2px;
-  margin-left: -2px;
-  margin-right: -2px;
-  outline: 0;
 `;
 
 const randomNameName = v4();
@@ -136,7 +125,7 @@ const Lobby = ({ codeIsInvalid, initialName, onCreateRoom, onJoinRoom }) => {
               </Text>
             ) : null}
           </Box>
-          <Button type="submit">SUBMIT</Button>
+          <Button type="submit">Submit</Button>
         </Box>
       </Box>
     </form>

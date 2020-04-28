@@ -10,12 +10,14 @@ const Container = styled(Box)`
 
 const DocumentWrapper = ({ title, children }) => {
   return (
-    <Container padTop="loose">
-      <Box textAlign="center" padBottom="tight">
-        <Text preset="document-title">{title}</Text>
-      </Box>
-      {children}
-    </Container>
+    <Box padY="loose" padX="normal">
+      <Container>
+        <Box textAlign="center" padBottom="tight">
+          <Text preset="document-title">{title}</Text>
+        </Box>
+        {children}
+      </Container>
+    </Box>
   );
 };
 

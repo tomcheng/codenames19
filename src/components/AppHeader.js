@@ -1,16 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
+import Box from "./Box";
 import { Grid, GridItem } from "./Grid";
 import Text from "./Text";
 
-const Container = styled.div`
-  padding: 10px 20px;
-`;
-
 const AppHeader = ({ roomCode }) => {
   return (
-    <Container>
+    <Box pad="tight" padX="normal">
       <Grid align="center" spacing="normal">
         <GridItem flexible>
           <Text preset="app-title">Codenames-19.</Text>
@@ -26,7 +22,7 @@ const AppHeader = ({ roomCode }) => {
           </GridItem>
         )}
       </Grid>
-    </Container>
+    </Box>
   );
 };
 

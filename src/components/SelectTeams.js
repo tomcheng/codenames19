@@ -22,11 +22,12 @@ const SelectTeams = ({ users, onLockInTeams, onSelectTeam }) => {
       <Box borderBottom padY="x-tight">
         {users.map(({ id, name, team }) => (
           <Box key={id} flex>
-            <Box flexible pad="tight">
+            <Box flexible padX="tight" padY="x-tight">
               <Text preset="label">{name}</Text>
             </Box>
             <Box
-              pad="tight"
+              padX="tight"
+              padY="x-tight"
               textAlign="center"
               width={70}
               onClick={() => {
@@ -38,7 +39,8 @@ const SelectTeams = ({ users, onLockInTeams, onSelectTeam }) => {
               <Checkbox checked={team === "A"} />
             </Box>
             <Box
-              pad="tight"
+              padX="tight"
+              padY="x-tight"
               textAlign="center"
               width={70}
               onClick={() => {
@@ -54,7 +56,7 @@ const SelectTeams = ({ users, onLockInTeams, onSelectTeam }) => {
       </Box>
       <Box alignItems="center" flex pad="tight">
         <Box flexible />
-        <Button onClick={onLockInTeams}>SUBMIT</Button>
+        <Button onClick={onLockInTeams}>Submit</Button>
       </Box>
     </Box>
   );

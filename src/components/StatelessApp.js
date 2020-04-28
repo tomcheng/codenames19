@@ -10,14 +10,11 @@ import SelectTeams from "./SelectTeams";
 import SelectSpymaster from "./SelectSpymaster";
 
 const AppContainer = styled.div`
+  background-color: #fff;
   background-image: url(${background});
   background-repeat: repeat;
   height: 100vh;
   overflow: auto;
-`;
-
-const AppBody = styled.div`
-  padding: 10px 20px;
 `;
 
 const StatelessApp = ({
@@ -36,43 +33,41 @@ const StatelessApp = ({
   return (
     <AppContainer>
       <AppHeader roomCode={room?.code} />
-      <AppBody>
-        {!room ? (
-          <DocumentWrapper title="Enlistment/Re-Enlistment Document">
-            <Lobby
-              initialName={name}
-              codeIsInvalid={codeIsInvalid}
-              onCreateRoom={onCreateRoom}
-              onJoinRoom={onJoinRoom}
-            />
-          </DocumentWrapper>
-        ) : !room.teamsLockedIn ? (
-          <DocumentWrapper title="Declaration of Allegiances">
-            <SelectTeams
-              users={users}
-              onLockInTeams={onLockInTeams}
-              onSelectTeam={onSelectTeam}
-            />
-          </DocumentWrapper>
-        ) : !room.spymasters.A.lockedIn || !room.spymasters.B.lockedIn ? (
-          <DocumentWrapper title="Spy Master Nomination Form">
-            <SelectSpymaster
-              spymasters={room.spymasters}
-              users={users}
-              userID={userID}
-              onLockInSpymaster={onLockInSpymaster}
-              onSelectSpymaster={onSelectSpymaster}
-            />
-          </DocumentWrapper>
-        ) : (
-          <Game
+      {!room ? (
+        <DocumentWrapper title="Enlistment/Re-Enlistment Document">
+          <Lobby
+            initialName={name}
+            codeIsInvalid={codeIsInvalid}
+            onCreateRoom={onCreateRoom}
+            onJoinRoom={onJoinRoom}
+          />
+        </DocumentWrapper>
+      ) : !room.teamsLockedIn ? (
+        <DocumentWrapper title="Declaration of Allegiances">
+          <SelectTeams
+            users={users}
+            onLockInTeams={onLockInTeams}
+            onSelectTeam={onSelectTeam}
+          />
+        </DocumentWrapper>
+      ) : !room.spymasters.A.lockedIn || !room.spymasters.B.lockedIn ? (
+        <DocumentWrapper title="Spy Master Nomination Form">
+          <SelectSpymaster
             spymasters={room.spymasters}
             users={users}
             userID={userID}
-            words={room.words}
+            onLockInSpymaster={onLockInSpymaster}
+            onSelectSpymaster={onSelectSpymaster}
           />
-        )}
-      </AppBody>
+        </DocumentWrapper>
+      ) : (
+        <Game
+          spymasters={room.spymasters}
+          users={users}
+          userID={userID}
+          words={room.words}
+        />
+      )}
     </AppContainer>
   );
 };

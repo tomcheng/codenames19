@@ -20,11 +20,12 @@ const SelectSpymaster = ({
       <Box borderBottom pad="tight">
         <Text preset="label">Agent</Text>
       </Box>
-      <Box padY="tight" borderBottom>
+      <Box padY="x-tight" borderBottom>
         {myTeam.map(({ id, name }) => (
           <Box
             key={id}
-            pad="tight"
+            padX="tight"
+            padY="x-tight"
             onClick={() => {
               if (spymasters[user.team].userID === id) {
                 return;
@@ -41,7 +42,7 @@ const SelectSpymaster = ({
       </Box>
       <Box alignItems="center" flex pad="tight">
         <Box flexible />
-        <Button onClick={onLockInSpymaster}>SUBMIT</Button>
+        <Button onClick={onLockInSpymaster}>Submit</Button>
       </Box>
     </Box>
   );
