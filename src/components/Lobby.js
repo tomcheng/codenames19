@@ -29,7 +29,7 @@ const Input = styled.input`
 const randomNameName = v4();
 const randomCodeName = v4();
 
-const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
+const Lobby = ({ codeIsInvalid, initialName, onCreateRoom, onJoinRoom }) => {
   const [name, setName] = useState(initialName);
   const [isNew, setIsNew] = useState(true);
   const [isMissingName, setIsMissingName] = useState(false);
@@ -130,7 +130,7 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
               <Text color="danger" preset="label">
                 Error: First Name is required
               </Text>
-            ) : invalidCode ? (
+            ) : codeIsInvalid ? (
               <Text color="danger" preset="label">
                 Error: Invalid mission code
               </Text>
@@ -144,8 +144,8 @@ const Lobby = ({ initialName, invalidCode, onCreateRoom, onJoinRoom }) => {
 };
 
 Lobby.propTypes = {
+  codeIsInvalid: PropTypes.bool.isRequired,
   initialName: PropTypes.string.isRequired,
-  invalidCode: PropTypes.bool.isRequired,
   onCreateRoom: PropTypes.func.isRequired,
   onJoinRoom: PropTypes.func.isRequired,
 };

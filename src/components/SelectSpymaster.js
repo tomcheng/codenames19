@@ -5,12 +5,12 @@ import Text from "./Text";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
 
-const SelectSpyMaster = ({
+const SelectSpymaster = ({
   spymasters,
   users,
   userID,
-  onLockInSpyMaster,
-  onSelectSpyMaster,
+  onLockInSpymaster,
+  onSelectSpymaster,
 }) => {
   const user = users.find((u) => u.id === userID);
   const myTeam = users.filter((u) => u.team === user.team);
@@ -29,7 +29,7 @@ const SelectSpyMaster = ({
               if (spymasters[user.team].userID === id) {
                 return;
               }
-              onSelectSpyMaster({ userID: id });
+              onSelectSpymaster({ userID: id });
             }}
           >
             <Checkbox
@@ -41,13 +41,13 @@ const SelectSpyMaster = ({
       </Box>
       <Box alignItems="center" flex pad="tight">
         <Box flexible />
-        <Button onClick={onLockInSpyMaster}>SUBMIT</Button>
+        <Button onClick={onLockInSpymaster}>SUBMIT</Button>
       </Box>
     </Box>
   );
 };
 
-SelectSpyMaster.propTypes = {
+SelectSpymaster.propTypes = {
   spymasters: PropTypes.shape({
     A: PropTypes.shape({
       lockedIn: PropTypes.bool.isRequired,
@@ -65,8 +65,8 @@ SelectSpyMaster.propTypes = {
       name: PropTypes.string.isRequired,
     })
   ).isRequired,
-  onLockInSpyMaster: PropTypes.func.isRequired,
-  onSelectSpyMaster: PropTypes.func.isRequired,
+  onLockInSpymaster: PropTypes.func.isRequired,
+  onSelectSpymaster: PropTypes.func.isRequired,
 };
 
-export default SelectSpyMaster;
+export default SelectSpymaster;
