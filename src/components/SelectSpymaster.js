@@ -1,17 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Box from "./Box";
 import Text from "./Text";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
 
-const SelectSpymaster = ({
-  spymasters,
-  users,
-  userID,
-  onLockInSpymaster,
-  onSelectSpymaster,
-}) => {
+const SelectSpymaster = ({ users, userID, onSelectSpymaster }) => {
+  const [selectedUserID, setSelectedUserID] = useState(null);
   const user = users.find((u) => u.id === userID);
   const myTeam = users.filter((u) => u.team === user.team);
 
@@ -27,38 +22,29 @@ const SelectSpymaster = ({
             padX="tight"
             padY="x-tight"
             onClick={() => {
-              if (spymasters[user.team].userID === id) {
-                return;
-              }
-              onSelectSpymaster({ userID: id });
+              setSelectedUserID(id);
             }}
           >
-            <Checkbox
-              checked={spymasters[user.team].userID === id}
-              label={name}
-            />
+            <Checkbox checked={id === selectedUserID} label={name} />
           </Box>
         ))}
       </Box>
       <Box alignItems="center" flex pad="tight">
         <Box flexible />
-        <Button onClick={onLockInSpymaster}>Submit</Button>
+        <Button
+          onClick={() => {
+            if (!selectedUserID) return;
+            onSelectSpymaster({ userID: selectedUserID });
+          }}
+        >
+          Submit
+        </Button>
       </Box>
     </Box>
   );
 };
 
 SelectSpymaster.propTypes = {
-  spymasters: PropTypes.shape({
-    A: PropTypes.shape({
-      lockedIn: PropTypes.bool.isRequired,
-      userID: PropTypes.string,
-    }).isRequired,
-    B: PropTypes.shape({
-      lockedIn: PropTypes.bool.isRequired,
-      userID: PropTypes.string,
-    }).isRequired,
-  }).isRequired,
   userID: PropTypes.string.isRequired,
   users: PropTypes.arrayOf(
     PropTypes.shape({
@@ -66,7 +52,6 @@ SelectSpymaster.propTypes = {
       name: PropTypes.string.isRequired,
     })
   ).isRequired,
-  onLockInSpymaster: PropTypes.func.isRequired,
   onSelectSpymaster: PropTypes.func.isRequired,
 };
 

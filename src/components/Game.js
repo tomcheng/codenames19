@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import GuesserView from "./GuesserView";
 import SpymasterView from "./SpymasterView";
 
-const Game = ({ spymasters, users, userID, words }) => {
+const Game = ({ spymasterA, spymasterB, users, userID, words }) => {
   const you = users.find((u) => u.id === userID);
-  const isSpymaster = spymasters[you.team].userID === userID;
+  const isSpymaster = you.id === spymasterA || you.id === spymasterB;
 
   return isSpymaster ? (
     <SpymasterView words={words} yourTeam={you.team} />
@@ -15,14 +15,8 @@ const Game = ({ spymasters, users, userID, words }) => {
 };
 
 Game.propTypes = {
-  spymasters: PropTypes.shape({
-    A: PropTypes.shape({
-      userID: PropTypes.string.isRequired,
-    }).isRequired,
-    B: PropTypes.shape({
-      userID: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
+  spymasterA: PropTypes.string.isRequired,
+  spymasterB: PropTypes.string.isRequired,
   users: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,

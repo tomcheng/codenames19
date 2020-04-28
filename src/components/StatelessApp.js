@@ -25,14 +25,13 @@ const StatelessApp = ({
   users,
   onCreateRoom,
   onJoinRoom,
-  onLockInSpymaster,
-  onLockInTeams,
+  onSetTeams,
   onSelectSpymaster,
   onSelectTeam,
 }) => {
   return (
     <AppContainer>
-      <AppHeader roomCode={room?.code} />
+      <AppHeader roomCode={room?.roomCode} />
       {!room ? (
         <DocumentWrapper title="Enlistment/Re-Enlistment Document">
           <Lobby
@@ -42,27 +41,26 @@ const StatelessApp = ({
             onJoinRoom={onJoinRoom}
           />
         </DocumentWrapper>
-      ) : !room.teamsLockedIn ? (
+      ) : !room.teamsSet ? (
         <DocumentWrapper title="Declaration of Allegiances">
           <SelectTeams
             users={users}
-            onLockInTeams={onLockInTeams}
+            onSetTeams={onSetTeams}
             onSelectTeam={onSelectTeam}
           />
         </DocumentWrapper>
-      ) : !room.spymasters.A.lockedIn || !room.spymasters.B.lockedIn ? (
+      ) : !room.spymasterA || !room.spymasterB ? (
         <DocumentWrapper title="Spy Master Nomination Form">
           <SelectSpymaster
-            spymasters={room.spymasters}
             users={users}
             userID={userID}
-            onLockInSpymaster={onLockInSpymaster}
             onSelectSpymaster={onSelectSpymaster}
           />
         </DocumentWrapper>
       ) : (
         <Game
-          spymasters={room.spymasters}
+          spymasterA={room.spymasterA}
+          spymasterB={room.spymasterB}
           users={users}
           userID={userID}
           words={room.words}
@@ -77,21 +75,14 @@ StatelessApp.propTypes = {
   name: PropTypes.string.isRequired,
   onCreateRoom: PropTypes.func.isRequired,
   onJoinRoom: PropTypes.func.isRequired,
-  onLockInSpymaster: PropTypes.func.isRequired,
-  onLockInTeams: PropTypes.func.isRequired,
+  onSetTeams: PropTypes.func.isRequired,
   onSelectSpymaster: PropTypes.func.isRequired,
   onSelectTeam: PropTypes.func.isRequired,
   room: PropTypes.shape({
-    code: PropTypes.string.isRequired,
-    spymasters: PropTypes.shape({
-      A: PropTypes.shape({
-        lockedIn: PropTypes.bool.isRequired,
-      }).isRequired,
-      B: PropTypes.shape({
-        lockedIn: PropTypes.bool.isRequired,
-      }).isRequired,
-    }).isRequired,
-    teamsLockedIn: PropTypes.bool.isRequired,
+    roomCode: PropTypes.string.isRequired,
+    teamsSet: PropTypes.bool.isRequired,
+    spymasterA: PropTypes.string,
+    spymasterB: PropTypes.string,
     words: PropTypes.array,
   }),
   userID: PropTypes.string,

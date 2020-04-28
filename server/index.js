@@ -52,7 +52,7 @@ const getUniqueRoomCode = () => {
 };
 
 const getRoomByCode = (code) => {
-  return Object.values(rooms).find((room) => room.code === code) || null;
+  return Object.values(rooms).find((room) => room.roomCode === code) || null;
 };
 
 const getUsersInRoom = (room) => {
@@ -109,14 +109,18 @@ io.on("connection", (socket) => {
     const user = { id: existingUserID || uuid.v4(), name, team: null };
     const room = {
       id: uuid.v4(),
-      code: getUniqueRoomCode(),
-      spymasters: {
-        A: { userID: null, lockedIn: false },
-        B: { userID: null, lockedIn: false },
-      },
-      teamsLockedIn: false,
-      spymastersLockedIn: false,
+      roomCode: getUniqueRoomCode(),
+      teamsSet: false,
+      spymasterA: null,
+      spymasterB: null,
       words: null,
+      round: 1,
+      turn: "A",
+      stage: "writing",
+      currentCode: null,
+      currentNumber: null,
+      guesses: [],
+      guessesLeft: 0,
     };
 
     users[user.id] = user;
@@ -163,40 +167,19 @@ io.on("connection", (socket) => {
     io.in(room.id).emit("users updated", { users: getUsersInRoom(room) });
   });
 
-  socket.on("lock in teams", () => {
+  socket.on("set teams", () => {
     const room = rooms[socket.roomID];
-    room.teamsLockedIn = true;
+    room.teamsSet = true;
     io.in(room.id).emit("room updated", { room });
   });
 
-  socket.on("select spymaster", ({ userID }) => {
+  socket.on("set spymaster", ({ userID }) => {
     const room = rooms[socket.roomID];
     const user = users[userID];
 
-    room.spymasters = {
-      ...room.spymasters,
-      [user.team]: {
-        ...room.spymasters[user.team],
-        userID: user.id,
-      },
-    };
+    room[user.team === "A" ? "spymasterA" : "spymasterB"] = user.id;
 
-    io.in(room.id).emit("room updated", { room });
-  });
-
-  socket.on("lock in spymaster", () => {
-    const room = rooms[socket.roomID];
-    const user = users[socket.userID];
-
-    room.spymasters = {
-      ...room.spymasters,
-      [user.team]: {
-        ...room.spymasters[user.team],
-        lockedIn: true,
-      },
-    };
-
-    if (room.spymasters.A.lockedIn && room.spymasters.B.lockedIn) {
+    if (room.spymasterA && room.spymasterB) {
       room.words = getInitialWords();
     }
 

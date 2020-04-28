@@ -97,17 +97,13 @@ const App = ({ socket }) => {
     [socket, userID]
   );
 
-  const handleLockInSpymaster = useCallback(() => {
-    socket.emit("lock in spymaster");
-  }, [socket]);
-
-  const handleLockInTeams = useCallback(() => {
-    socket.emit("lock in teams");
+  const handleSetTeams = useCallback(() => {
+    socket.emit("set teams");
   }, [socket]);
 
   const handleSelectSpymaster = useCallback(
     ({ userID }) => {
-      socket.emit("select spymaster", { userID });
+      socket.emit("set spymaster", { userID });
     },
     [socket]
   );
@@ -128,8 +124,7 @@ const App = ({ socket }) => {
       users={state.users}
       onCreateRoom={handleCreateRoom}
       onJoinRoom={handleJoinRoom}
-      onLockInSpymaster={handleLockInSpymaster}
-      onLockInTeams={handleLockInTeams}
+      onSetTeams={handleSetTeams}
       onSelectSpymaster={handleSelectSpymaster}
       onSelectTeam={handleSelectTeam}
     />

@@ -5,7 +5,7 @@ import Button from "./Button";
 import Checkbox from "./Checkbox";
 import Text from "./Text";
 
-const SelectTeams = ({ users, onLockInTeams, onSelectTeam }) => {
+const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
   return (
     <Box border>
       <Box borderBottom flex>
@@ -56,7 +56,7 @@ const SelectTeams = ({ users, onLockInTeams, onSelectTeam }) => {
       </Box>
       <Box alignItems="center" flex pad="tight">
         <Box flexible />
-        <Button onClick={onLockInTeams}>Submit</Button>
+        <Button onClick={onSetTeams}>Submit</Button>
       </Box>
     </Box>
   );
@@ -70,8 +70,8 @@ SelectTeams.propTypes = {
       team: PropTypes.string,
     })
   ).isRequired,
-  onLockInTeams: PropTypes.func.isRequired,
   onSelectTeam: PropTypes.func.isRequired,
+  onSetTeams: PropTypes.func.isRequired,
 };
 
 export default SelectTeams;
