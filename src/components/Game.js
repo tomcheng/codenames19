@@ -3,12 +3,23 @@ import PropTypes from "prop-types";
 import GuesserView from "./GuesserView";
 import SpymasterView from "./SpymasterView";
 
-const Game = ({ spymasterA, spymasterB, users, userID, words }) => {
+const Game = ({
+  spymasterA,
+  spymasterB,
+  users,
+  userID,
+  words,
+  onSubmitCode,
+}) => {
   const you = users.find((u) => u.id === userID);
   const isSpymaster = you.id === spymasterA || you.id === spymasterB;
 
   return isSpymaster ? (
-    <SpymasterView words={words} yourTeam={you.team} />
+    <SpymasterView
+      words={words}
+      yourTeam={you.team}
+      onSubmitCode={onSubmitCode}
+    />
   ) : (
     <GuesserView words={words} yourTeam={you.team} />
   );
@@ -32,6 +43,7 @@ Game.propTypes = {
       word: PropTypes.string.isRequired,
     })
   ).isRequired,
+  onSubmitCode: PropTypes.func.isRequired,
 };
 
 export default Game;

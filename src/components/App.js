@@ -115,6 +115,13 @@ const App = ({ socket }) => {
     [socket]
   );
 
+  const handleSubmitCode = useCallback(
+    ({ code, number }) => {
+      socket.emit("submit code", { code, number });
+    },
+    [socket]
+  );
+
   return (
     <StatelessApp
       codeIsInvalid={codeIsInvalid}
@@ -127,6 +134,7 @@ const App = ({ socket }) => {
       onSetTeams={handleSetTeams}
       onSelectSpymaster={handleSelectSpymaster}
       onSelectTeam={handleSelectTeam}
+      onSubmitCode={handleSubmitCode}
     />
   );
 };

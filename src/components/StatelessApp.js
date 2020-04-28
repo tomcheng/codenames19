@@ -28,6 +28,7 @@ const StatelessApp = ({
   onSetTeams,
   onSelectSpymaster,
   onSelectTeam,
+  onSubmitCode,
 }) => {
   return (
     <AppContainer>
@@ -64,6 +65,7 @@ const StatelessApp = ({
           users={users}
           userID={userID}
           words={room.words}
+          onSubmitCode={onSubmitCode}
         />
       )}
     </AppContainer>
@@ -78,6 +80,7 @@ StatelessApp.propTypes = {
   onSetTeams: PropTypes.func.isRequired,
   onSelectSpymaster: PropTypes.func.isRequired,
   onSelectTeam: PropTypes.func.isRequired,
+  onSubmitCode: PropTypes.func.isRequired,
   room: PropTypes.shape({
     roomCode: PropTypes.string.isRequired,
     teamsSet: PropTypes.bool.isRequired,

@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Box from "./Box";
 import Input from "./Input";
 import Text from "./Text";
 import Button from "./Button";
 
-const SpymasterView = ({ words, yourTeam }) => {
+const SpymasterView = ({ words, yourTeam, onSubmitCode }) => {
+  const [code, setCode] = useState("");
+  const [number, setNumber] = useState("");
   const yourWords = words
     .filter((w) => w.type === yourTeam)
     .map((w) => w.word)
@@ -50,28 +52,50 @@ const SpymasterView = ({ words, yourTeam }) => {
         </Box>
       </Box>
       <Box
+        as="form"
         borderTop
         flex
         style={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
+        onSubmit={(evt) => {
+          evt.preventDefault();
+          if (!code || !number) return;
+          onSubmitCode({ code, number: parseInt(number) });
+        }}
       >
         <Box borderRight pad="tight" padTop="x-tight" flexible>
-          <Text as="label" htmlFor="foo" preset="label">
+          <Text as="label" htmlFor="code" preset="label">
             Code Word
           </Text>
           <div>
-            <Input autoFocus id="foo" name="foo" />
+            <Input
+              autoFocus
+              id="code"
+              name="code"
+              value={code}
+              onChange={(evt) => {
+                setCode(evt.target.value);
+              }}
+            />
           </div>
         </Box>
         <Box pad="tight" padTop="x-tight" borderRight width={120}>
-          <Text as="label" htmlFor="foo" preset="label">
+          <Text as="label" htmlFor="number" preset="label">
             Number
           </Text>
           <div>
-            <Input id="foo" name="foo" type="number" />
+            <Input
+              id="number"
+              name="number"
+              type="number"
+              value={number}
+              onChange={(evt) => {
+                setNumber(evt.target.value);
+              }}
+            />
           </div>
         </Box>
         <Box pad="tight" flex alignItems="center">
-          <Button>Submit</Button>
+          <Button type="submit">Submit</Button>
         </Box>
       </Box>
     </>
@@ -86,6 +110,7 @@ SpymasterView.propTypes = {
     })
   ).isRequired,
   yourTeam: PropTypes.oneOf(["A", "B"]).isRequired,
+  onSubmitCode: PropTypes.func.isRequired,
 };
 
 export default SpymasterView;

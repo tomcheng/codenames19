@@ -114,6 +114,13 @@ const startGame = (room) => {
   room.stage = "writing";
 };
 
+const submitCode = (room, { code, number }) => {
+  room.stage = "guessing";
+  room.currentCode = code;
+  room.currentNumber = number;
+  room.guessesLeft = room.round === 1 ? number : number + 1;
+};
+
 const joinRoom = ({ room, user }, socket) => {
   socket.userID = user.id;
   socket.roomID = room.id;
@@ -193,6 +200,14 @@ io.on("connection", (socket) => {
     if (room.spymasterA && room.spymasterB) {
       startGame(room);
     }
+
+    io.in(room.id).emit("room updated", { room });
+  });
+
+  socket.on("submit code", ({ code, number }) => {
+    const room = rooms[socket.roomID];
+
+    submitCode(room, { code, number });
 
     io.in(room.id).emit("room updated", { room });
   });
