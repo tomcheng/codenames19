@@ -30,6 +30,8 @@ const StatelessApp = ({
   onSelectTeam,
   onSubmitCode,
 }) => {
+  const user = users.find((u) => u.id === userID);
+
   return (
     <AppContainer>
       <AppHeader roomCode={room?.roomCode} />
@@ -60,8 +62,11 @@ const StatelessApp = ({
         </DocumentWrapper>
       ) : (
         <Game
+          codes={room.codes}
+          isYourTurn={user.team === room.turn}
           spymasterA={room.spymasterA}
           spymasterB={room.spymasterB}
+          stage={room.stage}
           users={users}
           userID={userID}
           words={room.words}
@@ -82,10 +87,13 @@ StatelessApp.propTypes = {
   onSelectTeam: PropTypes.func.isRequired,
   onSubmitCode: PropTypes.func.isRequired,
   room: PropTypes.shape({
+    codes: PropTypes.array.isRequired,
     roomCode: PropTypes.string.isRequired,
     teamsSet: PropTypes.bool.isRequired,
     spymasterA: PropTypes.string,
     spymasterB: PropTypes.string,
+    stage: PropTypes.string,
+    turn: PropTypes.string,
     words: PropTypes.array,
   }),
   userID: PropTypes.string,

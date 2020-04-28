@@ -100,8 +100,7 @@ const createRoom = () => {
     round: null,
     turn: null,
     stage: null,
-    currentCode: null,
-    currentNumber: null,
+    codes: [],
     guesses: [],
     guessesLeft: null,
   };
@@ -114,10 +113,9 @@ const startGame = (room) => {
   room.stage = "writing";
 };
 
-const submitCode = (room, { code, number }) => {
+const submitCode = (room, { code, number, team }) => {
   room.stage = "guessing";
-  room.currentCode = code;
-  room.currentNumber = number;
+  room.codes.push({ code, number, team });
   room.guessesLeft = room.round === 1 ? number : number + 1;
 };
 
@@ -206,8 +204,9 @@ io.on("connection", (socket) => {
 
   socket.on("submit code", ({ code, number }) => {
     const room = rooms[socket.roomID];
+    const user = users[socket.userID];
 
-    submitCode(room, { code, number });
+    submitCode(room, { code, number, team: user.team });
 
     io.in(room.id).emit("room updated", { room });
   });

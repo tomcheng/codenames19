@@ -4,8 +4,11 @@ import GuesserView from "./GuesserView";
 import SpymasterView from "./SpymasterView";
 
 const Game = ({
+  codes,
+  isYourTurn,
   spymasterA,
   spymasterB,
+  stage,
   users,
   userID,
   words,
@@ -16,6 +19,9 @@ const Game = ({
 
   return isSpymaster ? (
     <SpymasterView
+      codes={codes}
+      isYourTurn={isYourTurn}
+      stage={stage}
       words={words}
       yourTeam={you.team}
       onSubmitCode={onSubmitCode}
@@ -26,8 +32,11 @@ const Game = ({
 };
 
 Game.propTypes = {
+  codes: PropTypes.array.isRequired,
+  isYourTurn: PropTypes.bool.isRequired,
   spymasterA: PropTypes.string.isRequired,
   spymasterB: PropTypes.string.isRequired,
+  stage: PropTypes.string.isRequired,
   users: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
