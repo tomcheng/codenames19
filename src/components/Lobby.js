@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import Box from "./Box";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
+import DocumentWrapper from "./DocumentWrapper";
 import Input from "./Input";
 import Text from "./Text";
 
@@ -43,90 +44,92 @@ const Lobby = ({ codeIsInvalid, initialName, onCreateRoom, onJoinRoom }) => {
         }
       }}
     >
-      <Box border>
-        <InputContainer borderBottom pad="tight" padY="x-tight">
-          <Text as="label" htmlFor={randomNameName} preset="label">
-            First Name
-          </Text>
-          <div>
-            <Input
-              autoFocus
-              id="name"
-              name={randomNameName}
-              value={name}
-              onChange={(evt) => {
-                setName(evt.target.value);
-              }}
-            />
-          </div>
-        </InputContainer>
-        <Box borderBottom style={{ display: "flex" }}>
-          <Box
-            borderRight
-            flex
-            flexDirection="column"
-            flexible
-            justifyContent="center"
-            pad="tight"
-          >
-            <div
-              onClick={() => {
-                setIsNew(true);
-              }}
-            >
-              <Checkbox checked={isNew} label="Start New Mission" />
-            </div>
-            <div
-              onClick={() => {
-                setIsNew(false);
-                codeInputRef.current.focus();
-              }}
-            >
-              <Checkbox checked={!isNew} label="Join Mission" />
-            </div>
-          </Box>
-          <InputContainer
-            pad="tight"
-            padY="x-tight"
-            width={120}
-            opacity={isNew ? 0.5 : 1}
-          >
-            <Text as="label" htmlFor={randomCodeName} preset="label">
-              Code
+      <DocumentWrapper title="Enlistment/Re-Enlistment Document">
+        <Box border>
+          <InputContainer borderBottom pad="tight" padY="x-tight">
+            <Text as="label" htmlFor={randomNameName} preset="label">
+              Applicant Name
             </Text>
-            <Input
-              ref={codeInputRef}
-              id="code"
-              name={randomCodeName}
-              value={code}
-              onChange={(evt) => {
-                if (isNew) {
-                  setIsNew(false);
-                }
-                setCode(
-                  evt.target.value
-                    .toUpperCase()
-                    .replace(/[^A-Z]/g, "")
-                    .slice(0, 4)
-                );
-              }}
-            />
+            <div>
+              <Input
+                autoFocus
+                id="name"
+                name={randomNameName}
+                value={name}
+                onChange={(evt) => {
+                  setName(evt.target.value);
+                }}
+              />
+            </div>
           </InputContainer>
-        </Box>
-        <Box alignItems="center" flex pad="tight">
-          <Box flexible>
-            {isMissingName ? (
-              <Text color="danger" preset="label">
-                Error: First Name is required
+          <Box style={{ display: "flex" }}>
+            <Box
+              borderRight
+              flex
+              flexDirection="column"
+              flexible
+              justifyContent="center"
+              pad="tight"
+            >
+              <div
+                onClick={() => {
+                  setIsNew(true);
+                }}
+              >
+                <Checkbox checked={isNew} label="Start New Mission" />
+              </div>
+              <div
+                onClick={() => {
+                  setIsNew(false);
+                  codeInputRef.current.focus();
+                }}
+              >
+                <Checkbox checked={!isNew} label="Join Mission" />
+              </div>
+            </Box>
+            <InputContainer
+              pad="tight"
+              padY="x-tight"
+              width={120}
+              opacity={isNew ? 0.5 : 1}
+            >
+              <Text as="label" htmlFor={randomCodeName} preset="label">
+                Mission Code
               </Text>
-            ) : codeIsInvalid ? (
-              <Text color="danger" preset="label">
-                Error: Invalid mission code
-              </Text>
-            ) : null}
+              <Input
+                ref={codeInputRef}
+                id="code"
+                name={randomCodeName}
+                value={code}
+                onChange={(evt) => {
+                  if (isNew) {
+                    setIsNew(false);
+                  }
+                  setCode(
+                    evt.target.value
+                      .toUpperCase()
+                      .replace(/[^A-Z]/g, "")
+                      .slice(0, 4)
+                  );
+                }}
+              />
+            </InputContainer>
           </Box>
-          <Button type="submit">Submit</Button>
         </Box>
+      </DocumentWrapper>
+      <Box flex justifyContent="center">
+        <Button type="submit">Submit</Button>
+      </Box>
+      <Box textAlign="center" padTop="normal">
+        {isMissingName ? (
+          <Text color="danger" preset="label">
+            Error: Name is required
+          </Text>
+        ) : codeIsInvalid ? (
+          <Text color="danger" preset="label">
+            Error: Invalid mission code
+          </Text>
+        ) : null}
       </Box>
     </form>
   );

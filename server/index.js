@@ -178,20 +178,29 @@ io.on("connection", (socket) => {
   });
 
   socket.on("select team", ({ userID, team }) => {
-    users[userID].team = team;
+    const user = users[userID];
     const room = rooms[socket.roomID];
+
+    if (!user || !room) return;
+
+    user.team = team;
     io.in(room.id).emit("users updated", { users: getUsersInRoom(room) });
   });
 
   socket.on("set teams", () => {
     const room = rooms[socket.roomID];
+
+    if (!room) return;
+
     room.teamsSet = true;
     io.in(room.id).emit("room updated", { room });
   });
 
   socket.on("set spymaster", ({ userID }) => {
-    const room = rooms[socket.roomID];
     const user = users[userID];
+    const room = rooms[socket.roomID];
+
+    if (!user || !room) return;
 
     room[user.team === "A" ? "spymasterA" : "spymasterB"] = user.id;
 
@@ -203,8 +212,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("submit code", ({ code, number }) => {
-    const room = rooms[socket.roomID];
     const user = users[socket.userID];
+    const room = rooms[socket.roomID];
+
+    if (!user || !room) return;
 
     submitCode(room, { code, number, team: user.team });
 

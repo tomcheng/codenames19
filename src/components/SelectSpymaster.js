@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Box from "./Box";
-import Text from "./Text";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
+import DocumentWrapper from "./DocumentWrapper";
+import Text from "./Text";
 
 const SelectSpymaster = ({ users, userID, onSelectSpymaster }) => {
   const [selectedUserID, setSelectedUserID] = useState(null);
@@ -11,26 +12,29 @@ const SelectSpymaster = ({ users, userID, onSelectSpymaster }) => {
   const myTeam = users.filter((u) => u.team === user.team);
 
   return (
-    <Box border>
-      <Box borderBottom pad="tight">
-        <Text preset="label">Agent</Text>
-      </Box>
-      <Box padY="x-tight" borderBottom>
-        {myTeam.map(({ id, name }) => (
-          <Box
-            key={id}
-            padX="tight"
-            padY="x-tight"
-            onClick={() => {
-              setSelectedUserID(id);
-            }}
-          >
-            <Checkbox checked={id === selectedUserID} label={name} />
+    <div>
+      <DocumentWrapper title="Spy Master Nomination Form">
+        <Box border>
+          <Box borderBottom pad="tight">
+            <Text preset="label">Agents</Text>
           </Box>
-        ))}
-      </Box>
-      <Box alignItems="center" flex pad="tight">
-        <Box flexible />
+          <Box padY="x-tight">
+            {myTeam.map(({ id, name }) => (
+              <Box
+                key={id}
+                padX="tight"
+                padY="x-tight"
+                onClick={() => {
+                  setSelectedUserID(id);
+                }}
+              >
+                <Checkbox checked={id === selectedUserID} label={name} />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </DocumentWrapper>
+      <Box flex justifyContent="center">
         <Button
           onClick={() => {
             if (!selectedUserID) return;
@@ -40,7 +44,7 @@ const SelectSpymaster = ({ users, userID, onSelectSpymaster }) => {
           Submit
         </Button>
       </Box>
-    </Box>
+    </div>
   );
 };
 

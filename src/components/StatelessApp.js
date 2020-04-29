@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import background from "../assets/so-white.png";
 import AppHeader from "./AppHeader";
-import DocumentWrapper from "./DocumentWrapper";
 import Game from "./Game";
 import Lobby from "./Lobby";
 import SelectTeams from "./SelectTeams";
@@ -36,30 +35,24 @@ const StatelessApp = ({
     <AppContainer>
       <AppHeader roomCode={room?.roomCode} />
       {!room ? (
-        <DocumentWrapper title="Enlistment/Re-Enlistment Document">
-          <Lobby
-            initialName={name}
-            codeIsInvalid={codeIsInvalid}
-            onCreateRoom={onCreateRoom}
-            onJoinRoom={onJoinRoom}
-          />
-        </DocumentWrapper>
+        <Lobby
+          initialName={name}
+          codeIsInvalid={codeIsInvalid}
+          onCreateRoom={onCreateRoom}
+          onJoinRoom={onJoinRoom}
+        />
       ) : !room.teamsSet ? (
-        <DocumentWrapper title="Declaration of Allegiances">
-          <SelectTeams
-            users={users}
-            onSetTeams={onSetTeams}
-            onSelectTeam={onSelectTeam}
-          />
-        </DocumentWrapper>
+        <SelectTeams
+          users={users}
+          onSetTeams={onSetTeams}
+          onSelectTeam={onSelectTeam}
+        />
       ) : !room.spymasterA || !room.spymasterB ? (
-        <DocumentWrapper title="Spy Master Nomination Form">
-          <SelectSpymaster
-            users={users}
-            userID={userID}
-            onSelectSpymaster={onSelectSpymaster}
-          />
-        </DocumentWrapper>
+        <SelectSpymaster
+          users={users}
+          userID={userID}
+          onSelectSpymaster={onSelectSpymaster}
+        />
       ) : (
         <Game
           codes={room.codes}
