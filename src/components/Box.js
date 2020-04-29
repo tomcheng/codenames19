@@ -22,6 +22,8 @@ const Box = styled.div`
   flex-direction: ${(props) => props.flexDirection};
   flex-grow: ${(props) => (props.flexible ? 1 : null)};
   flex-shrink: ${(props) => (props.flexible ? 1 : null)};
+  height: ${(props) =>
+    typeof props.height === "number" ? `${props.height}px` : props.height};
   justify-content: ${(props) => props.justifyContent};
   opacity: ${(props) => typeof props.opacity === "number" && props.opacity};
   padding: ${(props) => SPACING[props.pad]};
@@ -44,6 +46,7 @@ Box.propTypes = {
   flex: PropTypes.bool,
   flexDirection: PropTypes.oneOf(["column", "row"]),
   flexible: PropTypes.bool,
+  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   justifyContent: PropTypes.oneOf(["center", "space-between"]),
   opacity: PropTypes.number,
   pad: PropTypes.oneOf(["x-tight", "tight", "normal", "loose", "x-loose"]),

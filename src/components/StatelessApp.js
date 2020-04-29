@@ -30,7 +30,7 @@ const StatelessApp = ({
   onSelectTeam,
   onSubmitCode,
 }) => {
-  const user = users.find((u) => u.id === userID);
+  const user = users?.find((u) => u.id === userID);
 
   return (
     <AppContainer>
@@ -63,7 +63,7 @@ const StatelessApp = ({
       ) : (
         <Game
           codes={room.codes}
-          isYourTurn={user.team === room.turn}
+          isYourTurn={user?.team === room.turn}
           spymasterA={room.spymasterA}
           spymasterB={room.spymasterB}
           stage={room.stage}
