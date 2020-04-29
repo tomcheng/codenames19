@@ -17,9 +17,11 @@ const getPresetStyles = (props) => {
 `;
     case "code":
       return `
+  white-space: pre;
   font-family: "Courier", monospace;
   font-size: 14px;
   font-weight: 700;
+  line-height: 20px;
 `;
     case "document-title":
       return `  

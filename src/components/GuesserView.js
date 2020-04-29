@@ -64,8 +64,12 @@ const GuesserView = ({ codes, stage, words, yourTeam }) => {
       >
         <Text preset="code">
           {stage === "writing"
-            ? "Awaiting Transmission..."
-            : `Received: ${lastCode.code} - ${lastCode.number}`}
+            ? `   Awaiting Transmission...
+
+ `
+            : `   Received: ${lastCode.code} - ${lastCode.number}
+   You have 1 guess left.
+> `}
         </Text>
       </Box>
     </div>
