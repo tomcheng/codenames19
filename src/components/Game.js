@@ -27,7 +27,12 @@ const Game = ({
       onSubmitCode={onSubmitCode}
     />
   ) : (
-    <GuesserView words={words} yourTeam={you.team} />
+    <GuesserView
+      codes={codes}
+      stage={stage}
+      words={words}
+      yourTeam={you.team}
+    />
   );
 };
 

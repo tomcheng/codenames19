@@ -73,7 +73,12 @@ const SpymasterView = ({ codes, stage, words, yourTeam, onSubmitCode }) => {
 };
 
 SpymasterView.propTypes = {
-  codes: PropTypes.array.isRequired,
+  codes: PropTypes.arrayOf(
+    PropTypes.shape({
+      code: PropTypes.string.isRequired,
+      number: PropTypes.number.isRequired,
+    })
+  ).isRequired,
   stage: PropTypes.oneOf(["writing", "guessing"]).isRequired,
   words: PropTypes.arrayOf(
     PropTypes.shape({

@@ -15,6 +15,12 @@ const getPresetStyles = (props) => {
   letter-spacing: 3px;
   text-transform: uppercase;
 `;
+    case "code":
+      return `
+  font-family: "Courier", monospace;
+  font-size: 14px;
+  font-weight: 700;
+`;
     case "document-title":
       return `  
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -34,12 +40,13 @@ const Text = styled.div`
   font-size: 17px;
   ${getPresetStyles};
   color: ${(props) => (props.color === "danger" ? "#bf0000" : null)};
-  flex-grow: ${props => props.flexible ? 1 : null};
-  flex-shrink: ${props => props.flexible ? 1 : null};
+  flex-grow: ${(props) => (props.flexible ? 1 : null)};
+  flex-shrink: ${(props) => (props.flexible ? 1 : null)};
 `;
 
 Text.propTypes = {
-  preset: PropTypes.oneOf(["app-title", "document-title", "label"]).isRequired,
+  preset: PropTypes.oneOf(["app-title", "code", "document-title", "label"])
+    .isRequired,
   color: PropTypes.oneOf(["danger"]),
   flexible: PropTypes.bool,
 };

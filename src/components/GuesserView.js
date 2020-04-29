@@ -1,13 +1,17 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Grid, GridItem } from "./Grid";
-import Word from "./Word";
 import PropTypes from "prop-types";
 import chunk from "lodash/chunk";
+import last from "lodash/last";
+import Box from "./Box";
+import { Grid, GridItem } from "./Grid";
+import Word from "./Word";
+import Text from "./Text";
 
-const GuesserView = ({ words, yourTeam }) => {
+const GuesserView = ({ codes, stage, words, yourTeam }) => {
   const [numCols, setNumCols] = useState(5);
   const containerRef = useRef(null);
   const rows = chunk(words, numCols);
+  const lastCode = last(codes);
 
   useEffect(() => {
     const handleResize = () => {
@@ -47,11 +51,35 @@ const GuesserView = ({ words, yourTeam }) => {
           ))}
         </Grid>
       ))}
+      <Box
+        pad="tight"
+        style={{
+          color: "#00c202",
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: "black",
+        }}
+      >
+        <Text preset="code">
+          {stage === "writing"
+            ? "Awaiting Transmission..."
+            : `Received: ${lastCode.code} - ${lastCode.number}`}
+        </Text>
+      </Box>
     </div>
   );
 };
 
 GuesserView.propTypes = {
+  codes: PropTypes.arrayOf(
+    PropTypes.shape({
+      code: PropTypes.string.isRequired,
+      number: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  stage: PropTypes.oneOf(["guessing", "writing"]).isRequired,
   words: PropTypes.arrayOf(
     PropTypes.shape({
       type: PropTypes.oneOf(["A", "B", "neutral", "bomb"]).isRequired,
