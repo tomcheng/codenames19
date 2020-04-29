@@ -15,6 +15,13 @@ const getPresetStyles = (props) => {
   letter-spacing: 3px;
   text-transform: uppercase;
 `;
+    case "button":
+      return `
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+`;
     case "code":
       return `
   white-space: pre;

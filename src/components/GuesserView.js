@@ -9,6 +9,7 @@ import Text from "./Text";
 
 const GuesserView = ({ codes, stage, words, yourTeam }) => {
   const [numCols, setNumCols] = useState(5);
+  const [mode, setMode] = useState("highlight");
   const containerRef = useRef(null);
   const rows = chunk(words, numCols);
   const lastCode = last(codes);
@@ -34,6 +35,10 @@ const GuesserView = ({ codes, stage, words, yourTeam }) => {
       setNumCols(3);
     }
   }, []);
+  const selectedStyle = {
+    backgroundColor: "#222",
+    color: "#fff",
+  };
 
   return (
     <div
@@ -61,22 +66,50 @@ const GuesserView = ({ codes, stage, words, yourTeam }) => {
           </Grid>
         ))}
       </Box>
-      <Box
-        pad="tight"
-        style={{
-          color: "#00c202",
-          backgroundColor: "black",
-        }}
-      >
-        <Text preset="code">
-          {stage === "writing"
-            ? `   Awaiting Transmission...
+      <Box>
+        <Box flex borderTop style={{ backgroundColor: "#fff" }}>
+          <Box
+            borderRight
+            flexible
+            pad="normal"
+            style={mode === "highlight" ? selectedStyle : null}
+            textAlign="center"
+            onClick={() => {
+              setMode("highlight");
+            }}
+          >
+            <Text preset="button">Highlight</Text>
+          </Box>
+          <Box
+            flexible
+            pad="normal"
+            style={mode === "select" ? selectedStyle : null}
+            textAlign="center"
+            onClick={() => {
+              setMode("select");
+            }}
+          >
+            <Text preset="button">Select</Text>
+          </Box>
+        </Box>
+        <Box
+          pad="tight"
+          style={{
+            backgroundColor: "#222",
+            borderTop: "1px solid #888",
+            color: "#00c202",
+          }}
+        >
+          <Text preset="code">
+            {stage === "writing"
+              ? `   Awaiting Transmission...
 
  `
-            : `   Received: ${lastCode.code} - ${lastCode.number}
+              : `   Received: ${lastCode.code} - ${lastCode.number}
    You have 1 guess left.
 > `}
-        </Text>
+          </Text>
+        </Box>
       </Box>
     </div>
   );
