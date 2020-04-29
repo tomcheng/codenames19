@@ -33,7 +33,7 @@ const StatelessApp = ({
 
   return (
     <AppContainer>
-      <AppHeader roomCode={room?.roomCode} />
+      {!room?.words && <AppHeader roomCode={room?.roomCode} />}
       {!room ? (
         <Lobby
           initialName={name}
