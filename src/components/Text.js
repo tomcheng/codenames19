@@ -54,8 +54,13 @@ const Text = styled.div`
 `;
 
 Text.propTypes = {
-  preset: PropTypes.oneOf(["app-title", "code", "document-title", "label"])
-    .isRequired,
+  preset: PropTypes.oneOf([
+    "app-title",
+    "button",
+    "code",
+    "document-title",
+    "label",
+  ]).isRequired,
   color: PropTypes.oneOf(["danger"]),
   flexible: PropTypes.bool,
 };

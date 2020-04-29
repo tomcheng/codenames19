@@ -7,7 +7,14 @@ import { Grid, GridItem } from "./Grid";
 import Word from "./Word";
 import Text from "./Text";
 
-const GuesserView = ({ codes, stage, words, yourTeam }) => {
+const GuesserView = ({
+  codes,
+  highlights,
+  stage,
+  words,
+  yourTeam,
+  onHighlightWord,
+}) => {
   const [numCols, setNumCols] = useState(5);
   const [mode, setMode] = useState("highlight");
   const containerRef = useRef(null);
@@ -56,10 +63,18 @@ const GuesserView = ({ codes, stage, words, yourTeam }) => {
             {wrds.map(({ word, type, flipped }) => (
               <GridItem key={word} flexible>
                 <Word
-                  word={word}
-                  type={type}
                   flipped={flipped}
+                  highlighted={highlights.includes(word)}
+                  type={type}
+                  word={word}
                   yourTeam={yourTeam}
+                  onClick={() => {
+                    if (mode === "highlight") {
+                      onHighlightWord({ word });
+                    } else {
+                      // select word...
+                    }
+                  }}
                 />
               </GridItem>
             ))}
@@ -67,31 +82,33 @@ const GuesserView = ({ codes, stage, words, yourTeam }) => {
         ))}
       </Box>
       <Box>
-        <Box flex borderTop style={{ backgroundColor: "#fff" }}>
-          <Box
-            borderRight
-            flexible
-            pad="normal"
-            style={mode === "highlight" ? selectedStyle : null}
-            textAlign="center"
-            onClick={() => {
-              setMode("highlight");
-            }}
-          >
-            <Text preset="button">Highlight</Text>
+        {stage === "guessing" && (
+          <Box flex borderTop style={{ backgroundColor: "#fff" }}>
+            <Box
+              borderRight
+              flexible
+              pad="normal"
+              style={mode === "highlight" ? selectedStyle : null}
+              textAlign="center"
+              onClick={() => {
+                setMode("highlight");
+              }}
+            >
+              <Text preset="button">Highlight</Text>
+            </Box>
+            <Box
+              flexible
+              pad="normal"
+              style={mode === "select" ? selectedStyle : null}
+              textAlign="center"
+              onClick={() => {
+                setMode("select");
+              }}
+            >
+              <Text preset="button">Select</Text>
+            </Box>
           </Box>
-          <Box
-            flexible
-            pad="normal"
-            style={mode === "select" ? selectedStyle : null}
-            textAlign="center"
-            onClick={() => {
-              setMode("select");
-            }}
-          >
-            <Text preset="button">Select</Text>
-          </Box>
-        </Box>
+        )}
         <Box
           pad="tight"
           style={{
@@ -122,6 +139,7 @@ GuesserView.propTypes = {
       number: PropTypes.number.isRequired,
     })
   ).isRequired,
+  highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
   stage: PropTypes.oneOf(["guessing", "writing"]).isRequired,
   words: PropTypes.arrayOf(
     PropTypes.shape({
@@ -130,6 +148,7 @@ GuesserView.propTypes = {
     })
   ).isRequired,
   yourTeam: PropTypes.oneOf(["A", "B"]).isRequired,
+  onHighlightWord: PropTypes.func.isRequired,
 };
 
 export default GuesserView;

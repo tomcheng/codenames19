@@ -103,6 +103,10 @@ const createRoom = () => {
     codes: [],
     guesses: [],
     guessesLeft: null,
+    highlights: {
+      A: [],
+      B: [],
+    },
   };
 };
 
@@ -117,6 +121,12 @@ const submitCode = (room, { code, number, team }) => {
   room.stage = "guessing";
   room.codes.push({ code, number, team });
   room.guessesLeft = room.round === 1 ? number : number + 1;
+};
+
+const highlightWord = (room, { word, team }) => {
+  room.highlights[team] = room.highlights[team].includes(word)
+    ? room.highlights[team].filter((w) => w !== word)
+    : room.highlights[team].concat(word);
 };
 
 const joinRoom = ({ room, user }, socket) => {
@@ -218,7 +228,15 @@ io.on("connection", (socket) => {
     if (!user || !room) return;
 
     submitCode(room, { code, number, team: user.team });
+    io.in(room.id).emit("room updated", { room });
+  });
 
+  socket.on("highlight word", ({ word, team }) => {
+    const room = rooms[socket.roomID];
+
+    if (!room) return;
+
+    highlightWord(room, { word, team });
     io.in(room.id).emit("room updated", { room });
   });
 

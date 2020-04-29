@@ -23,6 +23,7 @@ const StatelessApp = ({
   userID,
   users,
   onCreateRoom,
+  onHighlightWord,
   onJoinRoom,
   onSetTeams,
   onSelectSpymaster,
@@ -57,12 +58,14 @@ const StatelessApp = ({
         <Game
           codes={room.codes}
           isYourTurn={user?.team === room.turn}
+          highlights={room.highlights}
           spymasterA={room.spymasterA}
           spymasterB={room.spymasterB}
           stage={room.stage}
           users={users}
           userID={userID}
           words={room.words}
+          onHighlightWord={onHighlightWord}
           onSubmitCode={onSubmitCode}
         />
       )}
@@ -74,6 +77,7 @@ StatelessApp.propTypes = {
   codeIsInvalid: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   onCreateRoom: PropTypes.func.isRequired,
+  onHighlightWord: PropTypes.func.isRequired,
   onJoinRoom: PropTypes.func.isRequired,
   onSetTeams: PropTypes.func.isRequired,
   onSelectSpymaster: PropTypes.func.isRequired,
@@ -81,6 +85,7 @@ StatelessApp.propTypes = {
   onSubmitCode: PropTypes.func.isRequired,
   room: PropTypes.shape({
     codes: PropTypes.array.isRequired,
+    highlights: PropTypes.object.isRequired,
     roomCode: PropTypes.string.isRequired,
     teamsSet: PropTypes.bool.isRequired,
     spymasterA: PropTypes.string,
