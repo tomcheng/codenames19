@@ -36,29 +36,35 @@ const GuesserView = ({ codes, stage, words, yourTeam }) => {
   }, []);
 
   return (
-    <div ref={containerRef}>
-      {rows.map((wrds, index) => (
-        <Grid key={index} spacing="normal">
-          {wrds.map(({ word, type, flipped }) => (
-            <GridItem key={word} flexible>
-              <Word
-                word={word}
-                type={type}
-                flipped={flipped}
-                yourTeam={yourTeam}
-              />
-            </GridItem>
-          ))}
-        </Grid>
-      ))}
+    <div
+      ref={containerRef}
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "stretch",
+      }}
+    >
+      <Box flexible padBottom="loose" style={{ overflow: "auto", flexGrow: 1 }}>
+        {rows.map((wrds, index) => (
+          <Grid key={index} spacing="normal">
+            {wrds.map(({ word, type, flipped }) => (
+              <GridItem key={word} flexible>
+                <Word
+                  word={word}
+                  type={type}
+                  flipped={flipped}
+                  yourTeam={yourTeam}
+                />
+              </GridItem>
+            ))}
+          </Grid>
+        ))}
+      </Box>
       <Box
         pad="tight"
         style={{
           color: "#00c202",
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
           backgroundColor: "black",
         }}
       >
