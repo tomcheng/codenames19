@@ -142,7 +142,8 @@ const GuesserView = ({
           style={{
             backgroundColor: "#222",
             borderTop: "1px solid #888",
-            color: "#00c202",
+            color: "rgb(17, 212, 40)",
+            textShadow: "0 0 3px rgb(17, 212, 40)",
           }}
         >
           <Text preset="code">
