@@ -12,6 +12,7 @@ const GuesserView = ({
   codes,
   guessesLeft,
   highlights,
+  isYourTurn,
   stage,
   words,
   yourTeam,
@@ -94,7 +95,7 @@ const GuesserView = ({
         ))}
       </Box>
       <Box>
-        {stage === "guessing" && (
+        {stage === "guessing" && isYourTurn && (
           <Box flex borderTop style={{ backgroundColor: "#fff" }}>
             {selectedWord ? (
               <Box
@@ -147,8 +148,12 @@ const GuesserView = ({
           }}
         >
           <Text preset="code">
-            {stage === "writing"
-              ? `   Awaiting Transmission...
+            {!isYourTurn
+              ? `   Awaiting enemy's response...
+
+ `
+              : stage === "writing"
+              ? `   Awaiting transmission...
 
  `
               : `   Received: ${lastCode.code} - ${lastCode.number}
@@ -170,6 +175,7 @@ GuesserView.propTypes = {
   ).isRequired,
   guessesLeft: PropTypes.number.isRequired,
   highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
+  isYourTurn: PropTypes.bool.isRequired,
   stage: PropTypes.oneOf(["guessing", "writing"]).isRequired,
   words: PropTypes.arrayOf(
     PropTypes.shape({

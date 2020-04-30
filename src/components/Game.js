@@ -35,6 +35,7 @@ const Game = ({
       codes={codes}
       guessesLeft={guessesLeft}
       highlights={highlights[you.team]}
+      isYourTurn={isYourTurn}
       stage={stage}
       words={words}
       yourTeam={you.team}
