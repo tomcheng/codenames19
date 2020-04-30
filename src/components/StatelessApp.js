@@ -59,6 +59,7 @@ const StatelessApp = ({
         />
       ) : (
         <Game
+          key={room.round}
           codes={room.codes}
           isYourTurn={user?.team === room.turn}
           guessesLeft={room.guessesLeft}
