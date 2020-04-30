@@ -92,12 +92,16 @@ const App = ({ socket }) => {
 
   const handleHighlightWord = useCallback(
     ({ word }) => {
+      const user = state?.users?.find((u) => u.id === userID);
+
+      if (!user) return;
+
       socket.emit("highlight word", {
         word,
-        team: state.users.find((u) => u.id === userID).team,
+        team: user.team,
       });
     },
-    [socket, state.users, userID]
+    [socket, state, userID]
   );
 
   const handleJoinRoom = useCallback(
@@ -125,6 +129,13 @@ const App = ({ socket }) => {
     [socket]
   );
 
+  const handleSelectWord = useCallback(
+    ({ word }) => {
+      socket.emit("select word", { word });
+    },
+    [socket]
+  );
+
   const handleSubmitCode = useCallback(
     ({ code, number }) => {
       socket.emit("submit code", { code, number });
@@ -145,6 +156,7 @@ const App = ({ socket }) => {
       onSetTeams={handleSetTeams}
       onSelectSpymaster={handleSelectSpymaster}
       onSelectTeam={handleSelectTeam}
+      onSelectWord={handleSelectWord}
       onSubmitCode={handleSubmitCode}
     />
   );

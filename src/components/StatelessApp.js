@@ -28,6 +28,7 @@ const StatelessApp = ({
   onSetTeams,
   onSelectSpymaster,
   onSelectTeam,
+  onSelectWord,
   onSubmitCode,
 }) => {
   const user = users?.find((u) => u.id === userID);
@@ -66,6 +67,7 @@ const StatelessApp = ({
           userID={userID}
           words={room.words}
           onHighlightWord={onHighlightWord}
+          onSelectWord={onSelectWord}
           onSubmitCode={onSubmitCode}
         />
       )}

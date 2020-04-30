@@ -14,6 +14,7 @@ const Game = ({
   userID,
   words,
   onHighlightWord,
+  onSelectWord,
   onSubmitCode,
 }) => {
   const you = users.find((u) => u.id === userID);
@@ -36,6 +37,7 @@ const Game = ({
       words={words}
       yourTeam={you.team}
       onHighlightWord={onHighlightWord}
+      onSelectWord={onSelectWord}
     />
   );
 };
@@ -66,6 +68,7 @@ Game.propTypes = {
     })
   ).isRequired,
   onHighlightWord: PropTypes.func.isRequired,
+  onSelectWord: PropTypes.func.isRequired,
   onSubmitCode: PropTypes.func.isRequired,
 };
 

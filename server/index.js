@@ -96,7 +96,7 @@ const createRoom = () => {
     teamsSet: false,
     spymasterA: null,
     spymasterB: null,
-    words: null,
+    words: getInitialWords(),
     round: null,
     turn: null,
     stage: null,
@@ -111,7 +111,6 @@ const createRoom = () => {
 };
 
 const startGame = (room) => {
-  room.words = getInitialWords();
   room.round = 1;
   room.turn = "A";
   room.stage = "writing";
@@ -127,6 +126,12 @@ const highlightWord = (room, { word, team }) => {
   room.highlights[team] = room.highlights[team].includes(word)
     ? room.highlights[team].filter((w) => w !== word)
     : room.highlights[team].concat(word);
+};
+
+const selectWord = (room, { word }) => {
+  room.words = room.words.map((w) =>
+    w.word === word ? { ...w, flipped: true } : w
+  );
 };
 
 const joinRoom = ({ room, user }, socket) => {
@@ -237,6 +242,15 @@ io.on("connection", (socket) => {
     if (!room) return;
 
     highlightWord(room, { word, team });
+    io.in(room.id).emit("room updated", { room });
+  });
+
+  socket.on("select word", ({ word }) => {
+    const room = rooms[socket.roomID];
+
+    if (!room) return;
+
+    selectWord(room, { word });
     io.in(room.id).emit("room updated", { room });
   });
 
