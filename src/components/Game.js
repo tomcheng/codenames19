@@ -5,6 +5,7 @@ import SpymasterView from "./SpymasterView";
 
 const Game = ({
   codes,
+  guessesLeft,
   highlights,
   isYourTurn,
   spymasterA,
@@ -32,6 +33,7 @@ const Game = ({
   ) : (
     <GuesserView
       codes={codes}
+      guessesLeft={guessesLeft}
       highlights={highlights[you.team]}
       stage={stage}
       words={words}
@@ -44,6 +46,7 @@ const Game = ({
 
 Game.propTypes = {
   codes: PropTypes.array.isRequired,
+  guessesLeft: PropTypes.number.isRequired,
   highlights: PropTypes.shape({
     A: PropTypes.array.isRequired,
     B: PropTypes.array.isRequired,

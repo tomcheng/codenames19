@@ -33,6 +33,7 @@ const StatelessApp = ({
 }) => {
   const user = users?.find((u) => u.id === userID);
   const gameStarted = !!room?.turn;
+  console.log("room", room);
 
   return (
     <AppContainer>
@@ -60,6 +61,7 @@ const StatelessApp = ({
         <Game
           codes={room.codes}
           isYourTurn={user?.team === room.turn}
+          guessesLeft={room.guessesLeft}
           highlights={room.highlights}
           spymasterA={room.spymasterA}
           spymasterB={room.spymasterB}
@@ -91,6 +93,7 @@ StatelessApp.propTypes = {
     highlights: PropTypes.object.isRequired,
     roomCode: PropTypes.string.isRequired,
     teamsSet: PropTypes.bool.isRequired,
+    guessesLeft: PropTypes.number,
     spymasterA: PropTypes.string,
     spymasterB: PropTypes.string,
     stage: PropTypes.string,

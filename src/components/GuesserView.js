@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import chunk from "lodash/chunk";
 import last from "lodash/last";
+import { plc } from "../utils";
 import Box from "./Box";
 import { Grid, GridItem } from "./Grid";
 import Word from "./Word";
@@ -9,6 +10,7 @@ import Text from "./Text";
 
 const GuesserView = ({
   codes,
+  guessesLeft,
   highlights,
   stage,
   words,
@@ -149,7 +151,7 @@ const GuesserView = ({
 
  `
               : `   Received: ${lastCode.code} - ${lastCode.number}
-   You have 1 guess left.
+   You have ${plc(guessesLeft, "guess", "guesses")} left.
 > `}
           </Text>
         </Box>
@@ -165,6 +167,7 @@ GuesserView.propTypes = {
       number: PropTypes.number.isRequired,
     })
   ).isRequired,
+  guessesLeft: PropTypes.number.isRequired,
   highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
   stage: PropTypes.oneOf(["guessing", "writing"]).isRequired,
   words: PropTypes.arrayOf(

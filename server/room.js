@@ -57,6 +57,17 @@ class Room {
     this.words = this.words.map((w) =>
       w.word === word ? { ...w, flipped: true } : w
     );
+
+    if (this.guessesLeft === 1) {
+      this.guessesLeft = null;
+      if (this.turn === "B") {
+        this.round += 1;
+      }
+      this.turn = this.turn === "A" ? "B" : "A";
+      this.stage = "writing";
+    } else {
+      this.guessesLeft -= 1;
+    }
   }
 
   _getUniqueRoomCode({ usedCodes }) {
