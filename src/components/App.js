@@ -96,10 +96,7 @@ const App = ({ socket }) => {
 
       if (!user) return;
 
-      socket.emit("highlight word", {
-        word,
-        team: user.team,
-      });
+      socket.emit("highlight word", { word });
     },
     [socket, state, userID]
   );

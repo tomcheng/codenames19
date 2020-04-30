@@ -32,10 +32,11 @@ const StatelessApp = ({
   onSubmitCode,
 }) => {
   const user = users?.find((u) => u.id === userID);
+  const gameStarted = !!room?.turn;
 
   return (
     <AppContainer>
-      {!room?.words && <AppHeader roomCode={room?.roomCode} />}
+      {!gameStarted && <AppHeader roomCode={room?.roomCode} />}
       {!room ? (
         <Lobby
           initialName={name}

@@ -1,6 +1,5 @@
 require("dotenv").config();
 const path = require("path");
-const uuid = require("uuid");
 
 const express = require("express");
 const app = express();
@@ -31,106 +30,25 @@ http.listen(PORT, () => {
 /*** ROOM LOGIC ***/
 
 const _ = require("lodash");
-const utils = require("./utils");
-const { getWords } = require("./words");
+const UserDB = require("./userDB");
+const RoomDB = require("./roomDB");
 
-let rooms = {};
-let users = {};
+const Users = new UserDB();
+const Rooms = new RoomDB();
 
-const getUniqueRoomCode = () => {
-  let code = utils.generateRoomCode();
-
-  while (
-    Object.values(rooms)
-      .map((room) => room.code)
-      .includes(code)
-  ) {
-    code = utils.generateRoomCode();
-  }
-
-  return code;
-};
-
-const getRoomByCode = (code) => {
-  return Object.values(rooms).find((room) => room.roomCode === code) || null;
-};
-
-const getUsersInRoom = (room) => {
-  if (!io.sockets.adapter.rooms[room.id]) {
+const getUsersInRoom = (roomID) => {
+  if (!io.sockets.adapter.rooms[roomID]) {
     return [];
   }
 
+  const users = Users.getUsers();
+
   return _.compact(
     _.uniq(
-      Object.keys(io.sockets.adapter.rooms[room.id].sockets).map(
+      Object.keys(io.sockets.adapter.rooms[roomID].sockets).map(
         (id) => io.sockets.connected[id].userID
       )
     ).map((userID) => users[userID])
-  );
-};
-
-const getInitialWords = () => {
-  const words = getWords();
-  const shuffledWords = _.shuffle(words);
-  const teamAWords = shuffledWords.slice(0, 9);
-  const teamBWords = shuffledWords.slice(9, 17);
-  const bomb = shuffledWords[17];
-
-  return words.map((word) => ({
-    word,
-    type: teamAWords.includes(word)
-      ? "A"
-      : teamBWords.includes(word)
-      ? "B"
-      : word === bomb
-      ? "bomb"
-      : "neutral",
-    flipped: false,
-  }));
-};
-
-const createRoom = () => {
-  return {
-    id: uuid.v4(),
-    roomCode: getUniqueRoomCode(),
-    teamsSet: false,
-    spymasterA: null,
-    spymasterB: null,
-    words: getInitialWords(),
-    round: null,
-    turn: null,
-    stage: null,
-    codes: [],
-    guesses: [],
-    guessesLeft: null,
-    highlights: {
-      A: [],
-      B: [],
-    },
-  };
-};
-
-const startGame = (room) => {
-  room.round = 1;
-  room.turn = "A";
-  room.stage = "writing";
-};
-
-const submitCode = (room, { code, number, team }) => {
-  room.stage = "guessing";
-  room.codes.push({ code, number, team });
-  room.guessesLeft = room.round === 1 ? number : number + 1;
-};
-
-const highlightWord = (room, { word, team }) => {
-  room.highlights[team] = room.highlights[team].includes(word)
-    ? room.highlights[team].filter((w) => w !== word)
-    : room.highlights[team].concat(word);
-};
-
-const selectWord = (room, { word }) => {
-  room.words = room.words.map((w) =>
-    w.word === word ? { ...w, flipped: true } : w
   );
 };
 
@@ -139,7 +57,7 @@ const joinRoom = ({ room, user }, socket) => {
   socket.roomID = room.id;
 
   socket.join(room.id, () => {
-    const usersInRoom = getUsersInRoom(room);
+    const usersInRoom = getUsersInRoom(room.id);
     socket.emit("room joined", {
       room,
       users: usersInRoom,
@@ -150,22 +68,16 @@ const joinRoom = ({ room, user }, socket) => {
 };
 
 io.on("connection", (socket) => {
-  socket.on("create room", ({ name, userID: existingUserID }) => {
-    const user = { id: existingUserID || uuid.v4(), name, team: null };
-    const room = createRoom();
-
-    users[user.id] = user;
-    rooms[room.id] = room;
+  socket.on("create room", ({ name, userID }) => {
+    const user = Users.createUser({ name, userID });
+    const room = Rooms.createRoom();
 
     joinRoom({ room, user }, socket);
   });
 
-  socket.on("join room", ({ code, name, userID: existingUserID }) => {
-    const user = { id: existingUserID || uuid.v4(), name, team: null };
-
-    users[user.id] = user;
-
-    const room = getRoomByCode(code);
+  socket.on("join room", ({ code, name, userID }) => {
+    const user = Users.createUser({ name, userID });
+    const room = Rooms.getRoomByCode(code);
 
     if (!room) {
       socket.emit("room code not found");
@@ -176,8 +88,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("rejoin room", ({ roomID, userID }) => {
-    const user = users[userID];
-    const room = rooms[roomID];
+    const user = Users.getUser(userID);
+    const room = Rooms.getRoom(roomID);
 
     if (!user) {
       socket.emit("user not found");
@@ -193,76 +105,81 @@ io.on("connection", (socket) => {
   });
 
   socket.on("select team", ({ userID, team }) => {
-    const user = users[userID];
-    const room = rooms[socket.roomID];
+    const user = Users.updateTeam({ userID, team });
+    const room = Rooms.getRoom(socket.roomID);
 
     if (!user || !room) return;
 
-    user.team = team;
-    io.in(room.id).emit("users updated", { users: getUsersInRoom(room) });
+    io.in(room.id).emit("users updated", { users: getUsersInRoom(room.id) });
   });
 
   socket.on("set teams", () => {
-    const room = rooms[socket.roomID];
+    const room = Rooms.getRoom(socket.roomID);
 
     if (!room) return;
 
-    room.teamsSet = true;
+    room.setTeams();
+
     io.in(room.id).emit("room updated", { room });
   });
 
   socket.on("set spymaster", ({ userID }) => {
-    const user = users[userID];
-    const room = rooms[socket.roomID];
+    const user = Users.getUser(userID);
+    const room = Rooms.getRoom(socket.roomID);
 
     if (!user || !room) return;
 
-    room[user.team === "A" ? "spymasterA" : "spymasterB"] = user.id;
+    room.setSpymaster({ userID: user.id, team: user.team });
 
     if (room.spymasterA && room.spymasterB) {
-      startGame(room);
+      room.startGame();
     }
 
     io.in(room.id).emit("room updated", { room });
   });
 
   socket.on("submit code", ({ code, number }) => {
-    const user = users[socket.userID];
-    const room = rooms[socket.roomID];
+    const user = Users.getUser(socket.userID);
+    const room = Rooms.getRoom(socket.roomID);
 
-    if (!user || !room) return;
+    if (!room || user.team !== room.turn) return;
 
-    submitCode(room, { code, number, team: user.team });
+    room.submitCode({ code, number });
+
     io.in(room.id).emit("room updated", { room });
   });
 
-  socket.on("highlight word", ({ word, team }) => {
-    const room = rooms[socket.roomID];
+  socket.on("highlight word", ({ word }) => {
+    const user = Users.getUser(socket.userID);
+    const room = Rooms.getRoom(socket.roomID);
 
-    if (!room) return;
+    if (!room || user.team !== room.turn) return;
 
-    highlightWord(room, { word, team });
+    room.highlightWord({ word });
+
     io.in(room.id).emit("room updated", { room });
   });
 
   socket.on("select word", ({ word }) => {
-    const room = rooms[socket.roomID];
+    const user = Users.getUser(socket.userID);
+    const room = Rooms.getRoom(socket.roomID);
 
-    if (!room) return;
+    if (!room || user.team !== room.turn) return;
 
-    selectWord(room, { word });
+    room.selectWord({ word });
+
     io.in(room.id).emit("room updated", { room });
   });
 
   socket.on("disconnect", () => {
     if (!socket.roomID) return;
 
-    const usersLeft = getUsersInRoom(rooms[socket.roomID]);
+    const usersLeft = getUsersInRoom(socket.roomID);
 
     if (usersLeft.length) {
       socket.to(socket.roomID).emit("users updated", { users: usersLeft });
     } else {
-      rooms = _.omit(rooms, socket.roomID);
+      Rooms.removeRoom(socket.roomID);
     }
   });
 });
