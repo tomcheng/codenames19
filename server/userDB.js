@@ -5,18 +5,18 @@ class UserDB {
     this.users = {};
   }
 
-  getUsers() {
-    return this.users;
-  }
-
-  getUser(userID) {
-    return this.users[userID];
-  }
-
   createUser({ name, userID }) {
     const user = { id: userID || uuid.v4(), name, team: null };
     this.users[user.id] = user;
     return user;
+  }
+
+  removeUser(userID) {
+    delete this.users[userID];
+  }
+
+  getUser(userID) {
+    return this.users[userID];
   }
 
   updateTeam({ userID, team }) {

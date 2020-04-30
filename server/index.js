@@ -41,14 +41,12 @@ const getUsersInRoom = (roomID) => {
     return [];
   }
 
-  const users = Users.getUsers();
-
   return _.compact(
     _.uniq(
       Object.keys(io.sockets.adapter.rooms[roomID].sockets).map(
         (id) => io.sockets.connected[id].userID
       )
-    ).map((userID) => users[userID])
+    ).map((userID) => Users.getUser(userID))
   );
 };
 
@@ -180,6 +178,7 @@ io.on("connection", (socket) => {
       socket.to(socket.roomID).emit("users updated", { users: usersLeft });
     } else {
       Rooms.removeRoom(socket.roomID);
+      Users.removeUser(socket.userID);
     }
   });
 });
