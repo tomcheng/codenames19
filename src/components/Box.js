@@ -25,7 +25,8 @@ const Box = styled.div`
   height: ${(props) =>
     typeof props.height === "number" ? `${props.height}px` : props.height};
   justify-content: ${(props) => props.justifyContent};
-  opacity: ${(props) => typeof props.opacity === "number" && props.opacity};
+  opacity: ${(props) =>
+    props.faded ? 0.4 : typeof props.opacity === "number" && props.opacity};
   overflow: ${(props) => props.overflow ?? null};
   padding: ${(props) => SPACING[props.pad]};
   padding-left: ${(props) => SPACING[props.padLeft || props.padX]};
@@ -44,6 +45,7 @@ Box.propTypes = {
   borderBottom: PropTypes.bool,
   borderLeft: PropTypes.bool,
   borderRight: PropTypes.bool,
+  faded: PropTypes.bool,
   flex: PropTypes.bool,
   flexDirection: PropTypes.oneOf(["column", "row"]),
   flexible: PropTypes.bool,

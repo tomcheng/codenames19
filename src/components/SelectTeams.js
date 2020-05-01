@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import range from "lodash/range";
 import Box from "./Box";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
@@ -7,6 +8,8 @@ import DocumentWrapper from "./DocumentWrapper";
 import Text from "./Text";
 
 const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
+  const playersNeeded = Math.max(4 - users.length);
+
   return (
     <div>
       <DocumentWrapper title="Declaration of Allegiances">
@@ -53,6 +56,33 @@ const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
                   }}
                 >
                   <Checkbox checked={team === "B"} />
+                </Box>
+              </Box>
+            ))}
+            {range(playersNeeded).map((num) => (
+              <Box key={num} flex>
+                <Box flexible padX="tight" padY="x-tight">
+                  <Text preset="label" faded>
+                    Awaiting...
+                  </Text>
+                </Box>
+                <Box
+                  faded
+                  padX="tight"
+                  padY="x-tight"
+                  textAlign="center"
+                  width={70}
+                >
+                  <Checkbox />
+                </Box>
+                <Box
+                  faded
+                  padX="tight"
+                  padY="x-tight"
+                  textAlign="center"
+                  width={70}
+                >
+                  <Checkbox />
                 </Box>
               </Box>
             ))}
