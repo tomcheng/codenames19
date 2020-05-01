@@ -21,11 +21,31 @@ const Word = ({
     >
       <span
         style={{
-          backgroundColor: highlighted ? "yellow" : null,
+          backgroundColor: highlighted && !flipped ? "yellow" : null,
           padding: "0 5px",
+          position: "relative",
         }}
       >
         {word}
+        {flipped && (
+          <div
+            style={{
+              display: "inline-block",
+              backgroundColor:
+                type === "neutral" || type === "bomb"
+                  ? "black"
+                  : type === yourTeam
+                  ? "rgb(18, 175, 37)"
+                  : "red",
+              height: 4,
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: 11,
+              opacity: 0.6,
+            }}
+          />
+        )}
       </span>
     </div>
   );
