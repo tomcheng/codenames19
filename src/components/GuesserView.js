@@ -49,6 +49,10 @@ const GuesserView = ({
     }
   }, [mode, setSelectedWord]);
 
+  useEffect(() => {
+    setSelectedWord(null);
+  }, [guessesLeft, setSelectedWord]);
+
   useLayoutEffect(() => {
     if (containerRef.current.offsetWidth < 640) {
       setNumCols(3);
@@ -68,7 +72,7 @@ const GuesserView = ({
       flexDirection="column"
       height="100%"
     >
-      <Box flexible overflow="auto" padBottom="loose">
+      <Box flexible overflow="auto" padBottom="loose" padX="normal">
         {rows.map((wrds, index) => (
           <Grid key={index} spacing="normal">
             {wrds.map(({ word, type, flipped }) => (
@@ -81,6 +85,8 @@ const GuesserView = ({
                   word={word}
                   yourTeam={yourTeam}
                   onClick={() => {
+                    if (flipped) return;
+
                     if (mode === "highlight") {
                       onHighlightWord({ word });
                     } else {
