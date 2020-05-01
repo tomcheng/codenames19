@@ -57,5 +57,17 @@ describe("room", () => {
     expect(room.round).toEqual(2);
     expect(room.turn).toEqual("A");
     expect(room.stage).toEqual("writing");
+
+    room.submitCode({ code: "blah", number: 3 });
+
+    expect(room.round).toEqual(2);
+    expect(room.turn).toEqual("A");
+    expect(room.stage).toEqual("guessing");
+
+    room.endTurn();
+
+    expect(room.round).toEqual(2);
+    expect(room.turn).toEqual("B");
+    expect(room.stage).toEqual("writing");
   });
 });

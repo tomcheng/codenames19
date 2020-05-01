@@ -90,6 +90,10 @@ const App = ({ socket }) => {
     [socket, userID]
   );
 
+  const handleEndTurn = useCallback(() => {
+    socket.emit("end turn");
+  }, [socket]);
+
   const handleJoinRoom = useCallback(
     ({ code, name }) => {
       socket.emit("join room", { code, name, userID });
@@ -137,6 +141,7 @@ const App = ({ socket }) => {
       userID={userID}
       users={state.users}
       onCreateRoom={handleCreateRoom}
+      onEndTurn={handleEndTurn}
       onJoinRoom={handleJoinRoom}
       onSetTeams={handleSetTeams}
       onSelectSpymaster={handleSelectSpymaster}

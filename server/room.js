@@ -48,15 +48,19 @@ class Room {
     );
 
     if (this.guessesLeft === 1) {
-      this.guessesLeft = null;
-      if (this.turn === "B") {
-        this.round += 1;
-      }
-      this.turn = this.turn === "A" ? "B" : "A";
-      this.stage = "writing";
+      this.endTurn();
     } else {
       this.guessesLeft -= 1;
     }
+  }
+
+  endTurn() {
+    this.guessesLeft = null;
+    if (this.turn === "B") {
+      this.round += 1;
+    }
+    this.turn = this.turn === "A" ? "B" : "A";
+    this.stage = "writing";
   }
 
   _getUniqueRoomCode({ usedCodes }) {

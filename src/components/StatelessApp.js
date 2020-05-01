@@ -23,6 +23,7 @@ const StatelessApp = ({
   userID,
   users,
   onCreateRoom,
+  onEndTurn,
   onJoinRoom,
   onSetTeams,
   onSelectSpymaster,
@@ -70,6 +71,7 @@ const StatelessApp = ({
           users={users}
           userID={userID}
           words={room.words}
+          onEndTurn={onEndTurn}
           onSelectWord={onSelectWord}
           onSubmitCode={onSubmitCode}
         />
@@ -82,6 +84,7 @@ StatelessApp.propTypes = {
   codeIsInvalid: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   onCreateRoom: PropTypes.func.isRequired,
+  onEndTurn: PropTypes.func.isRequired,
   onJoinRoom: PropTypes.func.isRequired,
   onSetTeams: PropTypes.func.isRequired,
   onSelectSpymaster: PropTypes.func.isRequired,

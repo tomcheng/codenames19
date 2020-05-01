@@ -13,6 +13,7 @@ const Game = ({
   users,
   userID,
   words,
+  onEndTurn,
   onSelectWord,
   onSubmitCode,
 }) => {
@@ -36,6 +37,7 @@ const Game = ({
       stage={stage}
       words={words}
       yourTeam={you.team}
+      onEndTurn={onEndTurn}
       onSelectWord={onSelectWord}
     />
   );
@@ -62,6 +64,7 @@ Game.propTypes = {
       word: PropTypes.string.isRequired,
     })
   ).isRequired,
+  onEndTurn: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
   onSubmitCode: PropTypes.func.isRequired,
   guessesLeft: PropTypes.number,

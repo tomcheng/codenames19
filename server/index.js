@@ -158,6 +158,17 @@ io.on("connection", (socket) => {
     io.in(room.id).emit("room updated", { room });
   });
 
+  socket.on("end turn", () => {
+    const user = Users.getUser(socket.userID);
+    const room = Rooms.getRoom(socket.roomID);
+
+    if (!room || user.team !== room.turn) return;
+
+    room.endTurn();
+
+    io.in(room.id).emit("room updated", { room });
+  });
+
   socket.on("disconnect", () => {
     if (!socket.roomID) return;
 

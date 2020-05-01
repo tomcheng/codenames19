@@ -9,6 +9,36 @@ import { Grid, GridItem } from "./Grid";
 import Word from "./Word";
 import Text from "./Text";
 
+const Bottom = ({ children }) => (
+  <Box
+    style={{
+      bottom: 0,
+      left: 0,
+      position: "fixed",
+      right: 0,
+    }}
+  >
+    {children}
+  </Box>
+);
+
+const FullButton = ({ children, isBlack, onClick }) => (
+  <Box
+    borderTop={!isBlack}
+    flexible
+    pad="normal"
+    textAlign="center"
+    style={{
+      userSelect: "none",
+      color: isBlack ? "#fff" : "#222",
+      backgroundColor: isBlack ? "#222" : "#fff",
+    }}
+    onClick={onClick}
+  >
+    <Text preset="button">{children}</Text>
+  </Box>
+);
+
 const GuesserView = ({
   codes,
   guessesLeft,
@@ -16,10 +46,12 @@ const GuesserView = ({
   stage,
   words,
   yourTeam,
+  onEndTurn,
   onSelectWord,
 }) => {
   const [numCols, setNumCols] = useState(5);
   const [selectedWord, setSelectedWord] = useState(null);
+  const [confirmEndTurn, setConfirmEndTurn] = useState(false);
   const containerRef = useRef(null);
   const rows = chunk(words, numCols);
   const lastCode = last(codes);
@@ -92,28 +124,53 @@ const GuesserView = ({
                 />
               </GridItem>
             ))}
+            {numCols === 3 && wrds.length === 1 && (
+              <>
+                <GridItem flexible />
+                <GridItem flexible />
+              </>
+            )}
           </Grid>
         ))}
       </Box>
-      {stage === "guessing" && isYourTurn && selectedWord && (
-        <Box
-          flexible
-          pad="normal"
-          style={{
-            backgroundColor: "#222",
-            bottom: 0,
-            color: "#fff",
-            left: 0,
-            position: "fixed",
-            right: 0,
-          }}
-          textAlign="center"
-          onClick={() => {
-            onSelectWord({ word: selectedWord });
-          }}
-        >
-          <Text preset="button">Confirm Code: {selectedWord}</Text>
-        </Box>
+      {!isYourTurn || stage === "writing" ? null : (
+        <Bottom>
+          {selectedWord ? (
+            <FullButton
+              isBlack
+              style={{
+                backgroundColor: "#222",
+                color: "#fff",
+              }}
+              onClick={() => {
+                onSelectWord({ word: selectedWord });
+              }}
+            >
+              Confirm Code: {selectedWord}
+            </FullButton>
+          ) : confirmEndTurn ? (
+            <Box flex width="100%">
+              <FullButton
+                onClick={() => {
+                  setConfirmEndTurn(false);
+                }}
+              >
+                <Text preset="button">Cancel</Text>
+              </FullButton>
+              <FullButton isBlack onClick={onEndTurn}>
+                <Text preset="button">Confirm End Turn</Text>
+              </FullButton>
+            </Box>
+          ) : (
+            <FullButton
+              onClick={() => {
+                setConfirmEndTurn(true);
+              }}
+            >
+              <Text preset="button">End Turn</Text>
+            </FullButton>
+          )}
+        </Bottom>
       )}
     </Box>
   );
@@ -136,6 +193,7 @@ GuesserView.propTypes = {
     })
   ).isRequired,
   yourTeam: PropTypes.oneOf(["A", "B"]).isRequired,
+  onEndTurn: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
 };
 
