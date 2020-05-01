@@ -31,6 +31,20 @@ const SpymasterView = ({
 
   return (
     <Box alignItems="stretch" flex flexDirection="column" height="100%">
+      <Console
+        lines={
+          !isYourTurn
+            ? ["Awaiting the enemy's turn..."]
+            : stage === "guessing"
+            ? yourLastCode
+              ? [
+                  `Transmission sent: ${yourLastCode.code} / ${yourLastCode.number}`,
+                ]
+              : []
+            : ["* Send one word and one number.", "* Try not to fuck this up."]
+        }
+        showPrompt={!isDisabled}
+      />
       <Box flexible overflow="auto">
         <DocumentWrapper title="Sensitive - Do Not Distribute">
           <Box flexible padX="loose" padY="normal">
@@ -142,21 +156,6 @@ const SpymasterView = ({
           }}
         />
       </Box>
-      <Console
-        lines={
-          !isYourTurn
-            ? ["Awaiting the enemy's turn..."]
-            : stage === "guessing"
-            ? yourLastCode
-              ? [
-                  `Transmission sent: ${yourLastCode.code} - ${yourLastCode.number}`,
-                  "Awaiting Alliance's response...",
-                ]
-              : []
-            : []
-        }
-        showPrompt={!isDisabled}
-      />
     </Box>
   );
 };

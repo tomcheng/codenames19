@@ -72,6 +72,21 @@ const GuesserView = ({
       flexDirection="column"
       height="100%"
     >
+      <Console
+        lines={
+          !isYourTurn
+            ? ["Awaiting the enemy's turn..."]
+            : stage === "writing"
+            ? ["Awaiting transmission..."]
+            : [
+                `* Code Received: ${lastCode.code.toUpperCase()} / ${
+                  lastCode.number
+                }`,
+                `* You have ${plc(guessesLeft, "guess", "guesses")} remaining`,
+              ]
+        }
+        showPrompt={isYourTurn && stage === "guessing"}
+      />
       <Box flexible overflow="auto" padBottom="loose" padX="normal">
         {rows.map((wrds, index) => (
           <Grid key={index} spacing="normal">
@@ -143,19 +158,6 @@ const GuesserView = ({
             )}
           </Box>
         )}
-        <Console
-          lines={
-            !isYourTurn
-              ? ["Awaiting the enemy's turn..."]
-              : stage === "writing"
-              ? ["Awaiting transmission..."]
-              : [
-                  `Received: ${lastCode.code} - ${lastCode.number}`,
-                  `You have ${plc(guessesLeft, "guess", "guesses")} left.`,
-                ]
-          }
-          showPrompt={isYourTurn && stage === "guessing"}
-        />
       </Box>
     </Box>
   );
