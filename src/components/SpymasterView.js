@@ -104,19 +104,13 @@ const SpymasterView = ({
             <Box border style={{ margin: "8px -16px -16px" }}>
               <Box flex>
                 <Box borderRight pad="tight" padTop="x-tight" flexible>
-                  <Text
-                    as="label"
-                    htmlFor="code"
-                    preset="label"
-                    faded={isDisabled}
-                  >
+                  <Text preset="label" faded={isDisabled}>
                     Code Word
                   </Text>
                   <div>
                     <Input
                       autocomplete="off"
                       disabled={isDisabled}
-                      id="code"
                       value={isDisabled ? yourLastCode?.code ?? "" : code}
                       onChange={(evt) => {
                         setCode(
@@ -127,18 +121,12 @@ const SpymasterView = ({
                   </div>
                 </Box>
                 <Box pad="tight" padTop="x-tight" width={120}>
-                  <Text
-                    as="label"
-                    htmlFor="number"
-                    preset="label"
-                    faded={isDisabled}
-                  >
+                  <Text preset="label" faded={isDisabled}>
                     Number
                   </Text>
                   <div>
                     <Input
                       disabled={isDisabled}
-                      id="number"
                       type="number"
                       value={isDisabled ? yourLastCode?.number ?? "" : number}
                       onChange={(evt) => {
