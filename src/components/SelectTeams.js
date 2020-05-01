@@ -10,8 +10,9 @@ import DocumentSubmit from "./DocumentSubmit";
 
 const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
   const [error, setError] = useState(null);
-  const playersNeeded = Math.max(4 - users.length);
+  const playersNeeded = Math.max(4 - users.length, 0);
   const counts = countBy(users, "team");
+  const usersWithNoTeams = users.filter((user) => !user.team);
 
   return (
     <div>
@@ -104,6 +105,13 @@ const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
             setError("Insufficient numbers in Group B");
             return;
           }
+          if (usersWithNoTeams.length) {
+            setError(
+              `${usersWithNoTeams[0].name} has not been assigned a group`
+            );
+            return;
+          }
+
           onSetTeams();
         }}
       />
