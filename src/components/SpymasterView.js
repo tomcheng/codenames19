@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 import last from "lodash/last";
 import Box from "./Box";
 import Button from "./Button";
-import DocumentWrapper from "./DocumentWrapper";
-import Text from "./Text";
-import Input from "./Input";
 import Console from "./Console";
+import DocumentWrapper from "./DocumentWrapper";
+import Input from "./Input";
+import Text from "./Text";
+import InlineWord from "./InlineWord";
 
 const SpymasterView = ({
   codes,
@@ -19,14 +20,12 @@ const SpymasterView = ({
   const [code, setCode] = useState("");
   const [number, setNumber] = useState("");
 
-  const yourWords = words.filter((w) => w.type === yourTeam).map((w) => w.word);
-  const opponentsWords = words
-    .filter((w) => w.type === (yourTeam === "A" ? "B" : "A"))
-    .map((w) => w.word);
-  const neutralWords = words
-    .filter((w) => w.type === "neutral")
-    .map((w) => w.word);
-  const bomb = words.find((w) => w.type === "bomb").word;
+  const yourWords = words.filter((w) => w.type === yourTeam);
+  const opponentsWords = words.filter(
+    (w) => w.type === (yourTeam === "A" ? "B" : "A")
+  );
+  const neutralWords = words.filter((w) => w.type === "neutral");
+  const bomb = words.find((w) => w.type === "bomb");
   const isDisabled = !isYourTurn || stage === "guessing";
   const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
 
@@ -37,27 +36,53 @@ const SpymasterView = ({
           <Box flexible padX="loose" padY="normal">
             <Box padBottom="normal">
               <div>
-                <Text preset="label">Alliances Words:</Text>
+                <Text preset="label">Alliance's Words:</Text>
               </div>
-              <div>{yourWords.join(", ")}</div>
+              <div>
+                {yourWords.map((word, index) => (
+                  <InlineWord
+                    key={word.word}
+                    {...word}
+                    isLast={index === yourWords.length - 1}
+                  />
+                ))}
+              </div>
             </Box>
             <Box padBottom="normal">
               <div>
                 <Text preset="label">Enemy's Words:</Text>
               </div>
-              <div>{opponentsWords.join(", ")}</div>
+              <div>
+                {opponentsWords.map((word, index) => (
+                  <InlineWord
+                    key={word.word}
+                    {...word}
+                    isLast={index === opponentsWords.length - 1}
+                  />
+                ))}
+              </div>
             </Box>
             <Box padBottom="normal">
               <div>
                 <Text preset="label">Neutral Words:</Text>
               </div>
-              <div>{neutralWords.join(", ")}</div>
+              <div>
+                {neutralWords.map((word, index) => (
+                  <InlineWord
+                    key={word.word}
+                    {...word}
+                    isLast={index === neutralWords.length - 1}
+                  />
+                ))}
+              </div>
             </Box>
             <Box padBottom="normal">
               <div>
                 <Text preset="label">Bomb:</Text>
               </div>
-              <div>{bomb}</div>
+              <div>
+                <InlineWord {...bomb} isLast />
+              </div>
             </Box>
             <Box border style={{ margin: "8px -16px -32px" }}>
               <Box flex>
