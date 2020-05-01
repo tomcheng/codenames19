@@ -121,7 +121,21 @@ const SpymasterView = ({
           </Button>
         </Box>
       </Box>
-      <Console lines={[]} showPrompt />
+      <Console
+        lines={
+          !isYourTurn
+            ? ["Awaiting enemy's response..."]
+            : stage === "guessing"
+            ? yourLastCode
+              ? [
+                  `Transmission sent: ${yourLastCode.code} - ${yourLastCode.number}`,
+                  "Awaiting Alliance's response...",
+                ]
+              : []
+            : []
+        }
+        showPrompt={!isDisabled}
+      />
     </Box>
   );
 };
