@@ -6,6 +6,7 @@ import Button from "./Button";
 import DocumentWrapper from "./DocumentWrapper";
 import Text from "./Text";
 import Input from "./Input";
+import Console from "./Console";
 
 const SpymasterView = ({
   codes,
@@ -30,95 +31,98 @@ const SpymasterView = ({
   const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
 
   return (
-    <div>
-      <DocumentWrapper title="Sensitive - Do Not Distribute">
-        <Box flexible padX="loose" padY="normal">
-          <Box padBottom="normal">
-            <div>
-              <Text preset="label">Alliances Words:</Text>
-            </div>
-            <div>{yourWords.join(", ")}</div>
-          </Box>
-          <Box padBottom="normal">
-            <div>
-              <Text preset="label">Enemy's Words:</Text>
-            </div>
-            <div>{opponentsWords.join(", ")}</div>
-          </Box>
-          <Box padBottom="normal">
-            <div>
-              <Text preset="label">Neutral Words:</Text>
-            </div>
-            <div>{neutralWords.join(", ")}</div>
-          </Box>
-          <Box padBottom="normal">
-            <div>
-              <Text preset="label">Bomb:</Text>
-            </div>
-            <div>{bomb}</div>
-          </Box>
-          <Box border style={{ margin: "8px -16px -32px" }}>
-            <Box flex>
-              <Box borderRight pad="tight" padTop="x-tight" flexible>
-                <Text
-                  as="label"
-                  htmlFor="code"
-                  preset="label"
-                  faded={isDisabled}
-                >
-                  Code Word
-                </Text>
-                <div>
-                  <Input
-                    autoFocus
-                    disabled={isDisabled}
-                    id="code"
-                    name="code"
-                    value={isDisabled ? yourLastCode?.code ?? "" : code}
-                    onChange={(evt) => {
-                      setCode(evt.target.value);
-                    }}
-                  />
-                </div>
-              </Box>
-              <Box pad="tight" padTop="x-tight" width={120}>
-                <Text
-                  as="label"
-                  htmlFor="number"
-                  preset="label"
-                  faded={isDisabled}
-                >
-                  Number
-                </Text>
-                <div>
-                  <Input
-                    disabled={isDisabled}
-                    id="number"
-                    name="number"
-                    type="number"
-                    value={isDisabled ? yourLastCode?.number ?? "" : number}
-                    onChange={(evt) => {
-                      setNumber(evt.target.value);
-                    }}
-                  />
-                </div>
+    <Box alignItems="stretch" flex flexDirection="column" height="100%">
+      <Box flexible overflow="auto">
+        <DocumentWrapper title="Sensitive - Do Not Distribute">
+          <Box flexible padX="loose" padY="normal">
+            <Box padBottom="normal">
+              <div>
+                <Text preset="label">Alliances Words:</Text>
+              </div>
+              <div>{yourWords.join(", ")}</div>
+            </Box>
+            <Box padBottom="normal">
+              <div>
+                <Text preset="label">Enemy's Words:</Text>
+              </div>
+              <div>{opponentsWords.join(", ")}</div>
+            </Box>
+            <Box padBottom="normal">
+              <div>
+                <Text preset="label">Neutral Words:</Text>
+              </div>
+              <div>{neutralWords.join(", ")}</div>
+            </Box>
+            <Box padBottom="normal">
+              <div>
+                <Text preset="label">Bomb:</Text>
+              </div>
+              <div>{bomb}</div>
+            </Box>
+            <Box border style={{ margin: "8px -16px -32px" }}>
+              <Box flex>
+                <Box borderRight pad="tight" padTop="x-tight" flexible>
+                  <Text
+                    as="label"
+                    htmlFor="code"
+                    preset="label"
+                    faded={isDisabled}
+                  >
+                    Code Word
+                  </Text>
+                  <div>
+                    <Input
+                      autoFocus
+                      disabled={isDisabled}
+                      id="code"
+                      name="code"
+                      value={isDisabled ? yourLastCode?.code ?? "" : code}
+                      onChange={(evt) => {
+                        setCode(evt.target.value);
+                      }}
+                    />
+                  </div>
+                </Box>
+                <Box pad="tight" padTop="x-tight" width={120}>
+                  <Text
+                    as="label"
+                    htmlFor="number"
+                    preset="label"
+                    faded={isDisabled}
+                  >
+                    Number
+                  </Text>
+                  <div>
+                    <Input
+                      disabled={isDisabled}
+                      id="number"
+                      name="number"
+                      type="number"
+                      value={isDisabled ? yourLastCode?.number ?? "" : number}
+                      onChange={(evt) => {
+                        setNumber(evt.target.value);
+                      }}
+                    />
+                  </div>
+                </Box>
               </Box>
             </Box>
           </Box>
+        </DocumentWrapper>
+        <Box flex justifyContent="center" padBottom="x-loose">
+          <Button
+            disabled={isDisabled}
+            onClick={() => {
+              if (!code || !number) return;
+              onSubmitCode({ code, number: parseInt(number) });
+            }}
+          >
+            Submit
+          </Button>
         </Box>
-      </DocumentWrapper>
-      <Box flex justifyContent="center">
-        <Button
-          disabled={isDisabled}
-          onClick={() => {
-            if (!code || !number) return;
-            onSubmitCode({ code, number: parseInt(number) });
-          }}
-        >
-          Submit
-        </Button>
       </Box>
-    </div>
+      <Console lines={[]} showPrompt />
+    </Box>
   );
 };
 

@@ -61,16 +61,14 @@ const GuesserView = ({
   };
 
   return (
-    <div
+    <Box
       ref={containerRef}
-      style={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
-      }}
+      alignItems="stretch"
+      flex
+      flexDirection="column"
+      height="100%"
     >
-      <Box flexible padBottom="loose" style={{ overflow: "auto", flexGrow: 1 }}>
+      <Box flexible overflow="auto" padBottom="loose">
         {rows.map((wrds, index) => (
           <Grid key={index} spacing="normal">
             {wrds.map(({ word, type, flipped }) => (
@@ -153,7 +151,7 @@ const GuesserView = ({
           showPrompt={isYourTurn && stage === "guessing"}
         />
       </Box>
-    </div>
+    </Box>
   );
 };
 

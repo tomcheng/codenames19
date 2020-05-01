@@ -26,6 +26,7 @@ const Box = styled.div`
     typeof props.height === "number" ? `${props.height}px` : props.height};
   justify-content: ${(props) => props.justifyContent};
   opacity: ${(props) => typeof props.opacity === "number" && props.opacity};
+  overflow: ${(props) => props.overflow ?? null};
   padding: ${(props) => SPACING[props.pad]};
   padding-left: ${(props) => SPACING[props.padLeft || props.padX]};
   padding-right: ${(props) => SPACING[props.padRight || props.padX]};
@@ -37,7 +38,7 @@ const Box = styled.div`
 `;
 
 Box.propTypes = {
-  alignItems: PropTypes.oneOf(["center"]),
+  alignItems: PropTypes.oneOf(["center", "stretch"]),
   border: PropTypes.bool,
   borderTop: PropTypes.bool,
   borderBottom: PropTypes.bool,
@@ -49,6 +50,7 @@ Box.propTypes = {
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   justifyContent: PropTypes.oneOf(["center", "space-between"]),
   opacity: PropTypes.number,
+  overflow: PropTypes.oneOf(["auto"]),
   pad: PropTypes.oneOf(["x-tight", "tight", "normal", "loose", "x-loose"]),
   padX: PropTypes.oneOf(["x-tight", "tight", "normal", "loose", "x-loose"]),
   padY: PropTypes.oneOf(["x-tight", "tight", "normal", "loose", "x-loose"]),
