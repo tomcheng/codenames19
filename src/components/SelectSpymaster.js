@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Box from "./Box";
-import Button from "./Button";
 import Checkbox from "./Checkbox";
 import DocumentWrapper from "./DocumentWrapper";
 import Text from "./Text";
+import DocumentSubmit from "./DocumentSubmit";
 
 const SelectSpymaster = ({ users, userID, onSelectSpymaster }) => {
   const [selectedUserID, setSelectedUserID] = useState(null);
@@ -34,16 +34,12 @@ const SelectSpymaster = ({ users, userID, onSelectSpymaster }) => {
           </Box>
         </Box>
       </DocumentWrapper>
-      <Box flex justifyContent="center">
-        <Button
-          onClick={() => {
-            if (!selectedUserID) return;
-            onSelectSpymaster({ userID: selectedUserID });
-          }}
-        >
-          Submit
-        </Button>
-      </Box>
+      <DocumentSubmit
+        onSubmit={() => {
+          if (!selectedUserID) return;
+          onSelectSpymaster({ userID: selectedUserID });
+        }}
+      />
     </div>
   );
 };

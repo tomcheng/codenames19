@@ -2,10 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import range from "lodash/range";
 import Box from "./Box";
-import Button from "./Button";
 import Checkbox from "./Checkbox";
 import DocumentWrapper from "./DocumentWrapper";
 import Text from "./Text";
+import DocumentSubmit from "./DocumentSubmit";
 
 const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
   const playersNeeded = Math.max(4 - users.length);
@@ -89,9 +89,7 @@ const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
           </Box>
         </Box>
       </DocumentWrapper>
-      <Box justifyContent="center" flex>
-        <Button onClick={onSetTeams}>Submit</Button>
-      </Box>
+      <DocumentSubmit onSubmit={onSetTeams} />
     </div>
   );
 };

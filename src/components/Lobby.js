@@ -3,8 +3,8 @@ import { v4 } from "uuid";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import Box from "./Box";
-import Button from "./Button";
 import Checkbox from "./Checkbox";
+import DocumentSubmit from "./DocumentSubmit";
 import DocumentWrapper from "./DocumentWrapper";
 import Input from "./Input";
 import Text from "./Text";
@@ -117,20 +117,15 @@ const Lobby = ({ codeIsInvalid, initialName, onCreateRoom, onJoinRoom }) => {
           </Box>
         </Box>
       </DocumentWrapper>
-      <Box flex justifyContent="center">
-        <Button type="submit">Submit</Button>
-      </Box>
-      <Box textAlign="center" padTop="normal">
-        {isMissingName ? (
-          <Text color="danger" preset="label">
-            Error: Name is required
-          </Text>
-        ) : codeIsInvalid ? (
-          <Text color="danger" preset="label">
-            Error: Invalid mission code
-          </Text>
-        ) : null}
-      </Box>
+      <DocumentSubmit
+        error={
+          isMissingName
+            ? "Name is required"
+            : codeIsInvalid
+            ? "Invalid mission code"
+            : null
+        }
+      />
     </form>
   );
 };

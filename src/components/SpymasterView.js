@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import last from "lodash/last";
 import Box from "./Box";
-import Button from "./Button";
 import Console from "./Console";
+import DocumentSubmit from "./DocumentSubmit";
 import DocumentWrapper from "./DocumentWrapper";
+import InlineWord from "./InlineWord";
 import Input from "./Input";
 import Text from "./Text";
-import InlineWord from "./InlineWord";
 
 const SpymasterView = ({
   codes,
@@ -134,17 +134,13 @@ const SpymasterView = ({
             </Box>
           </Box>
         </DocumentWrapper>
-        <Box flex justifyContent="center" padBottom="x-loose">
-          <Button
-            disabled={isDisabled}
-            onClick={() => {
-              if (!code || !number) return;
-              onSubmitCode({ code, number: parseInt(number) });
-            }}
-          >
-            Submit
-          </Button>
-        </Box>
+        <DocumentSubmit
+          disabled={isDisabled}
+          onSubmit={() => {
+            if (!code || !number) return;
+            onSubmitCode({ code, number: parseInt(number) });
+          }}
+        />
       </Box>
       <Console
         lines={
