@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
+import countBy from "lodash/countBy";
 import range from "lodash/range";
 import Box from "./Box";
 import Checkbox from "./Checkbox";
@@ -8,7 +9,9 @@ import Text from "./Text";
 import DocumentSubmit from "./DocumentSubmit";
 
 const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
+  const [error, setError] = useState(null);
   const playersNeeded = Math.max(4 - users.length);
+  const counts = countBy(users, "team");
 
   return (
     <div>
@@ -89,7 +92,21 @@ const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
           </Box>
         </Box>
       </DocumentWrapper>
-      <DocumentSubmit onSubmit={onSetTeams} />
+      <DocumentSubmit
+        error={error}
+        disabled={playersNeeded > 0}
+        onSubmit={() => {
+          if ((counts.A || 0) < 2) {
+            setError("Insufficient numbers in Group A");
+            return;
+          }
+          if ((counts.B || 0) < 2) {
+            setError("Insufficient numbers in Group B");
+            return;
+          }
+          onSetTeams();
+        }}
+      />
     </div>
   );
 };
