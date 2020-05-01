@@ -47,7 +47,6 @@ const Game = ({
 
 Game.propTypes = {
   codes: PropTypes.array.isRequired,
-  guessesLeft: PropTypes.number.isRequired,
   highlights: PropTypes.shape({
     A: PropTypes.array.isRequired,
     B: PropTypes.array.isRequired,
@@ -74,6 +73,7 @@ Game.propTypes = {
   onHighlightWord: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
   onSubmitCode: PropTypes.func.isRequired,
+  guessesLeft: PropTypes.number,
 };
 
 export default Game;

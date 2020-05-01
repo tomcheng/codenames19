@@ -84,7 +84,7 @@ const SpymasterView = ({
                 <InlineWord {...bomb} isLast />
               </div>
             </Box>
-            <Box border style={{ margin: "8px -16px -32px" }}>
+            <Box border style={{ margin: "8px -16px -16px" }}>
               <Box flex>
                 <Box borderRight pad="tight" padTop="x-tight" flexible>
                   <Text
@@ -145,7 +145,7 @@ const SpymasterView = ({
       <Console
         lines={
           !isYourTurn
-            ? ["Awaiting enemy's turn..."]
+            ? ["Awaiting the enemy's turn..."]
             : stage === "guessing"
             ? yourLastCode
               ? [

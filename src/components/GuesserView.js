@@ -140,7 +140,7 @@ const GuesserView = ({
         <Console
           lines={
             !isYourTurn
-              ? ["Awaiting enemy's turn..."]
+              ? ["Awaiting the enemy's turn..."]
               : stage === "writing"
               ? ["Awaiting transmission..."]
               : [

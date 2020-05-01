@@ -52,6 +52,9 @@ const StatelessApp = ({
         />
       ) : !room.spymasterA || !room.spymasterB ? (
         <SelectSpymaster
+          chosenSpymaster={
+            user.team === "A" ? room.spymasterA : room.spymasterB
+          }
           users={users}
           userID={userID}
           onSelectSpymaster={onSelectSpymaster}

@@ -6,7 +6,13 @@ import DocumentWrapper from "./DocumentWrapper";
 import Text from "./Text";
 import DocumentSubmit from "./DocumentSubmit";
 
-const SelectSpymaster = ({ users, userID, onSelectSpymaster }) => {
+const SelectSpymaster = ({
+  chosenSpymaster,
+  users,
+  userID,
+  onSelectSpymaster,
+}) => {
+  const [error, setError] = useState(null);
   const [selectedUserID, setSelectedUserID] = useState(null);
   const user = users.find((u) => u.id === userID);
   const myTeam = users.filter((u) => u.team === user.team);
@@ -28,15 +34,25 @@ const SelectSpymaster = ({ users, userID, onSelectSpymaster }) => {
                   setSelectedUserID(id);
                 }}
               >
-                <Checkbox checked={id === selectedUserID} label={name} />
+                <Checkbox
+                  checked={id === (chosenSpymaster || selectedUserID)}
+                  label={name}
+                />
               </Box>
             ))}
           </Box>
         </Box>
       </DocumentWrapper>
       <DocumentSubmit
+        disabled={!!chosenSpymaster}
+        error={error}
+        message={chosenSpymaster ? "Awaiting the enemy's decision..." : null}
         onSubmit={() => {
-          if (!selectedUserID) return;
+          if (!selectedUserID) {
+            setError("A selection is required");
+            return;
+          }
+          setError(null);
           onSelectSpymaster({ userID: selectedUserID });
         }}
       />
@@ -52,7 +68,9 @@ SelectSpymaster.propTypes = {
       name: PropTypes.string.isRequired,
     })
   ).isRequired,
+  yourSpymasterChosen: PropTypes.bool.isRequired,
   onSelectSpymaster: PropTypes.func.isRequired,
+  chosenSpymaster: PropTypes.string,
 };
 
 export default SelectSpymaster;
