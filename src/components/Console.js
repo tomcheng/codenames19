@@ -24,7 +24,7 @@ const Console = ({ lines, showPrompt }) => {
         left: 0,
         right: 0,
         zIndex: 1,
-        backgroundColor: "#222",
+        backgroundColor: "#000",
         color: "rgb(17, 212, 40)",
         textShadow: "0 0 3px rgb(17, 212, 40)",
       }}
