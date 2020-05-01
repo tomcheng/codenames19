@@ -114,6 +114,7 @@ const SpymasterView = ({
                   </Text>
                   <div>
                     <Input
+                      autocomplete="off"
                       disabled={isDisabled}
                       id="code"
                       value={isDisabled ? yourLastCode?.code ?? "" : code}
