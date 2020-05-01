@@ -51,6 +51,7 @@ const Text = styled.div`
   color: ${(props) => (props.color === "danger" ? "#bf0000" : null)};
   flex-grow: ${(props) => (props.flexible ? 1 : null)};
   flex-shrink: ${(props) => (props.flexible ? 1 : null)};
+  opacity: ${(props) => (props.faded ? 0.4 : null)};
 `;
 
 Text.propTypes = {
@@ -62,6 +63,7 @@ Text.propTypes = {
     "label",
   ]).isRequired,
   color: PropTypes.oneOf(["danger"]),
+  faded: PropTypes.bool,
   flexible: PropTypes.bool,
 };
 

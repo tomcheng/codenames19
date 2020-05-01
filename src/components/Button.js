@@ -8,6 +8,7 @@ const Button = styled.button`
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: bold;
   font-size: 14px;
+  opacity: ${(props) => (props.disabled ? 0.4 : null)};
   text-transform: uppercase;
 `;
 

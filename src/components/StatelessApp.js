@@ -33,7 +33,6 @@ const StatelessApp = ({
 }) => {
   const user = users?.find((u) => u.id === userID);
   const gameStarted = !!room?.turn;
-  console.log("room", room);
 
   return (
     <AppContainer>

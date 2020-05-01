@@ -11,6 +11,7 @@ const Input = styled.input`
   margin-left: -2px;
   margin-right: -2px;
   outline: 0;
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 `;
 
 export default Input;

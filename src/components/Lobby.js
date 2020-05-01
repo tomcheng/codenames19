@@ -87,13 +87,13 @@ const Lobby = ({ codeIsInvalid, initialName, onCreateRoom, onJoinRoom }) => {
                 <Checkbox checked={!isNew} label="Join Mission" />
               </div>
             </Box>
-            <InputContainer
-              pad="tight"
-              padY="x-tight"
-              width={120}
-              opacity={isNew ? 0.5 : 1}
-            >
-              <Text as="label" htmlFor={randomCodeName} preset="label">
+            <InputContainer pad="tight" padY="x-tight" width={120}>
+              <Text
+                as="label"
+                faded={isNew}
+                htmlFor={randomCodeName}
+                preset="label"
+              >
                 Mission Code
               </Text>
               <Input
