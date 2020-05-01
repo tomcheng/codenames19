@@ -48,10 +48,10 @@ const App = ({ socket }) => {
 
   useEffect(() => {
     socket.on("room joined", ({ room, users, userID }) => {
-      dispatch({ type: "join-room", payload: { room, users } });
-      setRoomID(room.id);
       setUserID(userID);
       setName(users.find((user) => user.id === userID).name);
+      setRoomID(room.id);
+      dispatch({ type: "join-room", payload: { room, users } });
     });
 
     socket.on("users updated", ({ users }) => {

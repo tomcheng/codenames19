@@ -149,7 +149,7 @@ const SpymasterView = ({
       <Console
         lines={
           !isYourTurn
-            ? ["Awaiting enemy's response..."]
+            ? ["Awaiting enemy's turn..."]
             : stage === "guessing"
             ? yourLastCode
               ? [
