@@ -34,20 +34,6 @@ describe("room", () => {
       .filter((w) => w.type !== "bomb")
       .map((w) => w.word);
 
-    room.highlightWord({ word: first });
-
-    expect(room.highlights).toEqual({
-      A: [first],
-      B: [],
-    });
-
-    room.highlightWord({ word: first });
-
-    expect(room.highlights).toEqual({
-      A: [],
-      B: [],
-    });
-
     room.selectWord({ word: first });
 
     expect(room.words.find((w) => w.word === first).flipped).toEqual(true);

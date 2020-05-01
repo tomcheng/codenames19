@@ -12,16 +12,13 @@ import Text from "./Text";
 const GuesserView = ({
   codes,
   guessesLeft,
-  highlights,
   isYourTurn,
   stage,
   words,
   yourTeam,
-  onHighlightWord,
   onSelectWord,
 }) => {
   const [numCols, setNumCols] = useState(5);
-  const [mode, setMode] = useState("highlight");
   const [selectedWord, setSelectedWord] = useState(null);
   const containerRef = useRef(null);
   const rows = chunk(words, numCols);
@@ -42,12 +39,6 @@ const GuesserView = ({
       window.removeEventListener("resize", handleResize);
     };
   }, [setNumCols]);
-
-  useEffect(() => {
-    if (mode === "highlight") {
-      setSelectedWord(null);
-    }
-  }, [mode, setSelectedWord]);
 
   useEffect(() => {
     setSelectedWord(null);
@@ -87,14 +78,19 @@ const GuesserView = ({
         }
         showPrompt={isYourTurn && stage === "guessing"}
       />
-      <Box flexible overflow="auto" padBottom="loose" padX="normal">
+      <Box
+        flexible
+        overflow="auto"
+        padBottom="loose"
+        padTop="normal"
+        padX="normal"
+      >
         {rows.map((wrds, index) => (
           <Grid key={index} spacing="normal">
             {wrds.map(({ word, type, flipped }) => (
               <GridItem key={word} flexible>
                 <Word
                   flipped={flipped}
-                  highlighted={highlights.includes(word)}
                   selected={word === selectedWord}
                   type={type}
                   word={word}
@@ -102,11 +98,7 @@ const GuesserView = ({
                   onClick={() => {
                     if (flipped) return;
 
-                    if (mode === "highlight") {
-                      onHighlightWord({ word });
-                    } else {
-                      setSelectedWord(selectedWord === word ? null : word);
-                    }
+                    setSelectedWord(selectedWord === word ? null : word);
                   }}
                 />
               </GridItem>
@@ -117,7 +109,7 @@ const GuesserView = ({
       <Box>
         {stage === "guessing" && isYourTurn && (
           <Box flex borderTop style={{ backgroundColor: "#fff" }}>
-            {selectedWord ? (
+            {selectedWord && (
               <Box
                 flexible
                 pad="normal"
@@ -129,32 +121,6 @@ const GuesserView = ({
               >
                 <Text preset="button">Confirm Code: {selectedWord}</Text>
               </Box>
-            ) : (
-              <>
-                <Box
-                  borderRight
-                  flexible
-                  pad="normal"
-                  style={mode === "highlight" ? selectedStyle : null}
-                  textAlign="center"
-                  onClick={() => {
-                    setMode("highlight");
-                  }}
-                >
-                  <Text preset="button">Highlight</Text>
-                </Box>
-                <Box
-                  flexible
-                  pad="normal"
-                  style={mode === "select" ? selectedStyle : null}
-                  textAlign="center"
-                  onClick={() => {
-                    setMode("select");
-                  }}
-                >
-                  <Text preset="button">Select</Text>
-                </Box>
-              </>
             )}
           </Box>
         )}
@@ -171,7 +137,6 @@ GuesserView.propTypes = {
     })
   ).isRequired,
   guessesLeft: PropTypes.number.isRequired,
-  highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
   isYourTurn: PropTypes.bool.isRequired,
   stage: PropTypes.oneOf(["guessing", "writing"]).isRequired,
   words: PropTypes.arrayOf(
@@ -181,7 +146,6 @@ GuesserView.propTypes = {
     })
   ).isRequired,
   yourTeam: PropTypes.oneOf(["A", "B"]).isRequired,
-  onHighlightWord: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
 };
 

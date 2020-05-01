@@ -1,12 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const InlineWord = ({ highlighted, flipped, isLast, result, word }) => {
+const InlineWord = ({ flipped, isLast, result, word }) => {
   return (
     <>
       <span
         style={{
-          backgroundColor: highlighted && !flipped ? "yellow" : null,
           position: "relative",
         }}
       >
@@ -39,7 +38,6 @@ const InlineWord = ({ highlighted, flipped, isLast, result, word }) => {
 InlineWord.propTypes = {
   word: PropTypes.string.isRequired,
   flipped: PropTypes.bool,
-  highlighted: PropTypes.bool,
   isLast: PropTypes.bool,
   result: PropTypes.oneOf(["yours", "theirs", "neutral"]),
 };

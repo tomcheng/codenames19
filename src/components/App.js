@@ -90,17 +90,6 @@ const App = ({ socket }) => {
     [socket, userID]
   );
 
-  const handleHighlightWord = useCallback(
-    ({ word }) => {
-      const user = state?.users?.find((u) => u.id === userID);
-
-      if (!user) return;
-
-      socket.emit("highlight word", { word });
-    },
-    [socket, state, userID]
-  );
-
   const handleJoinRoom = useCallback(
     ({ code, name }) => {
       socket.emit("join room", { code, name, userID });
@@ -148,7 +137,6 @@ const App = ({ socket }) => {
       userID={userID}
       users={state.users}
       onCreateRoom={handleCreateRoom}
-      onHighlightWord={handleHighlightWord}
       onJoinRoom={handleJoinRoom}
       onSetTeams={handleSetTeams}
       onSelectSpymaster={handleSelectSpymaster}

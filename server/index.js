@@ -147,17 +147,6 @@ io.on("connection", (socket) => {
     io.in(room.id).emit("room updated", { room });
   });
 
-  socket.on("highlight word", ({ word }) => {
-    const user = Users.getUser(socket.userID);
-    const room = Rooms.getRoom(socket.roomID);
-
-    if (!room || user.team !== room.turn) return;
-
-    room.highlightWord({ word });
-
-    io.in(room.id).emit("room updated", { room });
-  });
-
   socket.on("select word", ({ word }) => {
     const user = Users.getUser(socket.userID);
     const room = Rooms.getRoom(socket.roomID);

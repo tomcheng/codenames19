@@ -6,7 +6,6 @@ import SpymasterView from "./SpymasterView";
 const Game = ({
   codes,
   guessesLeft,
-  highlights,
   isYourTurn,
   spymasterA,
   spymasterB,
@@ -14,7 +13,6 @@ const Game = ({
   users,
   userID,
   words,
-  onHighlightWord,
   onSelectWord,
   onSubmitCode,
 }) => {
@@ -34,12 +32,10 @@ const Game = ({
     <GuesserView
       codes={codes}
       guessesLeft={guessesLeft}
-      highlights={highlights[you.team]}
       isYourTurn={isYourTurn}
       stage={stage}
       words={words}
       yourTeam={you.team}
-      onHighlightWord={onHighlightWord}
       onSelectWord={onSelectWord}
     />
   );
@@ -47,10 +43,6 @@ const Game = ({
 
 Game.propTypes = {
   codes: PropTypes.array.isRequired,
-  highlights: PropTypes.shape({
-    A: PropTypes.array.isRequired,
-    B: PropTypes.array.isRequired,
-  }).isRequired,
   isYourTurn: PropTypes.bool.isRequired,
   spymasterA: PropTypes.string.isRequired,
   spymasterB: PropTypes.string.isRequired,
@@ -70,7 +62,6 @@ Game.propTypes = {
       word: PropTypes.string.isRequired,
     })
   ).isRequired,
-  onHighlightWord: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
   onSubmitCode: PropTypes.func.isRequired,
   guessesLeft: PropTypes.number,

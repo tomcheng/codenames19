@@ -2,15 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import InlineWord from "./InlineWord";
 
-const Word = ({
-  highlighted,
-  word,
-  selected,
-  yourTeam,
-  type,
-  flipped,
-  onClick,
-}) => {
+const Word = ({ word, selected, yourTeam, type, flipped, onClick }) => {
   return (
     <div
       style={{
@@ -24,7 +16,6 @@ const Word = ({
       <InlineWord
         word={word}
         flipped={flipped}
-        highlighted={highlighted}
         isLast
         result={
           type === "neutral" || type === "bomb"
@@ -40,7 +31,6 @@ const Word = ({
 
 Word.propTypes = {
   flipped: PropTypes.bool.isRequired,
-  highlighted: PropTypes.bool.isRequired,
   selected: PropTypes.bool.isRequired,
   type: PropTypes.oneOf(["A", "B", "bomb", "neutral"]).isRequired,
   word: PropTypes.string.isRequired,

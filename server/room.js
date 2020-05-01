@@ -15,12 +15,7 @@ class Room {
     this.turn = null;
     this.stage = null;
     this.codes = [];
-    this.guesses = [];
     this.guessesLeft = null;
-    this.highlights = {
-      A: [],
-      B: [],
-    };
   }
 
   setTeams() {
@@ -45,12 +40,6 @@ class Room {
     this.stage = "guessing";
     this.codes.push({ code, number, team: this.turn });
     this.guessesLeft = this.round === 1 ? number : number + 1;
-  }
-
-  highlightWord({ word }) {
-    this.highlights[this.turn] = this.highlights[this.turn].includes(word)
-      ? this.highlights[this.turn].filter((w) => w !== word)
-      : this.highlights[this.turn].concat(word);
   }
 
   selectWord({ word }) {
