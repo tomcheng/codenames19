@@ -4,6 +4,7 @@ import chunk from "lodash/chunk";
 import last from "lodash/last";
 import { plc } from "../utils";
 import Box from "./Box";
+import Console from "./Console";
 import { Grid, GridItem } from "./Grid";
 import Word from "./Word";
 import Text from "./Text";
@@ -138,29 +139,19 @@ const GuesserView = ({
             )}
           </Box>
         )}
-        <Box
-          pad="tight"
-          style={{
-            backgroundColor: "#222",
-            borderTop: "1px solid #888",
-            color: "rgb(17, 212, 40)",
-            textShadow: "0 0 3px rgb(17, 212, 40)",
-          }}
-        >
-          <Text preset="code">
-            {!isYourTurn
-              ? `   Awaiting enemy's response...
-
- `
+        <Console
+          lines={
+            !isYourTurn
+              ? ["Awaiting enemy's response..."]
               : stage === "writing"
-              ? `   Awaiting transmission...
-
- `
-              : `   Received: ${lastCode.code} - ${lastCode.number}
-   You have ${plc(guessesLeft, "guess", "guesses")} left.
-> `}
-          </Text>
-        </Box>
+              ? ["Awaiting transmission..."]
+              : [
+                  `Received: ${lastCode.code} - ${lastCode.number}`,
+                  `You have ${plc(guessesLeft, "guess", "guesses")} left.`,
+                ]
+          }
+          showPrompt={isYourTurn && stage === "guessing"}
+        />
       </Box>
     </div>
   );
