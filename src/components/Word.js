@@ -14,9 +14,10 @@ const Word = ({
   return (
     <div
       style={{
+        border: selected ? "1px solid #222" : "1px solid transparent",
         padding: "20px 0",
         textAlign: "center",
-        border: selected ? "1px solid #222" : "1px solid transparent",
+        userSelect: "none",
       }}
       onClick={onClick}
     >
