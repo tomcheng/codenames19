@@ -56,13 +56,7 @@ const GuesserView = ({
   };
 
   return (
-    <Box
-      ref={containerRef}
-      alignItems="stretch"
-      flex
-      flexDirection="column"
-      height="100%"
-    >
+    <Box ref={containerRef} style={{ paddingTop: 80 }}>
       <Console
         lines={
           !isYourTurn
@@ -106,25 +100,23 @@ const GuesserView = ({
           </Grid>
         ))}
       </Box>
-      <Box>
-        {stage === "guessing" && isYourTurn && (
-          <Box flex borderTop style={{ backgroundColor: "#fff" }}>
-            {selectedWord && (
-              <Box
-                flexible
-                pad="normal"
-                style={selectedStyle}
-                textAlign="center"
-                onClick={() => {
-                  onSelectWord({ word: selectedWord });
-                }}
-              >
-                <Text preset="button">Confirm Code: {selectedWord}</Text>
-              </Box>
-            )}
-          </Box>
-        )}
-      </Box>
+      {stage === "guessing" && isYourTurn && (
+        <Box flex style={{ backgroundColor: "#fff" }}>
+          {selectedWord && (
+            <Box
+              flexible
+              pad="normal"
+              style={selectedStyle}
+              textAlign="center"
+              onClick={() => {
+                onSelectWord({ word: selectedWord });
+              }}
+            >
+              <Text preset="button">Confirm Code: {selectedWord}</Text>
+            </Box>
+          )}
+        </Box>
+      )}
     </Box>
   );
 };

@@ -19,6 +19,11 @@ const Console = ({ lines, showPrompt }) => {
     <Box
       pad="tight"
       style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1,
         backgroundColor: "#222",
         color: "rgb(17, 212, 40)",
         textShadow: "0 0 3px rgb(17, 212, 40)",

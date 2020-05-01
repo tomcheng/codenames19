@@ -30,7 +30,7 @@ const SpymasterView = ({
   const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
 
   return (
-    <Box alignItems="stretch" flex flexDirection="column" height="100%">
+    <Box style={{ paddingTop: 80, position: "relative" }}>
       <Console
         lines={
           !isYourTurn
