@@ -91,12 +91,12 @@ const GuesserView = ({
               <GridItem key={word} flexible>
                 <Word
                   flipped={flipped}
-                  selected={word === selectedWord}
+                  selected={isYourTurn && word === selectedWord}
                   type={type}
                   word={word}
                   yourTeam={yourTeam}
                   onClick={() => {
-                    if (flipped) return;
+                    if (flipped || !isYourTurn) return;
 
                     setSelectedWord(selectedWord === word ? null : word);
                   }}
