@@ -30,7 +30,7 @@ const SpymasterView = ({
   const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
 
   return (
-    <Box style={{ paddingTop: 80, position: "relative" }}>
+    <Box style={{ paddingTop: 64, position: "relative" }}>
       <Console
         lines={
           !isYourTurn
@@ -111,7 +111,6 @@ const SpymasterView = ({
                   </Text>
                   <div>
                     <Input
-                      autoFocus
                       disabled={isDisabled}
                       id="code"
                       name="code"

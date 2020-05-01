@@ -56,7 +56,7 @@ const GuesserView = ({
   };
 
   return (
-    <Box ref={containerRef} style={{ paddingTop: 80 }}>
+    <Box ref={containerRef} style={{ paddingTop: 72 }}>
       <Console
         lines={
           !isYourTurn
