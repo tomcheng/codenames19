@@ -41,7 +41,10 @@ const SpymasterView = ({
                   `Transmission sent: ${yourLastCode.code} / ${yourLastCode.number}`,
                 ]
               : []
-            : ["* Send one word and one number.", "* Try not to fuck this up."]
+            : [
+                "* Send one word and one number",
+                "* May God have mercy on your soul",
+              ]
         }
         showPrompt={!isDisabled}
       />
@@ -113,10 +116,11 @@ const SpymasterView = ({
                     <Input
                       disabled={isDisabled}
                       id="code"
-                      name="code"
                       value={isDisabled ? yourLastCode?.code ?? "" : code}
                       onChange={(evt) => {
-                        setCode(evt.target.value);
+                        setCode(
+                          evt.target.value.toUpperCase().replace(/[^A-Z]/g, "")
+                        );
                       }}
                     />
                   </div>
@@ -134,7 +138,6 @@ const SpymasterView = ({
                     <Input
                       disabled={isDisabled}
                       id="number"
-                      name="number"
                       type="number"
                       value={isDisabled ? yourLastCode?.number ?? "" : number}
                       onChange={(evt) => {
