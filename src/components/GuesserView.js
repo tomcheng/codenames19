@@ -55,6 +55,11 @@ const GuesserView = ({
   const containerRef = useRef(null);
   const rows = chunk(words, numCols);
   const lastCode = last(codes);
+  const yourWordsLeft = words.filter((w) => w.type === yourTeam && !w.flipped)
+    .length;
+  const enemyWordsLeft = words.filter(
+    (w) => w.type === (yourTeam === "A" ? "B" : "A") && !w.flipped
+  ).length;
 
   useEffect(() => {
     const handleResize = () => {
@@ -87,9 +92,16 @@ const GuesserView = ({
       <Console
         lines={
           !isYourTurn
-            ? ["Awaiting the enemy's turn..."]
+            ? [
+                "Awaiting The Enemy's turn...",
+                `Alliance: ${yourWordsLeft} left - The Enemy: ${enemyWordsLeft} left`,
+                ``,
+              ]
             : stage === "writing"
-            ? ["Awaiting transmission..."]
+            ? [
+                "Awaiting transmission...",
+                `Alliance: ${yourWordsLeft} left - Enemy: ${enemyWordsLeft} left`,
+              ]
             : [
                 `* Code Received: ${lastCode.code.toUpperCase()} / ${
                   lastCode.number
