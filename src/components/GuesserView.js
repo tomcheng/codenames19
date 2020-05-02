@@ -45,6 +45,7 @@ const GuesserView = ({
   isYourTurn,
   stage,
   words,
+  yourSpymasterName,
   yourTeam,
   onEndTurn,
   onSelectWord,
@@ -99,7 +100,9 @@ const GuesserView = ({
               ]
             : stage === "writing"
             ? [
-                "Awaiting transmission...",
+                `Awaiting transmission${
+                  yourSpymasterName ? ` from ${yourSpymasterName}` : ""
+                }...`,
                 `Alliance: ${yourWordsLeft} left - Enemy: ${enemyWordsLeft} left`,
               ]
             : [
@@ -207,6 +210,7 @@ GuesserView.propTypes = {
   onEndTurn: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
   guessesLeft: PropTypes.number,
+  yourSpymasterName: PropTypes.string,
 };
 
 export default GuesserView;

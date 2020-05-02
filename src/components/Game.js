@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import keyBy from "lodash/keyBy";
 import GuesserView from "./GuesserView";
 import SpymasterView from "./SpymasterView";
 
@@ -17,7 +18,8 @@ const Game = ({
   onSelectWord,
   onSubmitCode,
 }) => {
-  const you = users.find((u) => u.id === userID);
+  const usersByID = keyBy(users, "id");
+  const you = usersByID[userID];
   const isSpymaster = you.id === spymasterA || you.id === spymasterB;
 
   return isSpymaster ? (
@@ -36,6 +38,9 @@ const Game = ({
       isYourTurn={isYourTurn}
       stage={stage}
       words={words}
+      yourSpymasterName={
+        usersByID[you.team === "A" ? spymasterA : spymasterB]?.name
+      }
       yourTeam={you.team}
       onEndTurn={onEndTurn}
       onSelectWord={onSelectWord}
