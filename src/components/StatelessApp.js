@@ -6,6 +6,7 @@ import AppHeader from "./AppHeader";
 import Game from "./Game";
 import Lobby from "./Lobby";
 import SelectTeams from "./SelectTeams";
+import SelectTeamToJoin from "./SelectTeamToJoin";
 import SelectSpymaster from "./SelectSpymaster";
 
 const AppContainer = styled.div`
@@ -48,6 +49,12 @@ const StatelessApp = ({
         <SelectTeams
           users={users}
           onSetTeams={onSetTeams}
+          onSelectTeam={onSelectTeam}
+        />
+      ) : !user.team ? (
+        <SelectTeamToJoin
+          userID={userID}
+          users={users}
           onSelectTeam={onSelectTeam}
         />
       ) : !room.spymasterA || !room.spymasterB ? (

@@ -48,6 +48,7 @@ const Text = styled.div`
   letter-spacing: 0;
   font-size: 17px;
   ${getPresetStyles};
+  font-weight: ${(props) => (props.bold ? 700 : null)};
   color: ${(props) => (props.color === "danger" ? "#bf0000" : null)};
   flex-grow: ${(props) => (props.flexible ? 1 : null)};
   flex-shrink: ${(props) => (props.flexible ? 1 : null)};

@@ -183,7 +183,6 @@ GuesserView.propTypes = {
       number: PropTypes.number.isRequired,
     })
   ).isRequired,
-  guessesLeft: PropTypes.number.isRequired,
   isYourTurn: PropTypes.bool.isRequired,
   stage: PropTypes.oneOf(["guessing", "writing"]).isRequired,
   words: PropTypes.arrayOf(
@@ -195,6 +194,7 @@ GuesserView.propTypes = {
   yourTeam: PropTypes.oneOf(["A", "B"]).isRequired,
   onEndTurn: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
+  guessesLeft: PropTypes.number,
 };
 
 export default GuesserView;

@@ -68,7 +68,6 @@ SelectSpymaster.propTypes = {
       name: PropTypes.string.isRequired,
     })
   ).isRequired,
-  yourSpymasterChosen: PropTypes.bool.isRequired,
   onSelectSpymaster: PropTypes.func.isRequired,
   chosenSpymaster: PropTypes.string,
 };
