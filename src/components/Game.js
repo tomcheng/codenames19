@@ -30,10 +30,13 @@ const Game = ({
     (w) => w.type === (you.team === "A" ? "B" : "A") && !w.flipped
   ).length;
   const humanizedScore = `Alliance: ${yourWordsLeft} left - The Enemy: ${enemyWordsLeft} left`;
+  const gameResult =
+    yourWordsLeft === 0 ? "You won!" : enemyWordsLeft === 0 ? "You ded." : null;
 
   return isSpymaster ? (
     <SpymasterView
       codes={codes}
+      gameResult={gameResult}
       humanizedScore={humanizedScore}
       isYourTurn={isYourTurn}
       stage={stage}
@@ -45,6 +48,7 @@ const Game = ({
   ) : (
     <GuesserView
       codes={codes}
+      gameResult={gameResult}
       guessesLeft={guessesLeft}
       humanizedScore={humanizedScore}
       isYourTurn={isYourTurn}

@@ -41,6 +41,7 @@ const FullButton = ({ children, isBlack, onClick }) => (
 
 const GuesserView = ({
   codes,
+  gameResult,
   guessesLeft,
   humanizedScore,
   isYourTurn,
@@ -88,7 +89,9 @@ const GuesserView = ({
     <Box ref={containerRef} style={{ paddingTop: 72, paddingBottom: 56 }}>
       <Console
         lines={
-          !isYourTurn
+          gameResult
+            ? [gameResult]
+            : !isYourTurn
             ? ["Awaiting The Enemy's turn...", humanizedScore, ``]
             : stage === "writing"
             ? [
@@ -202,6 +205,7 @@ GuesserView.propTypes = {
   yourTeam: PropTypes.oneOf(["A", "B"]).isRequired,
   onEndTurn: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
+  gameResult: PropTypes.string,
   guessesLeft: PropTypes.number,
   yourSpymasterName: PropTypes.string,
 };

@@ -12,6 +12,7 @@ import Text from "./Text";
 
 const SpymasterView = ({
   codes,
+  gameResult,
   humanizedScore,
   isYourTurn,
   stage,
@@ -37,7 +38,9 @@ const SpymasterView = ({
     <Box style={{ paddingTop: 64, position: "relative" }}>
       <Console
         lines={
-          !isYourTurn
+          gameResult
+            ? [gameResult]
+            : !isYourTurn
             ? ["Awaiting the enemy's turn...", humanizedScore]
             : stage === "guessing"
             ? yourLastCode
@@ -189,6 +192,7 @@ SpymasterView.propTypes = {
   ).isRequired,
   yourTeam: PropTypes.oneOf(["A", "B"]).isRequired,
   onSubmitCode: PropTypes.func.isRequired,
+  gameResult: PropTypes.string,
 };
 
 export default SpymasterView;
