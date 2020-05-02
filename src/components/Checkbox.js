@@ -21,7 +21,7 @@ const Checkbox = ({ checked, label }) => {
 };
 
 Checkbox.propTypes = {
-  checked: PropTypes.bool.isRequired,
+  checked: PropTypes.bool,
   label: PropTypes.string,
 };
 

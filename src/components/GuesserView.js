@@ -42,6 +42,7 @@ const FullButton = ({ children, isBlack, onClick }) => (
 const GuesserView = ({
   codes,
   guessesLeft,
+  humanizedScore,
   isYourTurn,
   stage,
   words,
@@ -56,11 +57,6 @@ const GuesserView = ({
   const containerRef = useRef(null);
   const rows = chunk(words, numCols);
   const lastCode = last(codes);
-  const yourWordsLeft = words.filter((w) => w.type === yourTeam && !w.flipped)
-    .length;
-  const enemyWordsLeft = words.filter(
-    (w) => w.type === (yourTeam === "A" ? "B" : "A") && !w.flipped
-  ).length;
 
   useEffect(() => {
     const handleResize = () => {
@@ -93,17 +89,13 @@ const GuesserView = ({
       <Console
         lines={
           !isYourTurn
-            ? [
-                "Awaiting The Enemy's turn...",
-                `Alliance: ${yourWordsLeft} left - The Enemy: ${enemyWordsLeft} left`,
-                ``,
-              ]
+            ? ["Awaiting The Enemy's turn...", humanizedScore, ``]
             : stage === "writing"
             ? [
                 `Awaiting transmission${
                   yourSpymasterName ? ` from ${yourSpymasterName}` : ""
                 }...`,
-                `Alliance: ${yourWordsLeft} left - Enemy: ${enemyWordsLeft} left`,
+                humanizedScore,
               ]
             : [
                 `* Code Received: ${lastCode.code.toUpperCase()} / ${
@@ -198,6 +190,7 @@ GuesserView.propTypes = {
       number: PropTypes.number.isRequired,
     })
   ).isRequired,
+  humanizedScore: PropTypes.string.isRequired,
   isYourTurn: PropTypes.bool.isRequired,
   stage: PropTypes.oneOf(["guessing", "writing"]).isRequired,
   words: PropTypes.arrayOf(

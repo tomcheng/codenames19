@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import last from "lodash/last";
+import { humanizeList } from "../utils";
 import Box from "./Box";
 import Console from "./Console";
 import DocumentSubmit from "./DocumentSubmit";
@@ -11,8 +12,10 @@ import Text from "./Text";
 
 const SpymasterView = ({
   codes,
+  humanizedScore,
   isYourTurn,
   stage,
+  teamNames,
   words,
   yourTeam,
   onSubmitCode,
@@ -35,11 +38,12 @@ const SpymasterView = ({
       <Console
         lines={
           !isYourTurn
-            ? ["Awaiting the enemy's turn..."]
+            ? ["Awaiting the enemy's turn...", humanizedScore]
             : stage === "guessing"
             ? yourLastCode
               ? [
                   `Transmission sent: ${yourLastCode.code} / ${yourLastCode.number}`,
+                  `Awaiting interpretation by ${humanizeList(teamNames)}`,
                 ]
               : []
             : [
@@ -174,7 +178,9 @@ SpymasterView.propTypes = {
       number: PropTypes.number.isRequired,
     })
   ).isRequired,
+  humanizedScore: PropTypes.string.isRequired,
   stage: PropTypes.oneOf(["writing", "guessing"]).isRequired,
+  teamNames: PropTypes.arrayOf(PropTypes.string).isRequired,
   words: PropTypes.arrayOf(
     PropTypes.shape({
       type: PropTypes.oneOf(["A", "B", "neutral", "bomb"]).isRequired,

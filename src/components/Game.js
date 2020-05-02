@@ -21,12 +21,23 @@ const Game = ({
   const usersByID = keyBy(users, "id");
   const you = usersByID[userID];
   const isSpymaster = you.id === spymasterA || you.id === spymasterB;
+  const teamNames = users
+    .filter((u) => u.team === you.team && u.id !== userID)
+    .map((u) => u.name);
+  const yourWordsLeft = words.filter((w) => w.type === you.team && !w.flipped)
+    .length;
+  const enemyWordsLeft = words.filter(
+    (w) => w.type === (you.team === "A" ? "B" : "A") && !w.flipped
+  ).length;
+  const humanizedScore = `Alliance: ${yourWordsLeft} left - The Enemy: ${enemyWordsLeft} left`;
 
   return isSpymaster ? (
     <SpymasterView
       codes={codes}
+      humanizedScore={humanizedScore}
       isYourTurn={isYourTurn}
       stage={stage}
+      teamNames={teamNames}
       words={words}
       yourTeam={you.team}
       onSubmitCode={onSubmitCode}
@@ -35,6 +46,7 @@ const Game = ({
     <GuesserView
       codes={codes}
       guessesLeft={guessesLeft}
+      humanizedScore={humanizedScore}
       isYourTurn={isYourTurn}
       stage={stage}
       words={words}
