@@ -19,6 +19,7 @@ const SpymasterView = ({
 }) => {
   const [code, setCode] = useState("");
   const [number, setNumber] = useState("");
+  const [error, setError] = useState(null);
 
   const yourWords = words.filter((w) => w.type === yourTeam);
   const opponentsWords = words.filter(
@@ -128,6 +129,8 @@ const SpymasterView = ({
                     <Input
                       disabled={isDisabled}
                       type="number"
+                      min={1}
+                      max={9}
                       value={isDisabled ? yourLastCode?.number ?? "" : number}
                       onChange={(evt) => {
                         setNumber(evt.target.value);
@@ -141,8 +144,21 @@ const SpymasterView = ({
         </DocumentWrapper>
         <DocumentSubmit
           disabled={isDisabled}
+          error={error}
           onSubmit={() => {
-            if (!code || !number) return;
+            if (!code) {
+              setError("A code is required");
+              return;
+            }
+            if (!number) {
+              setError("A number is required");
+              return;
+            }
+            if (parseInt(number) < 1 || parseInt(number) > 9) {
+              setError("Number has to be between 1 and 9");
+              return;
+            }
+            setError(null);
             onSubmitCode({ code, number: parseInt(number) });
           }}
         />
