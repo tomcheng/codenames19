@@ -5,9 +5,7 @@ import { humanizeList } from "../utils";
 import { displayWordGroup } from "../consoleUtils";
 import Box from "./Box";
 import Console from "./Console";
-import InlineWord from "./InlineWord";
-import Input from "./Input";
-import Text from "./Text";
+import Keyboard from "./Keyboard";
 
 const SpymasterView = ({
   codes,
@@ -78,7 +76,7 @@ const SpymasterView = ({
         }
         showPrompt={!isDisabled}
       />
-      <Box pad="normal">Keyboard goes here...</Box>
+      <Keyboard />
     </Box>
   );
 };
