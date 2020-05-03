@@ -33,7 +33,7 @@ const Console = ({ lines, showPrompt, typed }) => {
             {parseMarkdown(str).html}
             {index === lines.length - 1 && (
               <>
-                {typed}
+                {showPrompt && typed}
                 {showPrompt && <Blink>_</Blink>}
               </>
             )}

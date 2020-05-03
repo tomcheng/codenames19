@@ -3,12 +3,34 @@ import PropTypes from "prop-types";
 import clamp from "lodash/clamp";
 import compact from "lodash/compact";
 import last from "lodash/last";
+import repeat from "lodash/repeat";
 import { humanizeList } from "../utils";
 import { displayWordGroup } from "../consoleUtils";
 import Box from "./Box";
 import Console from "./Console";
 import AlphabetKeyboard from "./AlphabetKeyboard";
 import NumericKeyboard from "./NumericKeyboard";
+
+const validateCode = (code) => {
+  if (code.trim().length === 0) {
+    return "A code is required";
+  }
+  if (code.trim().includes(" ")) {
+    return "Only one word is permitted";
+  }
+  return null;
+};
+
+const validateNumber = (number) => {
+  if (number.length === 0) {
+    return "A number is required";
+  }
+  if (parseInt(number) > 9) {
+    return "The number has to be less than 9";
+  }
+
+  return null;
+};
 
 const SpymasterView = ({
   codes,
@@ -23,10 +45,12 @@ const SpymasterView = ({
 }) => {
   const [code, setCode] = useState("");
   const [codeDone, setCodeDone] = useState(false);
+  const [codeError, setCodeError] = useState(null);
   const [number, setNumber] = useState("");
+  const [numberError, setNumberError] = useState(null);
   const [numberDone, setNumberDone] = useState(false);
   const [confirm, setConfirm] = useState("");
-  const [error, setError] = useState(null);
+  const [confirmed, setConfirmed] = useState(false);
 
   const allianceWords = words.filter((w) => w.type === yourTeam);
   const enemyWords = words.filter(
@@ -77,12 +101,20 @@ const SpymasterView = ({
                   words: [bomb.word],
                   lineLength: lineLength - 4,
                 }),
-                `**Enter code word:** ${codeDone ? code : ""}`,
-                codeDone && `**Enter number:** ${numberDone ? number : ""}`,
-                numberDone && `**Send code and number?** (Y/N) `,
+                repeat("─", lineLength),
+                " ",
+                (numberError || codeError) &&
+                  `**${numberError || codeError}.**`,
+                (numberError || codeError) && " ",
+                `Enter code word: **${codeDone ? code : ""}**`,
+                codeDone && `Enter number:    **${numberDone ? number : ""}**`,
+                numberDone &&
+                  `Send code and number? (Y/N) **${confirmed ? confirm : ""}**`,
+                confirmed && " ",
+                confirmed && `**Sending: ${code} / ${number}...**`,
               ])
         }
-        showPrompt={!isDisabled}
+        showPrompt={!isDisabled && !confirmed}
         typed={numberDone ? confirm : codeDone ? number : code}
       />
       {numberDone ? (
@@ -96,17 +128,31 @@ const SpymasterView = ({
             );
           }}
           onType={(letter) => {
-            setConfirm(confirm + letter);
+            setConfirm(letter);
           }}
-          onSubmit={() => {}}
+          onSubmit={() => {
+            if (confirm === "Y") {
+              setConfirmed(true);
+            } else {
+              setCode("");
+              setCodeError(null);
+              setCodeDone(false);
+              setNumber("");
+              setNumberError(null);
+              setNumberDone(false);
+              setConfirm("");
+            }
+          }}
         />
       ) : codeDone ? (
         <NumericKeyboard
           keyWidth={keyWidth}
           onCancel={() => {
             setCode("");
+            setCodeError(null);
             setCodeDone(false);
             setNumber("");
+            setNumberError(null);
           }}
           onDelete={() => {
             setNumber(
@@ -117,6 +163,12 @@ const SpymasterView = ({
             setNumber(number + num);
           }}
           onSubmit={() => {
+            const e = validateNumber(number);
+            if (e) {
+              setNumberError(e);
+              setNumber("");
+              return;
+            }
             setNumberDone(true);
           }}
         />
@@ -130,6 +182,12 @@ const SpymasterView = ({
             setCode(code + letter);
           }}
           onSubmit={() => {
+            const e = validateCode(code);
+            if (e) {
+              setCodeError(e);
+              setCode("");
+              return;
+            }
             setCodeDone(true);
           }}
         />
