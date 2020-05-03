@@ -19,6 +19,7 @@ const Console = ({ lines, showPrompt, typed }) => {
   return (
     <Box
       pad="tight"
+      padLeft="normal"
       flexible
       style={{
         backgroundColor: "#000",
@@ -29,7 +30,6 @@ const Console = ({ lines, showPrompt, typed }) => {
       <Text preset="code">
         {lines.map((str, index) => (
           <div key={index}>
-            {` `}
             {parseMarkdown(str).html}
             {index === lines.length - 1 && (
               <>

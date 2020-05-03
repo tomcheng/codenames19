@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import clamp from "lodash/clamp";
 import compact from "lodash/compact";
 import last from "lodash/last";
-import repeat from "lodash/repeat";
 import { humanizeList } from "../utils";
-import { displayWordGroup } from "../consoleUtils";
+import { printSpymasterList } from "../consoleUtils";
 import Box from "./Box";
 import Console from "./Console";
 import AlphabetKeyboard from "./AlphabetKeyboard";
@@ -35,8 +33,10 @@ const validateNumber = (number) => {
 const SpymasterView = ({
   codes,
   gameResult,
-  humanizedScore,
   isYourTurn,
+  keyWidth,
+  lineLength,
+  scoreLines,
   stage,
   teamNames,
   words,
@@ -52,18 +52,10 @@ const SpymasterView = ({
   const [confirm, setConfirm] = useState("");
   const [confirmed, setConfirmed] = useState(false);
 
-  const allianceWords = words.filter((w) => w.type === yourTeam);
-  const enemyWords = words.filter(
-    (w) => w.type === (yourTeam === "A" ? "B" : "A")
-  );
-  const neutralWords = words.filter((w) => w.type === "neutral");
-  const bomb = words.find((w) => w.type === "bomb");
   const isDisabled = !isYourTurn || stage === "guessing";
   const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
 
-  const width = window.innerWidth;
-  const lineLength = width / 8 - 2;
-  const keyWidth = clamp(Math.floor((width - 6) / 10), 36, 56);
+  const listLines = printSpymasterList({ words, yourTeam, lineLength });
 
   return (
     <Box flex flexDirection="column" height="100vh">
@@ -72,46 +64,29 @@ const SpymasterView = ({
           gameResult
             ? [gameResult]
             : !isYourTurn
-            ? ["Awaiting the enemy's turn...", humanizedScore]
+            ? [...scoreLines, ...listLines, "**Awaiting enemy's turn...**"]
             : stage === "guessing"
             ? yourLastCode
               ? [
-                  `Transmission sent: ${yourLastCode.code} / ${yourLastCode.number}`,
-                  `Awaiting interpretation by ${humanizeList(teamNames)}`,
+                  ...scoreLines,
+                  ...listLines,
+                  `**Transmission sent: ${yourLastCode.code} / ${yourLastCode.number}**`,
+                  " ",
+                  `Awaiting response from ${humanizeList(teamNames)}...`,
                 ]
               : []
             : compact([
-                ...displayWordGroup({
-                  title: "Alliance Words",
-                  words: allianceWords.map((w) => w.word),
-                  lineLength: lineLength - 4,
-                }),
-                ...displayWordGroup({
-                  title: "Enemy Words",
-                  words: enemyWords.map((w) => w.word),
-                  lineLength: lineLength - 4,
-                }),
-                ...displayWordGroup({
-                  title: "Neutral Words",
-                  words: neutralWords.map((w) => w.word),
-                  lineLength: lineLength - 4,
-                }),
-                ...displayWordGroup({
-                  title: "Bomb",
-                  words: [bomb.word],
-                  lineLength: lineLength - 4,
-                }),
-                repeat("─", lineLength),
-                " ",
+                ...scoreLines,
+                ...listLines,
                 (numberError || codeError) &&
                   `**${numberError || codeError}.**`,
-                (numberError || codeError) && " ",
                 `Enter code word: **${codeDone ? code : ""}**`,
                 codeDone && `Enter number:    **${numberDone ? number : ""}**`,
                 numberDone &&
                   `Send code and number? (Y/N) **${confirmed ? confirm : ""}**`,
                 confirmed && " ",
-                confirmed && `**Sending: ${code.trim()} / ${number}...**`,
+                confirmed &&
+                  `**Sending Transmission: ${code.trim()} / ${number}...**`,
               ])
         }
         showPrompt={!isDisabled && !confirmed}
@@ -204,7 +179,10 @@ SpymasterView.propTypes = {
       number: PropTypes.number.isRequired,
     })
   ).isRequired,
-  humanizedScore: PropTypes.string.isRequired,
+  isYourTurn: PropTypes.bool.isRequired,
+  keyWidth: PropTypes.number.isRequired,
+  lineLength: PropTypes.number.isRequired,
+  scoreLines: PropTypes.arrayOf(PropTypes.string).isRequired,
   stage: PropTypes.oneOf(["writing", "guessing"]).isRequired,
   teamNames: PropTypes.arrayOf(PropTypes.string).isRequired,
   words: PropTypes.arrayOf(

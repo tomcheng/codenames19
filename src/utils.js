@@ -5,6 +5,7 @@ export const humanizeList = (list) => {
   if (list.length === 0) {
     return "";
   }
+
   if (list.length === 1) {
     return list[0];
   }

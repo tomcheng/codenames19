@@ -1,8 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
+import clamp from "lodash/clamp";
 import keyBy from "lodash/keyBy";
 import GuesserView from "./GuesserView";
 import SpymasterView from "./SpymasterView";
+import { printScore } from "../consoleUtils";
 
 const Game = ({
   codes,
@@ -18,6 +20,10 @@ const Game = ({
   onSelectWord,
   onSubmitCode,
 }) => {
+  const width = window.innerWidth;
+  const lineLength = width / 8 - 2;
+  const keyWidth = clamp(Math.floor((width - 6) / 10), 36, 56);
+
   const usersByID = keyBy(users, "id");
   const you = usersByID[userID];
   const isSpymaster = you.id === spymasterA || you.id === spymasterB;
@@ -29,7 +35,11 @@ const Game = ({
   const enemyWordsLeft = words.filter(
     (w) => w.type === (you.team === "A" ? "B" : "A") && !w.flipped
   ).length;
-  const humanizedScore = `Alliance: ${yourWordsLeft} left - The Enemy: ${enemyWordsLeft} left`;
+  const scoreLines = printScore({
+    yourWordsLeft,
+    enemyWordsLeft,
+    lineLength,
+  });
   const gameResult =
     yourWordsLeft === 0 ? "You won!" : enemyWordsLeft === 0 ? "You ded." : null;
 
@@ -37,8 +47,10 @@ const Game = ({
     <SpymasterView
       codes={codes}
       gameResult={gameResult}
-      humanizedScore={humanizedScore}
       isYourTurn={isYourTurn}
+      keyWidth={keyWidth}
+      lineLength={lineLength}
+      scoreLines={scoreLines}
       stage={stage}
       teamNames={teamNames}
       words={words}
@@ -50,8 +62,8 @@ const Game = ({
       codes={codes}
       gameResult={gameResult}
       guessesLeft={guessesLeft}
-      humanizedScore={humanizedScore}
       isYourTurn={isYourTurn}
+      scoreLines={scoreLines}
       stage={stage}
       words={words}
       yourSpymasterName={
