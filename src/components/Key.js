@@ -37,7 +37,9 @@ const Key = ({ letter, size, widthMultiplier, onClick }) => {
   return (
     <KeyContainer
       size={size}
-      onClick={onClick}
+      onClick={() => {
+        onClick(letter);
+      }}
       style={widthMultiplier ? { width: size * widthMultiplier } : null}
     >
       <KeyWrapper>

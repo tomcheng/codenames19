@@ -77,8 +77,17 @@ const SpymasterView = ({
               ]
         }
         showPrompt={!isDisabled}
+        typed={code}
       />
-      <Keyboard keyWidth={keyWidth} />
+      <Keyboard
+        keyWidth={keyWidth}
+        onDelete={() => {
+          setCode(code.length > 0 ? code.slice(0, code.length - 1) : code);
+        }}
+        onType={(letter) => {
+          setCode(code + letter);
+        }}
+      />
     </Box>
   );
 };

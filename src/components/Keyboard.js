@@ -26,25 +26,45 @@ const Row = styled.div`
   }
 `;
 
-const Keyboard = ({ keyWidth }) => {
+const Keyboard = ({ keyWidth, onDelete, onType }) => {
   return (
     <Container>
       <KeysContainer>
         <Row flex>
           {"QWERTYUIOP".split("").map((letter) => (
-            <Key key={letter} letter={letter} size={keyWidth} />
+            <Key
+              key={letter}
+              letter={letter}
+              size={keyWidth}
+              onClick={onType}
+            />
           ))}
         </Row>
         <Row flex style={{ marginLeft: 0.5 * keyWidth }}>
           {"ASDFGHJKL".split("").map((letter) => (
-            <Key key={letter} letter={letter} size={keyWidth} />
+            <Key
+              key={letter}
+              letter={letter}
+              size={keyWidth}
+              onClick={onType}
+            />
           ))}
         </Row>
         <Row flex style={{ marginLeft: keyWidth }}>
           {"ZXCVBNM".split("").map((letter) => (
-            <Key key={letter} letter={letter} size={keyWidth} />
+            <Key
+              key={letter}
+              letter={letter}
+              size={keyWidth}
+              onClick={onType}
+            />
           ))}
-          <Key letter="Delete" size={keyWidth} widthMultiplier={1.75} />
+          <Key
+            letter="Delete"
+            size={keyWidth}
+            widthMultiplier={1.75}
+            onClick={onDelete}
+          />
         </Row>
       </KeysContainer>
     </Container>
@@ -53,6 +73,8 @@ const Keyboard = ({ keyWidth }) => {
 
 Keyboard.propTypes = {
   keyWidth: PropTypes.number.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onType: PropTypes.func.isRequired,
 };
 
 export default Keyboard;

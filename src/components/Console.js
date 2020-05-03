@@ -15,7 +15,7 @@ const Blink = styled.span`
   animation: ${blink} 1s step-end infinite;
 `;
 
-const Console = ({ lines, showPrompt }) => {
+const Console = ({ lines, showPrompt, typed }) => {
   return (
     <Box
       pad="tight"
@@ -34,6 +34,7 @@ const Console = ({ lines, showPrompt }) => {
           </div>
         ))}
         {`> `}
+        {typed}
         {showPrompt && <Blink>_</Blink>}
       </Text>
     </Box>
@@ -43,6 +44,7 @@ const Console = ({ lines, showPrompt }) => {
 Console.propTypes = {
   lines: PropTypes.arrayOf(PropTypes.string).isRequired,
   showPrompt: PropTypes.bool,
+  typed: PropTypes.string,
 };
 
 export default Console;
