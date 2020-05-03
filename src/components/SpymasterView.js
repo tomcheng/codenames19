@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import clamp from "lodash/clamp";
 import last from "lodash/last";
 import { humanizeList } from "../utils";
 import { displayWordGroup } from "../consoleUtils";
@@ -33,6 +34,7 @@ const SpymasterView = ({
 
   const width = window.innerWidth;
   const lineLength = width / 8 - 3;
+  const keyWidth = clamp(Math.floor((width - 6) / 10), 36, 56);
 
   return (
     <Box flex flexDirection="column" height="100vh">
@@ -76,7 +78,7 @@ const SpymasterView = ({
         }
         showPrompt={!isDisabled}
       />
-      <Keyboard />
+      <Keyboard keyWidth={keyWidth} />
     </Box>
   );
 };
