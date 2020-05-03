@@ -35,9 +35,29 @@ const StatelessApp = ({
   const user = users?.find((u) => u.id === userID);
   const gameStarted = !!room?.turn;
 
+  if (gameStarted) {
+    return (
+      <Game
+        key={room.round}
+        codes={room.codes}
+        isYourTurn={user?.team === room.turn}
+        guessesLeft={room.guessesLeft}
+        spymasterA={room.spymasterA}
+        spymasterB={room.spymasterB}
+        stage={room.stage}
+        users={users}
+        userID={userID}
+        words={room.words}
+        onEndTurn={onEndTurn}
+        onSelectWord={onSelectWord}
+        onSubmitCode={onSubmitCode}
+      />
+    );
+  }
+
   return (
     <AppContainer>
-      {!gameStarted && <AppHeader roomCode={room?.roomCode} />}
+      <AppHeader roomCode={room?.roomCode} />
       {!room ? (
         <Lobby
           initialName={name}
@@ -57,7 +77,7 @@ const StatelessApp = ({
           users={users}
           onSelectTeam={onSelectTeam}
         />
-      ) : !room.spymasterA || !room.spymasterB ? (
+      ) : (
         <SelectSpymaster
           chosenSpymaster={
             user.team === "A" ? room.spymasterA : room.spymasterB
@@ -65,22 +85,6 @@ const StatelessApp = ({
           users={users}
           userID={userID}
           onSelectSpymaster={onSelectSpymaster}
-        />
-      ) : (
-        <Game
-          key={room.round}
-          codes={room.codes}
-          isYourTurn={user?.team === room.turn}
-          guessesLeft={room.guessesLeft}
-          spymasterA={room.spymasterA}
-          spymasterB={room.spymasterB}
-          stage={room.stage}
-          users={users}
-          userID={userID}
-          words={room.words}
-          onEndTurn={onEndTurn}
-          onSelectWord={onSelectWord}
-          onSubmitCode={onSubmitCode}
         />
       )}
     </AppContainer>
