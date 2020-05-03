@@ -15,15 +15,21 @@ const KeysWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: ${(props) => props.keyWidth * 10}px;
 `;
 
 export const KeyboardBackground = ({ children, keyWidth }) => (
   <KeyboardContext.Provider value={keyWidth}>
     <Container>
-      <KeysWrapper>{children}</KeysWrapper>
+      <KeysWrapper keyWidth={keyWidth}>{children}</KeysWrapper>
     </Container>
   </KeyboardContext.Provider>
 );
+
+KeyboardBackground.propTypes = {
+  children: PropTypes.node.isRequired,
+  keyWidth: PropTypes.number.isRequired,
+};
 
 const StyledRow = styled.div`
   border-radius: 4px;
@@ -37,12 +43,17 @@ export const KeysRow = ({ children, offset }) => {
   return (
     <KeyboardContext.Consumer>
       {(value) => (
-        <StyledRow style={offset ? { marginLeft: offset * value } : null}>
+        <StyledRow style={offset ? { marginLeft: offset * value - 1 } : null}>
           {children}
         </StyledRow>
       )}
     </KeyboardContext.Consumer>
   );
+};
+
+KeysRow.propTypes = {
+  children: PropTypes.node.isRequired,
+  offset: PropTypes.number,
 };
 
 const KeyContainer = styled.div`
@@ -99,5 +110,5 @@ export const Key = ({ letter, widthMultiplier, onClick }) => {
 Key.propTypes = {
   letter: PropTypes.string.isRequired,
   widthMultiplier: PropTypes.number,
-  onClick: PropTypes.func,
+  onClick: PropTypes.func.isRequired,
 };

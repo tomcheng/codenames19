@@ -82,7 +82,7 @@ const SpymasterView = ({
         typed={code}
       />
       {codeDone ? (
-        <NumericKeyboard />
+        <NumericKeyboard keyWidth={keyWidth} />
       ) : (
         <AlphabetKeyboard
           keyWidth={keyWidth}
