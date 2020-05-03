@@ -1,5 +1,4 @@
 import React from "react";
-import repeat from "lodash/repeat";
 
 export const parseMarkdown = (str) => {
   const text = str.replace(/(\*\*)(.*)\1/g, "$2");

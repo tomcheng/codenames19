@@ -111,7 +111,7 @@ const SpymasterView = ({
                 numberDone &&
                   `Send code and number? (Y/N) **${confirmed ? confirm : ""}**`,
                 confirmed && " ",
-                confirmed && `**Sending: ${code} / ${number}...**`,
+                confirmed && `**Sending: ${code.trim()} / ${number}...**`,
               ])
         }
         showPrompt={!isDisabled && !confirmed}
@@ -133,6 +133,7 @@ const SpymasterView = ({
           onSubmit={() => {
             if (confirm === "Y") {
               setConfirmed(true);
+              onSubmitCode({ code: code.trim(), number: parseInt(number) });
             } else {
               setCode("");
               setCodeError(null);
