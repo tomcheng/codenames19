@@ -1,6 +1,7 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
 import PropTypes from "prop-types";
+import { parseMarkdown } from "../consoleUtils";
 import Box from "./Box";
 import Text from "./Text";
 
@@ -18,21 +19,21 @@ const Console = ({ lines, showPrompt }) => {
   return (
     <Box
       pad="tight"
+      flexible
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1,
         backgroundColor: "#000",
         color: "rgb(17, 212, 40)",
         textShadow: "0 0 3px rgb(17, 212, 40)",
       }}
     >
       <Text preset="code">
-        {`   ${lines[0] || ""}
-   ${lines[1] || ""}
-${showPrompt ? ">" : " "}  ${lines[2] || ""}`}
+        {lines.map((str, index) => (
+          <div key={index}>
+            {`  `}
+            {parseMarkdown(str).html}
+          </div>
+        ))}
+        {`> `}
         {showPrompt && <Blink>_</Blink>}
       </Text>
     </Box>

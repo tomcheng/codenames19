@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import last from "lodash/last";
 import { humanizeList } from "../utils";
+import { displayWordGroup } from "../consoleUtils";
 import Box from "./Box";
 import Console from "./Console";
-import DocumentSubmit from "./DocumentSubmit";
-import DocumentWrapper from "./DocumentWrapper";
 import InlineWord from "./InlineWord";
 import Input from "./Input";
 import Text from "./Text";
@@ -25,8 +24,8 @@ const SpymasterView = ({
   const [number, setNumber] = useState("");
   const [error, setError] = useState(null);
 
-  const yourWords = words.filter((w) => w.type === yourTeam);
-  const opponentsWords = words.filter(
+  const allianceWords = words.filter((w) => w.type === yourTeam);
+  const enemyWords = words.filter(
     (w) => w.type === (yourTeam === "A" ? "B" : "A")
   );
   const neutralWords = words.filter((w) => w.type === "neutral");
@@ -34,8 +33,11 @@ const SpymasterView = ({
   const isDisabled = !isYourTurn || stage === "guessing";
   const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
 
+  const width = window.innerWidth;
+  const lineLength = width / 8 - 3;
+
   return (
-    <Box style={{ paddingTop: 64, position: "relative" }}>
+    <Box flex flexDirection="column" height="100vh">
       <Console
         lines={
           gameResult
@@ -50,126 +52,33 @@ const SpymasterView = ({
                 ]
               : []
             : [
-                "* Send one word and one number",
-                "* May God have mercy on your soul",
+                ...displayWordGroup({
+                  title: "Alliance Words",
+                  words: allianceWords.map((w) => w.word),
+                  lineLength: lineLength - 4,
+                }),
+                ...displayWordGroup({
+                  title: "Enemy Words",
+                  words: enemyWords.map((w) => w.word),
+                  lineLength: lineLength - 4,
+                }),
+                ...displayWordGroup({
+                  title: "Neutral Words",
+                  words: neutralWords.map((w) => w.word),
+                  lineLength: lineLength - 4,
+                }),
+                ...displayWordGroup({
+                  title: "Bomb",
+                  words: [bomb.word],
+                  lineLength: lineLength - 4,
+                }),
+                "Send one word and one number",
+                "May God have mercy on your soul",
               ]
         }
         showPrompt={!isDisabled}
       />
-      <Box flexible overflow="auto">
-        <DocumentWrapper title="Sensitive - Do Not Distribute">
-          <Box flexible padX="loose" padY="normal">
-            <Box padBottom="normal">
-              <div>
-                <Text preset="label">Alliance's Words:</Text>
-              </div>
-              <div>
-                {yourWords.map((word, index) => (
-                  <InlineWord
-                    key={word.word}
-                    {...word}
-                    isLast={index === yourWords.length - 1}
-                  />
-                ))}
-              </div>
-            </Box>
-            <Box padBottom="normal">
-              <div>
-                <Text preset="label">Enemy's Words:</Text>
-              </div>
-              <div>
-                {opponentsWords.map((word, index) => (
-                  <InlineWord
-                    key={word.word}
-                    {...word}
-                    isLast={index === opponentsWords.length - 1}
-                  />
-                ))}
-              </div>
-            </Box>
-            <Box padBottom="normal">
-              <div>
-                <Text preset="label">Neutral Words:</Text>
-              </div>
-              <div>
-                {neutralWords.map((word, index) => (
-                  <InlineWord
-                    key={word.word}
-                    {...word}
-                    isLast={index === neutralWords.length - 1}
-                  />
-                ))}
-              </div>
-            </Box>
-            <Box padBottom="normal">
-              <div>
-                <Text preset="label">Bomb:</Text>
-              </div>
-              <div>
-                <InlineWord {...bomb} isLast />
-              </div>
-            </Box>
-            <Box border style={{ margin: "8px -16px -16px" }}>
-              <Box flex>
-                <Box borderRight pad="tight" padTop="x-tight" flexible>
-                  <Text preset="label" faded={isDisabled}>
-                    Code Word
-                  </Text>
-                  <div>
-                    <Input
-                      autocomplete="off"
-                      disabled={isDisabled}
-                      value={isDisabled ? yourLastCode?.code ?? "" : code}
-                      onChange={(evt) => {
-                        setCode(
-                          evt.target.value.toUpperCase().replace(/[^A-Z]/g, "")
-                        );
-                      }}
-                    />
-                  </div>
-                </Box>
-                <Box pad="tight" padTop="x-tight" width={120}>
-                  <Text preset="label" faded={isDisabled}>
-                    Number
-                  </Text>
-                  <div>
-                    <Input
-                      disabled={isDisabled}
-                      type="number"
-                      min={1}
-                      max={9}
-                      value={isDisabled ? yourLastCode?.number ?? "" : number}
-                      onChange={(evt) => {
-                        setNumber(evt.target.value);
-                      }}
-                    />
-                  </div>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
-        </DocumentWrapper>
-        <DocumentSubmit
-          disabled={isDisabled}
-          error={error}
-          onSubmit={() => {
-            if (!code) {
-              setError("A code is required");
-              return;
-            }
-            if (!number) {
-              setError("A number is required");
-              return;
-            }
-            if (parseInt(number) < 1 || parseInt(number) > 9) {
-              setError("Number has to be between 1 and 9");
-              return;
-            }
-            setError(null);
-            onSubmitCode({ code, number: parseInt(number) });
-          }}
-        />
-      </Box>
+      <Box pad="normal">Keyboard goes here...</Box>
     </Box>
   );
 };

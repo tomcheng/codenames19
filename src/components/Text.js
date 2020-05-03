@@ -24,11 +24,11 @@ const getPresetStyles = (props) => {
 `;
     case "code":
       return `
-  white-space: pre;
-  font-family: "Courier", monospace;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 20px;
+  white-space: pre-wrap;
+  font-family: "IBM Plex Mono", "Courier", monospace;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 16px;
 `;
     case "document-title":
       return `  
