@@ -36,17 +36,5 @@ export const displayWordGroup = ({ title, words, lineLength }) => {
     }
   });
 
-  return [`**${title.toUpperCase()}**`, ...lines, ""];
-};
-
-export const addBox = ({ lines, lineLength }) => {
-  const newLines = [`┌${repeat("─", lineLength - 2)}┐`];
-
-  lines.forEach((line) => {
-    newLines.push(`│ ${line}${repeat(" ", lineLength - (line.length + 4))} │`);
-  });
-
-  newLines.push(`└${repeat("─", lineLength - 2)}┘`);
-
-  return newLines;
+  return [`**${title.toUpperCase()}**`, ...lines, " "];
 };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import clamp from "lodash/clamp";
+import compact from "lodash/compact";
 import last from "lodash/last";
 import { humanizeList } from "../utils";
 import { displayWordGroup } from "../consoleUtils";
@@ -23,6 +24,8 @@ const SpymasterView = ({
   const [code, setCode] = useState("");
   const [codeDone, setCodeDone] = useState(false);
   const [number, setNumber] = useState("");
+  const [numberDone, setNumberDone] = useState(false);
+  const [confirm, setConfirm] = useState("");
   const [error, setError] = useState(null);
 
   const allianceWords = words.filter((w) => w.type === yourTeam);
@@ -35,7 +38,7 @@ const SpymasterView = ({
   const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
 
   const width = window.innerWidth;
-  const lineLength = width / 8 - 3;
+  const lineLength = width / 8 - 2;
   const keyWidth = clamp(Math.floor((width - 6) / 10), 36, 56);
 
   return (
@@ -53,7 +56,7 @@ const SpymasterView = ({
                   `Awaiting interpretation by ${humanizeList(teamNames)}`,
                 ]
               : []
-            : [
+            : compact([
                 ...displayWordGroup({
                   title: "Alliance Words",
                   words: allianceWords.map((w) => w.word),
@@ -74,15 +77,49 @@ const SpymasterView = ({
                   words: [bomb.word],
                   lineLength: lineLength - 4,
                 }),
-                "Send one word and one number",
-                "May God have mercy on your soul",
-              ]
+                `**Enter code word:** ${codeDone ? code : ""}`,
+                codeDone && `**Enter number:** ${numberDone ? number : ""}`,
+                numberDone && `**Send code and number?** (Y/N) `,
+              ])
         }
         showPrompt={!isDisabled}
-        typed={code}
+        typed={numberDone ? confirm : codeDone ? number : code}
       />
-      {codeDone ? (
-        <NumericKeyboard keyWidth={keyWidth} />
+      {numberDone ? (
+        <AlphabetKeyboard
+          keyWidth={keyWidth}
+          onDelete={() => {
+            setConfirm(
+              confirm.length > 0
+                ? confirm.slice(0, confirm.length - 1)
+                : confirm
+            );
+          }}
+          onType={(letter) => {
+            setConfirm(confirm + letter);
+          }}
+          onSubmit={() => {}}
+        />
+      ) : codeDone ? (
+        <NumericKeyboard
+          keyWidth={keyWidth}
+          onCancel={() => {
+            setCode("");
+            setCodeDone(false);
+            setNumber("");
+          }}
+          onDelete={() => {
+            setNumber(
+              number.length > 0 ? number.slice(0, number.length - 1) : number
+            );
+          }}
+          onType={(num) => {
+            setNumber(number + num);
+          }}
+          onSubmit={() => {
+            setNumberDone(true);
+          }}
+        />
       ) : (
         <AlphabetKeyboard
           keyWidth={keyWidth}

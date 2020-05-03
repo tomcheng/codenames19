@@ -29,13 +29,16 @@ const Console = ({ lines, showPrompt, typed }) => {
       <Text preset="code">
         {lines.map((str, index) => (
           <div key={index}>
-            {`  `}
+            {` `}
             {parseMarkdown(str).html}
+            {index === lines.length - 1 && (
+              <>
+                {typed}
+                {showPrompt && <Blink>_</Blink>}
+              </>
+            )}
           </div>
         ))}
-        {`> `}
-        {typed}
-        {showPrompt && <Blink>_</Blink>}
       </Text>
     </Box>
   );
