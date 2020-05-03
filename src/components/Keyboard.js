@@ -1,80 +1,103 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import Key from "./Key";
+
+const KeyboardContext = React.createContext();
 
 const Container = styled.div`
   background: linear-gradient(to bottom, #e5e2e1, #f5f3f1, #e5e2e1);
-  padding: 8px 0 45px;
+  padding: 10px 0 8px;
   display: flex;
   justify-content: center;
 `;
 
-const KeysContainer = styled.div`
+const KeysWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 `;
 
-const Row = styled.div`
+export const KeyboardBackground = ({ children, keyWidth }) => (
+  <KeyboardContext.Provider value={keyWidth}>
+    <Container>
+      <KeysWrapper>{children}</KeysWrapper>
+    </Container>
+  </KeyboardContext.Provider>
+);
+
+const StyledRow = styled.div`
   border-radius: 4px;
   background-color: #4c4b47;
   display: flex;
   padding: 1px;
-  & + & {
-    margin-top: -2px;
-  }
+  margin: -2px -1px 0;
 `;
 
-const Keyboard = ({ keyWidth, onDelete, onType }) => {
+export const KeysRow = ({ children, offset }) => {
   return (
-    <Container>
-      <KeysContainer>
-        <Row flex>
-          {"QWERTYUIOP".split("").map((letter) => (
-            <Key
-              key={letter}
-              letter={letter}
-              size={keyWidth}
-              onClick={onType}
-            />
-          ))}
-        </Row>
-        <Row flex style={{ marginLeft: 0.5 * keyWidth }}>
-          {"ASDFGHJKL".split("").map((letter) => (
-            <Key
-              key={letter}
-              letter={letter}
-              size={keyWidth}
-              onClick={onType}
-            />
-          ))}
-        </Row>
-        <Row flex style={{ marginLeft: keyWidth }}>
-          {"ZXCVBNM".split("").map((letter) => (
-            <Key
-              key={letter}
-              letter={letter}
-              size={keyWidth}
-              onClick={onType}
-            />
-          ))}
-          <Key
-            letter="Delete"
-            size={keyWidth}
-            widthMultiplier={1.75}
-            onClick={onDelete}
-          />
-        </Row>
-      </KeysContainer>
-    </Container>
+    <KeyboardContext.Consumer>
+      {(value) => (
+        <StyledRow style={offset ? { marginLeft: offset * value } : null}>
+          {children}
+        </StyledRow>
+      )}
+    </KeyboardContext.Consumer>
   );
 };
 
-Keyboard.propTypes = {
-  keyWidth: PropTypes.number.isRequired,
-  onDelete: PropTypes.func.isRequired,
-  onType: PropTypes.func.isRequired,
+const KeyContainer = styled.div`
+  padding: 1px;
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size - 2}px;
+  display: flex;
+  align-items: stretch;
+`;
+const KeyWrapper = styled.div`
+  align-items: stretch;
+  background: #d3cfcc;
+  border-color: #ece8e4 #dedad6 #c9c4c4;
+  border-style: solid;
+  border-width: 2px 5px 6px;
+  border-radius: 3px;
+  display: flex;
+  flex-grow: 1;
+`;
+
+const KeyCap = styled.div`
+  flex-grow: 1;
+  padding: 4px 0 0 6px;
+  font-size: 12px;
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  line-height: 1;
+  background: linear-gradient(to right, #e5e2e1, #eaeaea, #e5e2e1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+  position: relative;
+`;
+
+export const Key = ({ letter, widthMultiplier, onClick }) => {
+  return (
+    <KeyboardContext.Consumer>
+      {(value) => (
+        <KeyContainer
+          size={value}
+          onClick={() => {
+            onClick(letter);
+          }}
+          style={widthMultiplier ? { width: value * widthMultiplier } : null}
+        >
+          <KeyWrapper>
+            <KeyCap>{letter}</KeyCap>
+          </KeyWrapper>
+        </KeyContainer>
+      )}
+    </KeyboardContext.Consumer>
+  );
 };
 
-export default Keyboard;
+Key.propTypes = {
+  letter: PropTypes.string.isRequired,
+  widthMultiplier: PropTypes.number,
+  onClick: PropTypes.func,
+};

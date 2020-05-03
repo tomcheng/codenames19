@@ -6,7 +6,8 @@ import { humanizeList } from "../utils";
 import { displayWordGroup } from "../consoleUtils";
 import Box from "./Box";
 import Console from "./Console";
-import Keyboard from "./Keyboard";
+import AlphabetKeyboard from "./AlphabetKeyboard";
+import NumericKeyboard from "./NumericKeyboard";
 
 const SpymasterView = ({
   codes,
@@ -20,6 +21,7 @@ const SpymasterView = ({
   onSubmitCode,
 }) => {
   const [code, setCode] = useState("");
+  const [codeDone, setCodeDone] = useState(false);
   const [number, setNumber] = useState("");
   const [error, setError] = useState(null);
 
@@ -79,15 +81,22 @@ const SpymasterView = ({
         showPrompt={!isDisabled}
         typed={code}
       />
-      <Keyboard
-        keyWidth={keyWidth}
-        onDelete={() => {
-          setCode(code.length > 0 ? code.slice(0, code.length - 1) : code);
-        }}
-        onType={(letter) => {
-          setCode(code + letter);
-        }}
-      />
+      {codeDone ? (
+        <NumericKeyboard />
+      ) : (
+        <AlphabetKeyboard
+          keyWidth={keyWidth}
+          onDelete={() => {
+            setCode(code.length > 0 ? code.slice(0, code.length - 1) : code);
+          }}
+          onType={(letter) => {
+            setCode(code + letter);
+          }}
+          onSubmit={() => {
+            setCodeDone(true);
+          }}
+        />
+      )}
     </Box>
   );
 };
