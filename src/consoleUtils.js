@@ -3,7 +3,7 @@ import compact from "lodash/compact";
 import countBy from "lodash/countBy";
 import repeat from "lodash/repeat";
 import last from "lodash/last";
-import { humanizeList } from "./utils";
+import { humanizeList, plc } from "./utils";
 
 export const parseMarkdown = (str) => {
   const text = str.replace(/(\*\*)(.*)\1/g, "$2");
@@ -111,17 +111,22 @@ export const printGuesserWords = ({ words, yourTeam, lineLength }) => {
 };
 
 export const printGuesserGuessing = ({
+  code,
   confirmation,
   confirmed,
   error,
+  guessesLeft,
   number,
   selected,
   words,
 }) => {
   return [
+    `**Transmission received: ${code.code} / ${code.number}**`,
+    " ",
     error && `**${error}.**`,
+    `You have ${plc(guessesLeft, "guess", "guesses")} remaining.`,
     `Enter selection: ${
-      selected ? `**${number}** (${words[parseInt(number) - 1].word})` : ""
+      selected ? `**${number}** - ${words[parseInt(number) - 1].word}` : ""
     }`,
     selected && `Are you sure? (Y/N) ${confirmed ? `**${confirmation}**` : ""}`,
     confirmed && " ",

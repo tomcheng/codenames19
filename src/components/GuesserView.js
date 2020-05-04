@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import compact from "lodash/compact";
+import last from "lodash/last";
 import Box from "./Box";
 import Console from "./Console";
 import { GameDimensionsConsumer } from "./GameDimensions";
@@ -24,7 +25,9 @@ const validateNumber = ({ selectedWord }) => {
   return null;
 };
 const GuesserView = ({
+  codes,
   gameResult,
+  guessesLeft,
   isYourTurn,
   stage,
   words,
@@ -52,9 +55,11 @@ const GuesserView = ({
                     ...printGuesserWords({ words, yourTeam, lineLength }),
                     ...(isYourTurn && stage === "guessing"
                       ? printGuesserGuessing({
+                          code: last(codes),
                           confirmation,
                           confirmed,
                           error,
+                          guessesLeft,
                           number,
                           selected,
                           words,
