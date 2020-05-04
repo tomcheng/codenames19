@@ -155,7 +155,7 @@ export const printSpymasterWriting = ({
   code,
   codeDone,
   codeError,
-  confirm,
+  confirmation,
   confirmed,
   number,
   numberDone,
@@ -165,7 +165,8 @@ export const printSpymasterWriting = ({
     (numberError || codeError) && `**${numberError || codeError}.**`,
     `Enter code word: **${codeDone ? code : ""}**`,
     codeDone && `Enter number:    **${numberDone ? number : ""}**`,
-    numberDone && `Send code and number? (Y/N) **${confirmed ? confirm : ""}**`,
+    numberDone &&
+      `Send code and number? (Y/N) **${confirmed ? confirmation : ""}**`,
     confirmed && " ",
     confirmed && `**Sending Transmission: ${code.trim()} / ${number}...**`,
   ]);

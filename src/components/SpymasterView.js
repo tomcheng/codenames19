@@ -50,10 +50,10 @@ const SpymasterView = ({
   const [number, setNumber] = useState("");
   const [numberError, setNumberError] = useState(null);
   const [numberDone, setNumberDone] = useState(false);
-  const [confirm, setConfirm] = useState("");
+  const [confirmation, setConfirmation] = useState("");
   const [confirmed, setConfirmed] = useState(false);
 
-  const isDisabled = !isYourTurn || stage === "guessing";
+  const disabled = !isYourTurn || stage === "guessing" || confirmed;
 
   return (
     <Box flex flexDirection="column" height="100vh">
@@ -71,7 +71,7 @@ const SpymasterView = ({
                           code,
                           codeDone,
                           codeError,
-                          confirm,
+                          confirmation,
                           confirmed,
                           number,
                           numberDone,
@@ -84,25 +84,26 @@ const SpymasterView = ({
                     !isYourTurn && "**Awaiting enemy's turn...**",
                   ])
             }
-            showPrompt={!isDisabled && !confirmed}
-            typed={numberDone ? confirm : codeDone ? number : code}
+            showPrompt={!disabled}
+            typed={numberDone ? confirmation : codeDone ? number : code}
           />
         )}
       </GameDimensionsConsumer>
       {numberDone ? (
         <AlphabetKeyboard
+          disabled={disabled}
           onDelete={() => {
-            setConfirm(
-              confirm.length > 0
-                ? confirm.slice(0, confirm.length - 1)
-                : confirm
+            setConfirmation(
+              confirmation.length > 0
+                ? confirmation.slice(0, confirmation.length - 1)
+                : confirmation
             );
           }}
           onType={(letter) => {
-            setConfirm(letter);
+            setConfirmation(letter);
           }}
           onSubmit={() => {
-            if (confirm === "Y") {
+            if (confirmation === "Y") {
               setConfirmed(true);
               onSubmitCode({ code: code.trim(), number: parseInt(number) });
             } else {
@@ -112,12 +113,13 @@ const SpymasterView = ({
               setNumber("");
               setNumberError(null);
               setNumberDone(false);
-              setConfirm("");
+              setConfirmation("");
             }
           }}
         />
       ) : codeDone ? (
         <NumericKeyboard
+          disabled={disabled}
           onCancel={() => {
             setCode("");
             setCodeError(null);
@@ -145,6 +147,7 @@ const SpymasterView = ({
         />
       ) : (
         <AlphabetKeyboard
+          disabled={disabled}
           onDelete={() => {
             setCode(code.length > 0 ? code.slice(0, code.length - 1) : code);
           }}

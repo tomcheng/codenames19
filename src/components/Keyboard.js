@@ -19,10 +19,10 @@ const KeysWrapper = styled.div`
   width: ${(props) => props.keyWidth * 10}px;
 `;
 
-export const KeyboardBackground = ({ children }) => (
+export const KeyboardBackground = ({ children, disabled }) => (
   <GameDimensionsConsumer>
     {({ keyWidth }) => (
-      <KeyboardContext.Provider value={keyWidth}>
+      <KeyboardContext.Provider value={{ disabled }}>
         <Container>
           <KeysWrapper keyWidth={keyWidth}>{children}</KeysWrapper>
         </Container>
@@ -46,23 +46,30 @@ const BORDER_RADII = {
 };
 
 const StyledRow = styled.div`
-  border-radius: ${(props) => BORDER_RADII[props.round]};
   background-color: #4c4b47;
+  border-radius: ${(props) => BORDER_RADII[props.round]};
   display: flex;
-  padding: 1px;
   margin: -2px -1px 0;
+  transition: opacity 0.15s ease-in-out;
+  opacity: ${(props) => (props.disabled ? 0.4 : null)};
+  padding: 1px;
 `;
 
 export const KeysRow = ({ children, offset, round }) => {
   return (
     <GameDimensionsConsumer>
       {({ keyWidth }) => (
-        <StyledRow
-          round={round}
-          style={offset ? { marginLeft: offset * keyWidth - 1 } : null}
-        >
-          {children}
-        </StyledRow>
+        <KeyboardContext.Consumer>
+          {({ disabled }) => (
+            <StyledRow
+              disabled={disabled}
+              round={round}
+              style={offset ? { marginLeft: offset * keyWidth - 1 } : null}
+            >
+              {children}
+            </StyledRow>
+          )}
+        </KeyboardContext.Consumer>
       )}
     </GameDimensionsConsumer>
   );
@@ -113,17 +120,24 @@ export const Key = ({ letter, widthMultiplier, onClick }) => {
   return (
     <GameDimensionsConsumer>
       {({ keyWidth }) => (
-        <KeyContainer
-          size={keyWidth}
-          onClick={() => {
-            onClick(letter);
-          }}
-          style={widthMultiplier ? { width: keyWidth * widthMultiplier } : null}
-        >
-          <KeyWrapper>
-            <KeyCap>{letter}</KeyCap>
-          </KeyWrapper>
-        </KeyContainer>
+        <KeyboardContext.Consumer>
+          {({ disabled }) => (
+            <KeyContainer
+              size={keyWidth}
+              onClick={() => {
+                if (disabled) return;
+                onClick(letter);
+              }}
+              style={
+                widthMultiplier ? { width: keyWidth * widthMultiplier } : null
+              }
+            >
+              <KeyWrapper>
+                <KeyCap>{letter}</KeyCap>
+              </KeyWrapper>
+            </KeyContainer>
+          )}
+        </KeyboardContext.Consumer>
       )}
     </GameDimensionsConsumer>
   );

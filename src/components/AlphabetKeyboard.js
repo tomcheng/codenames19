@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import Box from "./Box";
 import { Key, KeyboardBackground, KeysRow } from "./Keyboard";
 
-const AlphabetKeyboard = ({ onDelete, onType, onSubmit }) => {
+const AlphabetKeyboard = ({ disabled, onDelete, onType, onSubmit }) => {
   return (
-    <KeyboardBackground>
+    <KeyboardBackground disabled={disabled}>
       <KeysRow>
         {"QWERTYUIOP".split("").map((letter) => (
           <Key key={letter} letter={letter} onClick={onType} />
@@ -38,6 +38,7 @@ AlphabetKeyboard.propTypes = {
   onDelete: PropTypes.func.isRequired,
   onType: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 };
 
 export default AlphabetKeyboard;

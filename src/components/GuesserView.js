@@ -12,23 +12,32 @@ import {
 import NumericKeyboard from "./NumericKeyboard";
 import AlphabetKeyboard from "./AlphabetKeyboard";
 
-const validateNumber = ({ number, words }) => {
-  if (!words[parseInt(number) - 1]) {
+const validateNumber = ({ selectedWord }) => {
+  if (!selectedWord) {
     return "Number must correspond to a word";
   }
 
-  if (words[parseInt(number) - 1].flipped) {
+  if (selectedWord.flipped) {
     return "Word has already been chosen";
   }
 
   return null;
 };
-const GuesserView = ({ gameResult, isYourTurn, stage, words, yourTeam }) => {
+const GuesserView = ({
+  gameResult,
+  isYourTurn,
+  stage,
+  words,
+  yourTeam,
+  onSelectWord,
+}) => {
   const [number, setNumber] = useState("");
   const [error, setError] = useState(null);
   const [selected, setSelected] = useState(false);
   const [confirmation, setConfirmation] = useState("");
   const [confirmed, setConfirmed] = useState(false);
+  const selectedWord = number ? words[parseInt(number) - 1] : null;
+  const disabled = !isYourTurn || stage === "writing" || confirmed;
 
   return (
     <Box flex flexDirection="column" height="100vh">
@@ -53,13 +62,14 @@ const GuesserView = ({ gameResult, isYourTurn, stage, words, yourTeam }) => {
                       : []),
                   ])
             }
-            showPrompt={isYourTurn && stage === "guessing" && !confirmed}
+            showPrompt={!disabled}
             typed={selected ? confirmation : number}
           />
         )}
       </GameDimensionsConsumer>
       {selected ? (
         <AlphabetKeyboard
+          disabled={disabled}
           onType={(letter) => {
             setConfirmation(letter);
           }}
@@ -69,6 +79,7 @@ const GuesserView = ({ gameResult, isYourTurn, stage, words, yourTeam }) => {
           onSubmit={() => {
             if (confirmation === "Y") {
               setConfirmed(true);
+              onSelectWord({ word: selectedWord.word });
             } else {
               setNumber("");
               setError(null);
@@ -79,6 +90,7 @@ const GuesserView = ({ gameResult, isYourTurn, stage, words, yourTeam }) => {
         />
       ) : (
         <NumericKeyboard
+          disabled={disabled}
           onDelete={() => {
             setNumber(
               number.length > 0 ? number.slice(0, number.length - 1) : ""
@@ -88,7 +100,7 @@ const GuesserView = ({ gameResult, isYourTurn, stage, words, yourTeam }) => {
             setNumber(number + num);
           }}
           onSubmit={() => {
-            const e = validateNumber({ number, words });
+            const e = validateNumber({ selectedWord });
             if (e) {
               setError(e);
               setNumber("");

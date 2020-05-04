@@ -3,9 +3,15 @@ import PropTypes from "prop-types";
 import { Key, KeyboardBackground, KeysRow } from "./Keyboard";
 import Box from "./Box";
 
-const NumericKeyboard = ({ onCancel, onDelete, onSubmit, onType }) => {
+const NumericKeyboard = ({
+  disabled,
+  onCancel,
+  onDelete,
+  onSubmit,
+  onType,
+}) => {
   return (
-    <KeyboardBackground>
+    <KeyboardBackground disabled={disabled}>
       <Box flex>
         {onCancel && (
           <KeysRow>
@@ -46,6 +52,7 @@ NumericKeyboard.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   onType: PropTypes.func.isRequired,
   onCancel: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default NumericKeyboard;
