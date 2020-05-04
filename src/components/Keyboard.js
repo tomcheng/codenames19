@@ -35,19 +35,30 @@ KeyboardBackground.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
+const BORDER_RADII = {
+  all: "4px",
+  top: "4px 4px 0 0",
+  bottom: "0 0 4px 4px",
+  "bottom-left": "0 0 0 4px",
+  "top-right-bottom-left": "0 4px 0 4px",
+  "x-top-left": "0 4px 4px 4px",
+  none: 0,
+};
+
 const StyledRow = styled.div`
-  border-radius: 4px;
+  border-radius: ${(props) => BORDER_RADII[props.round]};
   background-color: #4c4b47;
   display: flex;
   padding: 1px;
   margin: -2px -1px 0;
 `;
 
-export const KeysRow = ({ children, offset }) => {
+export const KeysRow = ({ children, offset, round }) => {
   return (
     <GameDimensionsConsumer>
       {({ keyWidth }) => (
         <StyledRow
+          round={round}
           style={offset ? { marginLeft: offset * keyWidth - 1 } : null}
         >
           {children}
@@ -60,6 +71,11 @@ export const KeysRow = ({ children, offset }) => {
 KeysRow.propTypes = {
   children: PropTypes.node.isRequired,
   offset: PropTypes.number,
+  round: PropTypes.oneOf(Object.keys(BORDER_RADII)),
+};
+
+KeysRow.defaultProps = {
+  round: "all",
 };
 
 const KeyContainer = styled.div`

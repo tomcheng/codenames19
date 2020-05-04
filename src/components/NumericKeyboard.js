@@ -12,23 +12,23 @@ const NumericKeyboard = ({ onCancel, onDelete, onSubmit, onType }) => {
             <Key letter="Esc" widthMultiplier={1.25} onClick={onCancel} />
           </KeysRow>
         )}
-        <KeysRow offset={onCancel ? 2.25 : 3.5}>
+        <KeysRow offset={onCancel ? 2.25 : 3.5} round="top">
           {"789".split("").map((num) => (
             <Key key={num} letter={num} onClick={onType} />
           ))}
         </KeysRow>
       </Box>
-      <KeysRow offset={3.5}>
+      <KeysRow offset={3.5} round="none">
         {"456".split("").map((num) => (
           <Key key={num} letter={num} onClick={onType} />
         ))}
       </KeysRow>
-      <KeysRow offset={3.5}>
+      <KeysRow offset={3.5} round="none">
         {"123".split("").map((num) => (
           <Key key={num} letter={num} onClick={onType} />
         ))}
       </KeysRow>
-      <Box flex>
+      <Box flex round="bottom">
         <KeysRow offset={3.5}>
           <Key letter="0" widthMultiplier={2} onClick={onType} />
           <Key letter="⌫" onClick={onDelete} />
