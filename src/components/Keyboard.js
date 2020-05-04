@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { GameDimensionsConsumer } from "./GameDimensions";
 
 const KeyboardContext = React.createContext();
 
@@ -18,17 +19,20 @@ const KeysWrapper = styled.div`
   width: ${(props) => props.keyWidth * 10}px;
 `;
 
-export const KeyboardBackground = ({ children, keyWidth }) => (
-  <KeyboardContext.Provider value={keyWidth}>
-    <Container>
-      <KeysWrapper keyWidth={keyWidth}>{children}</KeysWrapper>
-    </Container>
-  </KeyboardContext.Provider>
+export const KeyboardBackground = ({ children }) => (
+  <GameDimensionsConsumer>
+    {({ keyWidth }) => (
+      <KeyboardContext.Provider value={keyWidth}>
+        <Container>
+          <KeysWrapper keyWidth={keyWidth}>{children}</KeysWrapper>
+        </Container>
+      </KeyboardContext.Provider>
+    )}
+  </GameDimensionsConsumer>
 );
 
 KeyboardBackground.propTypes = {
   children: PropTypes.node.isRequired,
-  keyWidth: PropTypes.number.isRequired,
 };
 
 const StyledRow = styled.div`
@@ -41,13 +45,15 @@ const StyledRow = styled.div`
 
 export const KeysRow = ({ children, offset }) => {
   return (
-    <KeyboardContext.Consumer>
-      {(value) => (
-        <StyledRow style={offset ? { marginLeft: offset * value - 1 } : null}>
+    <GameDimensionsConsumer>
+      {({ keyWidth }) => (
+        <StyledRow
+          style={offset ? { marginLeft: offset * keyWidth - 1 } : null}
+        >
           {children}
         </StyledRow>
       )}
-    </KeyboardContext.Consumer>
+    </GameDimensionsConsumer>
   );
 };
 
@@ -89,21 +95,21 @@ const KeyCap = styled.div`
 
 export const Key = ({ letter, widthMultiplier, onClick }) => {
   return (
-    <KeyboardContext.Consumer>
-      {(value) => (
+    <GameDimensionsConsumer>
+      {({ keyWidth }) => (
         <KeyContainer
-          size={value}
+          size={keyWidth}
           onClick={() => {
             onClick(letter);
           }}
-          style={widthMultiplier ? { width: value * widthMultiplier } : null}
+          style={widthMultiplier ? { width: keyWidth * widthMultiplier } : null}
         >
           <KeyWrapper>
             <KeyCap>{letter}</KeyCap>
           </KeyWrapper>
         </KeyContainer>
       )}
-    </KeyboardContext.Consumer>
+    </GameDimensionsConsumer>
   );
 };
 

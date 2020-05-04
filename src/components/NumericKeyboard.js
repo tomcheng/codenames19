@@ -3,15 +3,9 @@ import PropTypes from "prop-types";
 import { Key, KeyboardBackground, KeysRow } from "./Keyboard";
 import Box from "./Box";
 
-const NumericKeyboard = ({
-  keyWidth,
-  onCancel,
-  onDelete,
-  onSubmit,
-  onType,
-}) => {
+const NumericKeyboard = ({ onCancel, onDelete, onSubmit, onType }) => {
   return (
-    <KeyboardBackground keyWidth={keyWidth}>
+    <KeyboardBackground>
       <Box flex>
         <KeysRow>
           <Key letter="Esc" widthMultiplier={1.25} onClick={onCancel} />
@@ -46,7 +40,6 @@ const NumericKeyboard = ({
 };
 
 NumericKeyboard.propTypes = {
-  keyWidth: PropTypes.number.isRequired,
   onCancel: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,

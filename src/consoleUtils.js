@@ -1,5 +1,9 @@
 import React from "react";
+import compact from "lodash/compact";
+import countBy from "lodash/countBy";
 import repeat from "lodash/repeat";
+import last from "lodash/last";
+import { humanizeList } from "./utils";
 
 export const parseMarkdown = (str) => {
   const text = str.replace(/(\*\*)(.*)\1/g, "$2");
@@ -39,7 +43,7 @@ const printWordGroup = ({ title, words, lineLength }) => {
   return [`**${title.toUpperCase()}**`, ...lines, " "];
 };
 
-export const printSpymasterList = ({ words, yourTeam, lineLength }) => {
+export const printSpymasterWords = ({ words, yourTeam, lineLength }) => {
   const allianceWords = words.filter((w) => w.type === yourTeam);
   const enemyWords = words.filter(
     (w) => w.type === (yourTeam === "A" ? "B" : "A")
@@ -72,7 +76,13 @@ export const printSpymasterList = ({ words, yourTeam, lineLength }) => {
   ];
 };
 
-export const printScore = ({ yourWordsLeft, enemyWordsLeft, lineLength }) => {
+export const printScore = ({ words, yourTeam, lineLength }) => {
+  const counts = countBy(
+    words.filter((word) => !word.flipped),
+    "type"
+  );
+  const yourWordsLeft = counts[yourTeam] ?? 0;
+  const enemyWordsLeft = counts[yourTeam === "A" ? "B" : "A"] ?? 0;
   const yourScore = `**Alliance:** ${yourWordsLeft} left`;
   const theirScore = `**Enemy:** ${enemyWordsLeft} left`;
 
@@ -85,5 +95,35 @@ export const printScore = ({ yourWordsLeft, enemyWordsLeft, lineLength }) => {
     )}${theirScore}`,
     repeat("─", lineLength),
     " ",
+  ];
+};
+
+export const printSpymasterWriting = ({
+  code,
+  codeDone,
+  codeError,
+  confirm,
+  confirmed,
+  number,
+  numberDone,
+  numberError,
+}) => {
+  return compact([
+    (numberError || codeError) && `**${numberError || codeError}.**`,
+    `Enter code word: **${codeDone ? code : ""}**`,
+    codeDone && `Enter number:    **${numberDone ? number : ""}**`,
+    numberDone && `Send code and number? (Y/N) **${confirmed ? confirm : ""}**`,
+    confirmed && " ",
+    confirmed && `**Sending Transmission: ${code.trim()} / ${number}...**`,
+  ]);
+};
+
+export const printSpymasterGuessing = ({ codes, teamNames, yourTeam }) => {
+  const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
+
+  return [
+    `**Transmission sent: ${yourLastCode.code} / ${yourLastCode.number}**`,
+    " ",
+    `Awaiting response from ${humanizeList(teamNames)}...`,
   ];
 };

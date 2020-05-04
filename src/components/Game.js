@@ -1,10 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import clamp from "lodash/clamp";
 import keyBy from "lodash/keyBy";
 import GuesserView from "./GuesserView";
 import SpymasterView from "./SpymasterView";
-import { printScore } from "../consoleUtils";
+import { GameDimensionsProvider } from "./GameDimensions";
 
 const Game = ({
   codes,
@@ -20,10 +19,6 @@ const Game = ({
   onSelectWord,
   onSubmitCode,
 }) => {
-  const width = window.innerWidth;
-  const lineLength = width / 8 - 2;
-  const keyWidth = clamp(Math.floor((width - 6) / 10), 36, 56);
-
   const usersByID = keyBy(users, "id");
   const you = usersByID[userID];
   const isSpymaster = you.id === spymasterA || you.id === spymasterB;
@@ -35,44 +30,39 @@ const Game = ({
   const enemyWordsLeft = words.filter(
     (w) => w.type === (you.team === "A" ? "B" : "A") && !w.flipped
   ).length;
-  const scoreLines = printScore({
-    yourWordsLeft,
-    enemyWordsLeft,
-    lineLength,
-  });
   const gameResult =
     yourWordsLeft === 0 ? "You won!" : enemyWordsLeft === 0 ? "You ded." : null;
 
-  return isSpymaster ? (
-    <SpymasterView
-      codes={codes}
-      gameResult={gameResult}
-      isYourTurn={isYourTurn}
-      keyWidth={keyWidth}
-      lineLength={lineLength}
-      scoreLines={scoreLines}
-      stage={stage}
-      teamNames={teamNames}
-      words={words}
-      yourTeam={you.team}
-      onSubmitCode={onSubmitCode}
-    />
-  ) : (
-    <GuesserView
-      codes={codes}
-      gameResult={gameResult}
-      guessesLeft={guessesLeft}
-      isYourTurn={isYourTurn}
-      scoreLines={scoreLines}
-      stage={stage}
-      words={words}
-      yourSpymasterName={
-        usersByID[you.team === "A" ? spymasterA : spymasterB]?.name
-      }
-      yourTeam={you.team}
-      onEndTurn={onEndTurn}
-      onSelectWord={onSelectWord}
-    />
+  return (
+    <GameDimensionsProvider>
+      {isSpymaster ? (
+        <SpymasterView
+          codes={codes}
+          gameResult={gameResult}
+          isYourTurn={isYourTurn}
+          stage={stage}
+          teamNames={teamNames}
+          words={words}
+          yourTeam={you.team}
+          onSubmitCode={onSubmitCode}
+        />
+      ) : (
+        <GuesserView
+          codes={codes}
+          gameResult={gameResult}
+          guessesLeft={guessesLeft}
+          isYourTurn={isYourTurn}
+          stage={stage}
+          words={words}
+          yourSpymasterName={
+            usersByID[you.team === "A" ? spymasterA : spymasterB]?.name
+          }
+          yourTeam={you.team}
+          onEndTurn={onEndTurn}
+          onSelectWord={onSelectWord}
+        />
+      )}
+    </GameDimensionsProvider>
   );
 };
 

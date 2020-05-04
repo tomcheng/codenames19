@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import Box from "./Box";
 import { Key, KeyboardBackground, KeysRow } from "./Keyboard";
 
-const AlphabetKeyboard = ({ keyWidth, onDelete, onType, onSubmit }) => {
+const AlphabetKeyboard = ({ onDelete, onType, onSubmit }) => {
   return (
-    <KeyboardBackground keyWidth={keyWidth}>
+    <KeyboardBackground>
       <KeysRow>
         {"QWERTYUIOP".split("").map((letter) => (
           <Key key={letter} letter={letter} onClick={onType} />
@@ -35,7 +35,6 @@ const AlphabetKeyboard = ({ keyWidth, onDelete, onType, onSubmit }) => {
 };
 
 AlphabetKeyboard.propTypes = {
-  keyWidth: PropTypes.number.isRequired,
   onDelete: PropTypes.func.isRequired,
   onType: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,

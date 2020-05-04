@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import compact from "lodash/compact";
-import last from "lodash/last";
-import { humanizeList } from "../utils";
-import { printSpymasterList } from "../consoleUtils";
+import {
+  printScore,
+  printSpymasterGuessing,
+  printSpymasterWriting,
+  printSpymasterWords,
+} from "../consoleUtils";
 import Box from "./Box";
+import { GameDimensionsConsumer } from "./GameDimensions";
 import Console from "./Console";
 import AlphabetKeyboard from "./AlphabetKeyboard";
 import NumericKeyboard from "./NumericKeyboard";
@@ -34,9 +38,6 @@ const SpymasterView = ({
   codes,
   gameResult,
   isYourTurn,
-  keyWidth,
-  lineLength,
-  scoreLines,
   stage,
   teamNames,
   words,
@@ -53,48 +54,43 @@ const SpymasterView = ({
   const [confirmed, setConfirmed] = useState(false);
 
   const isDisabled = !isYourTurn || stage === "guessing";
-  const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
-
-  const listLines = printSpymasterList({ words, yourTeam, lineLength });
 
   return (
     <Box flex flexDirection="column" height="100vh">
-      <Console
-        lines={
-          gameResult
-            ? [gameResult]
-            : !isYourTurn
-            ? [...scoreLines, ...listLines, "**Awaiting enemy's turn...**"]
-            : stage === "guessing"
-            ? yourLastCode
-              ? [
-                  ...scoreLines,
-                  ...listLines,
-                  `**Transmission sent: ${yourLastCode.code} / ${yourLastCode.number}**`,
-                  " ",
-                  `Awaiting response from ${humanizeList(teamNames)}...`,
-                ]
-              : []
-            : compact([
-                ...scoreLines,
-                ...listLines,
-                (numberError || codeError) &&
-                  `**${numberError || codeError}.**`,
-                `Enter code word: **${codeDone ? code : ""}**`,
-                codeDone && `Enter number:    **${numberDone ? number : ""}**`,
-                numberDone &&
-                  `Send code and number? (Y/N) **${confirmed ? confirm : ""}**`,
-                confirmed && " ",
-                confirmed &&
-                  `**Sending Transmission: ${code.trim()} / ${number}...**`,
-              ])
-        }
-        showPrompt={!isDisabled && !confirmed}
-        typed={numberDone ? confirm : codeDone ? number : code}
-      />
+      <GameDimensionsConsumer>
+        {({ lineLength }) => (
+          <Console
+            lines={
+              gameResult
+                ? [gameResult]
+                : compact([
+                    ...printScore({ words, yourTeam, lineLength }),
+                    ...printSpymasterWords({ words, yourTeam, lineLength }),
+                    ...(isYourTurn && stage === "writing"
+                      ? printSpymasterWriting({
+                          code,
+                          codeDone,
+                          codeError,
+                          confirm,
+                          confirmed,
+                          number,
+                          numberDone,
+                          numberError,
+                        })
+                      : []),
+                    ...(isYourTurn && stage === "guessing"
+                      ? printSpymasterGuessing({ codes, teamNames, yourTeam })
+                      : []),
+                    !isYourTurn && "**Awaiting enemy's turn...**",
+                  ])
+            }
+            showPrompt={!isDisabled && !confirmed}
+            typed={numberDone ? confirm : codeDone ? number : code}
+          />
+        )}
+      </GameDimensionsConsumer>
       {numberDone ? (
         <AlphabetKeyboard
-          keyWidth={keyWidth}
           onDelete={() => {
             setConfirm(
               confirm.length > 0
@@ -122,7 +118,6 @@ const SpymasterView = ({
         />
       ) : codeDone ? (
         <NumericKeyboard
-          keyWidth={keyWidth}
           onCancel={() => {
             setCode("");
             setCodeError(null);
@@ -150,7 +145,6 @@ const SpymasterView = ({
         />
       ) : (
         <AlphabetKeyboard
-          keyWidth={keyWidth}
           onDelete={() => {
             setCode(code.length > 0 ? code.slice(0, code.length - 1) : code);
           }}
@@ -180,9 +174,6 @@ SpymasterView.propTypes = {
     })
   ).isRequired,
   isYourTurn: PropTypes.bool.isRequired,
-  keyWidth: PropTypes.number.isRequired,
-  lineLength: PropTypes.number.isRequired,
-  scoreLines: PropTypes.arrayOf(PropTypes.string).isRequired,
   stage: PropTypes.oneOf(["writing", "guessing"]).isRequired,
   teamNames: PropTypes.arrayOf(PropTypes.string).isRequired,
   words: PropTypes.arrayOf(
