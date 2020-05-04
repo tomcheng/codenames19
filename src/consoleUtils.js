@@ -76,6 +76,59 @@ export const printSpymasterWords = ({ words, yourTeam, lineLength }) => {
   ];
 };
 
+const padLeft = (str, numChars, char) => {
+  const length = str.toString().length;
+  return repeat(char, Math.max(numChars - length, 0)) + str.toString();
+};
+
+const padRight = (str, numChars, char) => {
+  const length = str.toString().length;
+  return str.toString() + repeat(char, Math.max(numChars - length, 0));
+};
+
+export const printGuesserWords = ({ words, yourTeam, lineLength }) => {
+  const half = Math.ceil(words.length / 2);
+  const halfLineLength = Math.floor(lineLength / 2);
+  const firstHalf = words.slice(0, half);
+  const secondHalf = words.slice(half, words.length);
+  return [
+    ...firstHalf.map(
+      ({ word }, index) =>
+        padRight(
+          `${padLeft(index + 1, 2, " ")}. ${word}`,
+          halfLineLength,
+          " "
+        ) +
+        (secondHalf[index]
+          ? `${padLeft(index + half + 1, 2, " ")}. ${secondHalf[index].word}`
+          : "")
+    ),
+    " ",
+    "99. End turn",
+    " ",
+    repeat("─", lineLength),
+  ];
+};
+
+export const printGuesserGuessing = ({
+  confirmation,
+  confirmed,
+  error,
+  number,
+  selected,
+  words,
+}) => {
+  return [
+    error && `**${error}.**`,
+    `Enter selection: ${
+      selected ? `**${number}** (${words[parseInt(number) - 1].word})` : ""
+    }`,
+    selected && `Are you sure? (Y/N) ${confirmed ? `**${confirmation}**` : ""}`,
+    confirmed && " ",
+    confirmed && "**Transmitting selection...**",
+  ];
+};
+
 export const printScore = ({ words, yourTeam, lineLength }) => {
   const counts = countBy(
     words.filter((word) => !word.flipped),

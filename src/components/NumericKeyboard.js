@@ -7,10 +7,12 @@ const NumericKeyboard = ({ onCancel, onDelete, onSubmit, onType }) => {
   return (
     <KeyboardBackground>
       <Box flex>
-        <KeysRow>
-          <Key letter="Esc" widthMultiplier={1.25} onClick={onCancel} />
-        </KeysRow>
-        <KeysRow offset={2.25}>
+        {onCancel && (
+          <KeysRow>
+            <Key letter="Esc" widthMultiplier={1.25} onClick={onCancel} />
+          </KeysRow>
+        )}
+        <KeysRow offset={onCancel ? 2.25 : 3.5}>
           {"789".split("").map((num) => (
             <Key key={num} letter={num} onClick={onType} />
           ))}
@@ -40,10 +42,10 @@ const NumericKeyboard = ({ onCancel, onDelete, onSubmit, onType }) => {
 };
 
 NumericKeyboard.propTypes = {
-  onCancel: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onType: PropTypes.func.isRequired,
+  onCancel: PropTypes.func,
 };
 
 export default NumericKeyboard;
