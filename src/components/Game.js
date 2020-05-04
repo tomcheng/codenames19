@@ -48,6 +48,7 @@ const Game = ({
         />
       ) : (
         <GuesserView
+          key={guessesLeft}
           codes={codes}
           gameResult={gameResult}
           guessesLeft={guessesLeft}
