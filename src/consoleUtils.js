@@ -173,7 +173,7 @@ export const printScore = ({ isYourTurn, lineLength, words, yourTeam }) => {
   const yourWordsLeft = counts[yourTeam] ?? 0;
   const enemyWordsLeft = counts[yourTeam === "A" ? "B" : "A"] ?? 0;
   const yourScore = `**Alliance:** ${yourWordsLeft} left`;
-  const turnIndicator = isYourTurn ? "<<" : ">>";
+  const turnIndicator = isYourTurn ? "**<<**" : "**>>**";
   const yourScorePlus = `${yourScore}${repeat(
     " ",
     halfLine - parseMarkdown(yourScore).length - 1
