@@ -114,6 +114,7 @@ export const printGuesserGuessing = ({
   code,
   confirmation,
   confirmed,
+  endTurn,
   error,
   guessesLeft,
   number,
@@ -126,9 +127,14 @@ export const printGuesserGuessing = ({
     error && `**${error}.**`,
     `You have ${plc(guessesLeft, "guess", "guesses")} remaining.`,
     `Enter selection: ${
-      selected ? `**${number}** - ${words[parseInt(number) - 1].word}` : ""
+      selected || endTurn
+        ? `**${number}** - ${
+            endTurn ? "End turn" : words[parseInt(number) - 1].word
+          }`
+        : ""
     }`,
-    selected && `Are you sure? (Y/N) ${confirmed ? `**${confirmation}**` : ""}`,
+    (selected || endTurn) &&
+      `Are you sure? (Y/N) ${confirmed ? `**${confirmation}**` : ""}`,
     confirmed && " ",
     confirmed && "**Transmitting selection...**",
   ];

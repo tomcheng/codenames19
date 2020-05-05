@@ -19,7 +19,7 @@ const validateNumber = ({ selectedWord }) => {
   }
 
   if (selectedWord.flipped) {
-    return "Word has already been chosen";
+    return `"${selectedWord.word}" has already been chosen`;
   }
 
   return null;
@@ -32,9 +32,11 @@ const GuesserView = ({
   stage,
   words,
   yourTeam,
+  onEndTurn,
   onSelectWord,
 }) => {
   const [number, setNumber] = useState("");
+  const [endTurn, setEndTurn] = useState(false);
   const [error, setError] = useState(null);
   const [selected, setSelected] = useState(false);
   const [confirmation, setConfirmation] = useState("");
@@ -58,6 +60,7 @@ const GuesserView = ({
                           code: last(codes),
                           confirmation,
                           confirmed,
+                          endTurn,
                           error,
                           guessesLeft,
                           number,
@@ -68,11 +71,11 @@ const GuesserView = ({
                   ])
             }
             showPrompt={!disabled}
-            typed={selected ? confirmation : number}
+            typed={selected || endTurn ? confirmation : number}
           />
         )}
       </GameDimensionsConsumer>
-      {selected ? (
+      {selected || endTurn ? (
         <AlphabetKeyboard
           disabled={disabled}
           onType={(letter) => {
@@ -84,7 +87,11 @@ const GuesserView = ({
           onSubmit={() => {
             if (confirmation === "Y") {
               setConfirmed(true);
-              onSelectWord({ word: selectedWord.word });
+              if (endTurn) {
+                onEndTurn();
+              } else {
+                onSelectWord({ word: selectedWord.word });
+              }
             } else {
               setNumber("");
               setError(null);
@@ -105,12 +112,19 @@ const GuesserView = ({
             setNumber(number + num);
           }}
           onSubmit={() => {
+            if (number === "99") {
+              setEndTurn(true);
+              return;
+            }
+
             const e = validateNumber({ selectedWord });
+
             if (e) {
               setError(e);
               setNumber("");
               return;
             }
+
             setSelected(true);
           }}
         />
