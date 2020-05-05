@@ -7,17 +7,19 @@ import { humanizeList, plc } from "./utils";
 
 export const parseMarkdown = (str) => {
   const text = str
-    .replace(/(\*\*)(.*)\1/g, "$2")
-    .replace(/(--)(.*)\1/g, "$2")
-    .replace(/(__)(.*)\1/g, "$2");
+    .replace(/(\*\*)(.*?)\1/g, "$2")
+    .replace(/(--)(.*?)\1/g, "$2")
+    .replace(/(__)(.*?)\1/g, "$2")
+    .replace(/(~~)(.*?)\1/g, "$2");
   return {
     html: (
       <span
         dangerouslySetInnerHTML={{
           __html: str
             .replace(/(\*\*)(.*?)\1/g, "<strong>$2</strong>")
-            .replace(/(--)(.*)\1/g, "<span class='strike-through'>$2</span>")
-            .replace(/(__)(.*)\1/g, "<span class='faded'>$2</span>"),
+            .replace(/(--)(.*?)\1/g, "<span class='strike-through'>$2</span>")
+            .replace(/(__)(.*?)\1/g, "<span class='faded'>$2</span>")
+            .replace(/(~~)(.*?)\1/g, "<span class='red'>$2</span>"),
         }}
       />
     ),
@@ -92,9 +94,18 @@ const padLeft = (str, numChars, char) => {
   return repeat(char, Math.max(numChars - length, 0)) + str.toString();
 };
 
-const padRight = (str, numChars, char) => {
-  const length = str.toString().length;
-  return str.toString() + repeat(char, Math.max(numChars - length, 0));
+const printGuesserWord = ({ word, number, yourTeam }) => {
+  const indicator =
+    !word.flipped || word.type === "neutral"
+      ? " "
+      : word.type === yourTeam
+      ? "■"
+      : "~~■~~";
+  return ` ${indicator} ${word.flipped ? "__" : ""}${padLeft(
+    number,
+    2,
+    " "
+  )}. ${word.flipped ? "--" : ""}${word.word}${word.flipped ? "--__" : ""}`;
 };
 
 export const printGuesserWords = ({ words, yourTeam, lineLength }) => {
@@ -102,23 +113,25 @@ export const printGuesserWords = ({ words, yourTeam, lineLength }) => {
   const halfLineLength = Math.floor(lineLength / 2);
   const firstHalf = words.slice(0, half);
   const secondHalf = words.slice(half, words.length);
-  return [
-    ...firstHalf.map(
-      ({ word }, index) =>
-        padRight(
-          `${padLeft(index + 1, 2, " ")}. ${word}`,
-          halfLineLength,
-          " "
-        ) +
-        (secondHalf[index]
-          ? `${padLeft(index + half + 1, 2, " ")}. ${secondHalf[index].word}`
-          : "")
-    ),
+
+  const lines = [
+    ...firstHalf.map((word, index) => {
+      return printGuesserWord({ word, number: index + 1, yourTeam });
+    }),
     " ",
-    "99. End turn",
+    "   99. End turn",
     " ",
     repeat("─", lineLength),
   ];
+
+  secondHalf.forEach((word, index) => {
+    lines[index] += `${repeat(
+      " ",
+      halfLineLength - parseMarkdown(lines[index]).length
+    )}${printGuesserWord({ word, number: index + 1 + half, yourTeam })}`;
+  });
+
+  return lines;
 };
 
 export const printGuesserGuessing = ({

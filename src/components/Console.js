@@ -22,6 +22,9 @@ const Content = styled.div`
   .strike-through {
     text-decoration: line-through;
   }
+  .red {
+    color: red;
+  }
 `;
 
 const Console = ({ lines, showPrompt, typed }) => {
