@@ -15,6 +15,15 @@ const Blink = styled.span`
   animation: ${blink} 1s step-end infinite;
 `;
 
+const Content = styled.div`
+  .faded {
+    opacity: 0.5;
+  }
+  .strike-through {
+    text-decoration: line-through;
+  }
+`;
+
 const Console = ({ lines, showPrompt, typed }) => {
   return (
     <Box
@@ -29,7 +38,7 @@ const Console = ({ lines, showPrompt, typed }) => {
     >
       <Text preset="code">
         {lines.map((str, index) => (
-          <div key={index}>
+          <Content key={index}>
             {parseMarkdown(str).html}
             {index === lines.length - 1 && (
               <>
@@ -37,7 +46,7 @@ const Console = ({ lines, showPrompt, typed }) => {
                 {showPrompt && <Blink>_</Blink>}
               </>
             )}
-          </div>
+          </Content>
         ))}
       </Text>
     </Box>

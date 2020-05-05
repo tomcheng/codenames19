@@ -6,12 +6,18 @@ import last from "lodash/last";
 import { humanizeList, plc } from "./utils";
 
 export const parseMarkdown = (str) => {
-  const text = str.replace(/(\*\*)(.*)\1/g, "$2");
+  const text = str
+    .replace(/(\*\*)(.*)\1/g, "$2")
+    .replace(/(--)(.*)\1/g, "$2")
+    .replace(/(__)(.*)\1/g, "$2");
   return {
     html: (
       <span
         dangerouslySetInnerHTML={{
-          __html: str.replace(/(\*\*)(.*?)\1/g, "<strong>$2</strong>"),
+          __html: str
+            .replace(/(\*\*)(.*?)\1/g, "<strong>$2</strong>")
+            .replace(/(--)(.*)\1/g, "<span class='strike-through'>$2</span>")
+            .replace(/(__)(.*)\1/g, "<span class='faded'>$2</span>"),
         }}
       />
     ),
@@ -24,19 +30,24 @@ const printWordGroup = ({ title, words, lineLength }) => {
 
   words.forEach((word, index) => {
     const isLast = index === words.length - 1;
-    const postWord = isLast ? "" : ",";
+    const wordPlus =
+      (word.flipped ? "__--" : "") +
+      word.word +
+      (word.flipped ? "--" : "") +
+      (isLast ? "" : ",") +
+      (word.flipped ? "__" : "");
 
     if (lines.length === 0) {
-      lines.push(`  ${word}${postWord}`);
+      lines.push(`  ${wordPlus}`);
       return;
     }
 
-    const candidateLine = `${lines[lines.length - 1]} ${word}${postWord}`;
+    const candidateLine = `${lines[lines.length - 1]} ${wordPlus}`;
 
-    if (candidateLine.length <= lineLength) {
+    if (parseMarkdown(candidateLine).length <= lineLength) {
       lines[lines.length - 1] = candidateLine;
     } else {
-      lines.push(`  ${word}${postWord}`);
+      lines.push(`  ${wordPlus}`);
     }
   });
 
@@ -54,22 +65,22 @@ export const printSpymasterWords = ({ words, yourTeam, lineLength }) => {
   return [
     ...printWordGroup({
       title: "Alliance Words",
-      words: allianceWords.map((w) => w.word),
+      words: allianceWords,
       lineLength,
     }),
     ...printWordGroup({
       title: "Enemy Words",
-      words: enemyWords.map((w) => w.word),
+      words: enemyWords,
       lineLength,
     }),
     ...printWordGroup({
       title: "Neutral Words",
-      words: neutralWords.map((w) => w.word),
+      words: neutralWords,
       lineLength,
     }),
     ...printWordGroup({
       title: "Bomb",
-      words: [bomb.word],
+      words: [bomb],
       lineLength,
     }),
     repeat("─", lineLength),
