@@ -69,7 +69,7 @@ const SpymasterView = ({
               gameResult
                 ? [gameResult]
                 : compact([
-                    ...printScore({ words, yourTeam, lineLength }),
+                    ...printScore({ isYourTurn, lineLength, words, yourTeam }),
                     ...printSpymasterWords({ words, yourTeam, lineLength }),
                     ...(isYourTurn && stage === "writing"
                       ? printSpymasterWriting({

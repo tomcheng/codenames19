@@ -164,7 +164,8 @@ export const printGuesserGuessing = ({
   ];
 };
 
-export const printScore = ({ words, yourTeam, lineLength }) => {
+export const printScore = ({ isYourTurn, lineLength, words, yourTeam }) => {
+  const halfLine = Math.floor(lineLength / 2);
   const counts = countBy(
     words.filter((word) => !word.flipped),
     "type"
@@ -172,13 +173,17 @@ export const printScore = ({ words, yourTeam, lineLength }) => {
   const yourWordsLeft = counts[yourTeam] ?? 0;
   const enemyWordsLeft = counts[yourTeam === "A" ? "B" : "A"] ?? 0;
   const yourScore = `**Alliance:** ${yourWordsLeft} left`;
+  const turnIndicator = isYourTurn ? "<<" : ">>";
+  const yourScorePlus = `${yourScore}${repeat(
+    " ",
+    halfLine - parseMarkdown(yourScore).length - 1
+  )}${turnIndicator}`;
   const theirScore = `**Enemy:** ${enemyWordsLeft} left`;
-
   return [
-    `${yourScore}${repeat(
+    `${yourScorePlus}${repeat(
       " ",
       lineLength -
-        parseMarkdown(yourScore).length -
+        parseMarkdown(yourScorePlus).length -
         parseMarkdown(theirScore).length
     )}${theirScore}`,
     repeat("─", lineLength),

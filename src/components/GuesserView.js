@@ -53,7 +53,7 @@ const GuesserView = ({
               gameResult
                 ? [gameResult]
                 : compact([
-                    ...printScore({ words, yourTeam, lineLength }),
+                    ...printScore({ isYourTurn, lineLength, words, yourTeam }),
                     ...printGuesserWords({ words, yourTeam, lineLength }),
                     ...(isYourTurn && stage === "guessing"
                       ? printGuesserGuessing({
