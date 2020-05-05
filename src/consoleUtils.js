@@ -221,3 +221,12 @@ export const printSpymasterGuessing = ({ codes, teamNames, yourTeam }) => {
     `Awaiting response from ${humanizeList(teamNames)}...`,
   ];
 };
+
+export const printWaitingMessage = ({ stage, codes }) => {
+  const lastCode = last(codes);
+  return [
+    stage === "writing"
+      ? "**Monitoring enemy communication...**"
+      : `**Enemy transmission intercepted: ${lastCode.code} / ${lastCode.number}**`,
+  ];
+};

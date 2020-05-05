@@ -9,6 +9,7 @@ import {
   printGuesserGuessing,
   printGuesserWords,
   printScore,
+  printWaitingMessage,
 } from "../consoleUtils";
 import NumericKeyboard from "./NumericKeyboard";
 import AlphabetKeyboard from "./AlphabetKeyboard";
@@ -55,6 +56,9 @@ const GuesserView = ({
                 : compact([
                     ...printScore({ isYourTurn, lineLength, words, yourTeam }),
                     ...printGuesserWords({ words, yourTeam, lineLength }),
+                    isYourTurn &&
+                      stage === "writing" &&
+                      "**Awaiting transmission...**",
                     ...(isYourTurn && stage === "guessing"
                       ? printGuesserGuessing({
                           code: last(codes),
@@ -67,6 +71,9 @@ const GuesserView = ({
                           selected,
                           words,
                         })
+                      : []),
+                    ...(!isYourTurn
+                      ? printWaitingMessage({ stage, codes })
                       : []),
                   ])
             }

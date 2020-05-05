@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import compact from "lodash/compact";
-import last from "lodash/last";
 import {
   printScore,
   printSpymasterGuessing,
   printSpymasterWriting,
   printSpymasterWords,
+  printWaitingMessage,
 } from "../consoleUtils";
 import Box from "./Box";
 import { GameDimensionsConsumer } from "./GameDimensions";
@@ -60,7 +60,6 @@ const SpymasterView = ({
   const [confirmed, setConfirmed] = useState(false);
 
   const disabled = !isYourTurn || stage === "guessing" || confirmed;
-  const lastCode = last(codes);
 
   return (
     <Box flex flexDirection="column" height="100vh">
@@ -88,12 +87,9 @@ const SpymasterView = ({
                     ...(isYourTurn && stage === "guessing"
                       ? printSpymasterGuessing({ codes, teamNames, yourTeam })
                       : []),
-                    !isYourTurn &&
-                      stage === "writing" &&
-                      "**Monitoring enemy communication...**",
-                    !isYourTurn &&
-                      stage === "guessing" &&
-                      `**Enemy transmission intercepted: ${lastCode.code} / ${lastCode.number}**`,
+                    ...(!isYourTurn
+                      ? printWaitingMessage({ codes, stage })
+                      : []),
                   ])
             }
             showPrompt={!disabled}
