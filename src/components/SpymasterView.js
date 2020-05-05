@@ -27,8 +27,13 @@ const validateNumber = (number) => {
   if (number.length === 0) {
     return "A number is required";
   }
+
   if (parseInt(number) > 9) {
     return "The number has to be less than 9";
+  }
+
+  if (parseInt(number) < 1) {
+    return "The number has to be at least 1";
   }
 
   return null;
