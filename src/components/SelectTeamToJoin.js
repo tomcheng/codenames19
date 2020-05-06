@@ -7,7 +7,7 @@ import Checkbox from "./Checkbox";
 import { Grid, GridItem } from "./Grid";
 import DocumentSubmit from "./DocumentSubmit";
 
-const SelectTeamToJoin = ({ userID, users, onSelectTeam }) => {
+const SelectTeamToJoin = ({ playerID, players, onSetTeam }) => {
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [error, setError] = useState(null);
 
@@ -32,7 +32,7 @@ const SelectTeamToJoin = ({ userID, users, onSelectTeam }) => {
                   <Text preset="label" bold>
                     Group A
                   </Text>
-                  {users
+                  {Object.values(players)
                     .filter((u) => u.team === "A")
                     .map((user) => (
                       <Text key={user.id} preset="label">
@@ -59,7 +59,7 @@ const SelectTeamToJoin = ({ userID, users, onSelectTeam }) => {
                   <Text preset="label" bold>
                     Group B
                   </Text>
-                  {users
+                  {Object.values(players)
                     .filter((u) => u.team === "B")
                     .map((user) => (
                       <Text key={user.id} preset="label">
@@ -79,7 +79,7 @@ const SelectTeamToJoin = ({ userID, users, onSelectTeam }) => {
             setError("A selection is required");
             return;
           }
-          onSelectTeam({ userID, team: selectedTeam });
+          onSetTeam({ playerID, team: selectedTeam });
         }}
       />
     </div>
@@ -87,15 +87,15 @@ const SelectTeamToJoin = ({ userID, users, onSelectTeam }) => {
 };
 
 SelectTeamToJoin.propTypes = {
-  userID: PropTypes.string.isRequired,
-  users: PropTypes.arrayOf(
+  playerID: PropTypes.string.isRequired,
+  players: PropTypes.objectOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       team: PropTypes.string,
     })
   ).isRequired,
-  onSelectTeam: PropTypes.func.isRequired,
+  onSetTeam: PropTypes.func.isRequired,
 };
 
 export default SelectTeamToJoin;

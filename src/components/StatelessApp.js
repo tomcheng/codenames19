@@ -19,7 +19,7 @@ const AppContainer = styled.div`
 `;
 
 const StatelessApp = ({
-  codeIsInvalid,
+  hasInvalidCode,
   name,
   playerID,
   room,
@@ -38,7 +38,7 @@ const StatelessApp = ({
   const player = room?.players[playerID];
   const gameStarted = !!room?.turn;
 
-  if (gameStarted) {
+  if (gameStarted && player.team) {
     return (
       <Game
         key={room.round}
@@ -58,8 +58,8 @@ const StatelessApp = ({
       <AppHeader roomCode={room?.roomCode} />
       {!room ? (
         <Lobby
+          hasInvalidCode={hasInvalidCode}
           initialName={name}
-          codeIsInvalid={codeIsInvalid}
           onCreateRoom={onCreateRoom}
           onJoinRoom={onJoinRoom}
         />
@@ -78,8 +78,8 @@ const StatelessApp = ({
         />
       ) : (
         <SelectSpymaster
-          players={room.players}
           playerID={playerID}
+          players={room.players}
           onSelectSpymaster={onSelectSpymaster}
         />
       )}
@@ -88,7 +88,7 @@ const StatelessApp = ({
 };
 
 StatelessApp.propTypes = {
-  codeIsInvalid: PropTypes.bool.isRequired,
+  hasInvalidCode: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   onConfirmWord: PropTypes.func.isRequired,
   onCreateRoom: PropTypes.func.isRequired,

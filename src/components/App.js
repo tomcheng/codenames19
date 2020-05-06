@@ -12,7 +12,7 @@ const App = ({ socket }) => {
   const [playerID, setPlayerID] = useStoredState(PLAYER_ID_KEY);
   const [roomID, setRoomID] = useStoredState(ROOM_ID_KEY);
   const [room, setRoom] = useState(null);
-  const [codeIsInvalid, setCodeIsInvalid] = useState(false);
+  const [hasInvalidCode, setHasInvalidCode] = useState(false);
   const [teamError, setTeamError] = useState(null);
 
   /*** EFFECTS ***/
@@ -38,7 +38,7 @@ const App = ({ socket }) => {
     });
 
     socket.on("room code not found", () => {
-      setCodeIsInvalid(true);
+      setHasInvalidCode(true);
     });
 
     socket.on("team error", ({ message }) => {
@@ -114,7 +114,7 @@ const App = ({ socket }) => {
 
   return (
     <StatelessApp
-      codeIsInvalid={codeIsInvalid}
+      hasInvalidCode={hasInvalidCode}
       name={name}
       room={room}
       playerID={playerID}

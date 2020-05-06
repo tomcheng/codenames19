@@ -6,7 +6,7 @@ import DocumentWrapper from "./DocumentWrapper";
 import Text from "./Text";
 import DocumentSubmit from "./DocumentSubmit";
 
-const SelectSpymaster = ({ players, playerID, onSelectSpymaster }) => {
+const SelectSpymaster = ({ playerID, players, onSelectSpymaster }) => {
   const [error, setError] = useState(null);
   const [selectedUserID, setSelectedUserID] = useState(null);
   const player = players[playerID];
