@@ -1,4 +1,4 @@
-import Room from "../../server/room";
+import Room from "./room";
 
 describe("room", () => {
   it("adds an player id if one is not supplied", () => {

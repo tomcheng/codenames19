@@ -1,4 +1,4 @@
-const Room = require("./room");
+const Room = require("../src/room");
 
 class RoomDB {
   constructor() {
