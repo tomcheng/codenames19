@@ -98,9 +98,11 @@ class Room {
   }
 
   submitCode({ code, number, playerID }) {
+    const player = this.players[playerID];
     if (
-      !this.players[playerID] ||
-      this.players[playerID].team !== this.turn ||
+      !player ||
+      player.team !== this.turn ||
+      !player.spymaster ||
       this.stage === "guessing"
     ) {
       return;
@@ -112,9 +114,11 @@ class Room {
   }
 
   selectWord({ word, playerID }) {
+    const player = this.players[playerID];
     if (
-      !this.players[playerID] ||
-      this.players[playerID].team !== this.turn ||
+      !player ||
+      player.team !== this.turn ||
+      player.spymaster ||
       this.stage === "writing"
     ) {
       return;
@@ -132,9 +136,11 @@ class Room {
   }
 
   endTurn({ playerID }) {
+    const player = this.players[playerID];
     if (
-      !this.players[playerID] ||
-      this.players[playerID].team !== this.turn ||
+      !player ||
+      player.team !== this.turn ||
+      player.spymaster ||
       this.stage === "writing"
     ) {
       return;
