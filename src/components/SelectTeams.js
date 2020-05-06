@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import countBy from "lodash/countBy";
 import range from "lodash/range";
+import size from "lodash/size";
 import Box from "./Box";
 import Checkbox from "./Checkbox";
 import DocumentWrapper from "./DocumentWrapper";
 import Text from "./Text";
 import DocumentSubmit from "./DocumentSubmit";
 
-const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
+const SelectTeams = ({ players, onLockTeams, onSetTeam }) => {
   const [error, setError] = useState(null);
-  const playersNeeded = Math.max(4 - users.length, 0);
-  const counts = countBy(users, "team");
-  const usersWithNoTeams = users.filter((user) => !user.team);
+  const playersNeeded = Math.max(4 - size(players), 0);
+  const counts = countBy(players, "team");
+  const usersWithNoTeams = Object.values(players).filter(
+    (player) => !player.team
+  );
 
   return (
     <div>
@@ -30,7 +33,7 @@ const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
             </Box>
           </Box>
           <Box padY="x-tight">
-            {users.map(({ id, name, team }) => (
+            {Object.values(players).map(({ id, name, team }) => (
               <Box key={id} flex>
                 <Box flexible padX="tight" padY="x-tight">
                   <Text preset="label">{name}</Text>
@@ -42,7 +45,7 @@ const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
                   width={70}
                   onClick={() => {
                     if (team !== "A") {
-                      onSelectTeam({ userID: id, team: "A" });
+                      onSetTeam({ playerID: id, team: "A" });
                     }
                   }}
                 >
@@ -55,7 +58,7 @@ const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
                   width={70}
                   onClick={() => {
                     if (team !== "B") {
-                      onSelectTeam({ userID: id, team: "B" });
+                      onSetTeam({ playerID: id, team: "B" });
                     }
                   }}
                 >
@@ -112,7 +115,7 @@ const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
             return;
           }
 
-          onSetTeams();
+          onLockTeams();
         }}
       />
     </div>
@@ -120,15 +123,15 @@ const SelectTeams = ({ users, onSelectTeam, onSetTeams }) => {
 };
 
 SelectTeams.propTypes = {
-  users: PropTypes.arrayOf(
+  players: PropTypes.objectOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       team: PropTypes.string,
     })
   ).isRequired,
-  onSelectTeam: PropTypes.func.isRequired,
-  onSetTeams: PropTypes.func.isRequired,
+  onLockTeams: PropTypes.func.isRequired,
+  onSetTeam: PropTypes.func.isRequired,
 };
 
 export default SelectTeams;

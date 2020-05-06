@@ -7,7 +7,7 @@ class Room {
   constructor({ usedCodes }) {
     this.id = uuid.v4();
     this.roomCode = this._getUniqueRoomCode({ usedCodes });
-    this.teamsSet = false;
+    this.teamsLocked = false;
     this.spymasterA = null;
     this.spymasterB = null;
     this.words = this._getInitialWords();
@@ -16,50 +16,104 @@ class Room {
     this.stage = null;
     this.codes = [];
     this.guessesLeft = null;
+    this.players = {};
   }
 
-  setTeams() {
-    this.teamsSet = true;
-  }
+  addPlayer({ name, playerID: existingID }) {
+    const playerID = existingID || uuid.v4();
 
-  setSpymaster({ userID, team }) {
-    if (team === "A") {
-      this.spymasterA = userID;
+    if (this.players[playerID]) {
+      this.players[playerID].online = true;
     } else {
-      this.spymasterB = userID;
+      this.players[playerID] = {
+        id: playerID || uuid.v4(),
+        name,
+        online: true,
+        team: null,
+      };
+    }
+
+    return this.players[playerID];
+  }
+
+  getPlayer(playerID) {
+    return this.players[playerID] || null;
+  }
+
+  removePlayer(playerID) {
+    if (!this.players[playerID]) return;
+
+    this.players[playerID].online = false;
+  }
+
+  setTeam({ playerID, team }) {
+    if (!this.players[playerID]) return;
+
+    this.players[playerID].team = team;
+  }
+
+  lockTeams() {
+    if (Object.values(this.players).some((player) => !player.team)) return;
+
+    this.teamsLocked = true;
+  }
+
+  setSpymaster({ playerID }) {
+    if (!this.players[playerID] || !this.teamsLocked) return;
+
+    if (this.players[playerID].team === "A") {
+      this.spymasterA = playerID;
+    } else {
+      this.spymasterB = playerID;
+    }
+
+    if (this.spymasterA && this.spymasterB) {
+      this._startGame();
     }
   }
 
-  startGame() {
-    this.round = 1;
-    this.turn = "A";
-    this.stage = "writing";
-  }
+  submitCode({ code, number, playerID }) {
+    if (!this.players[playerID] || this.players[playerID].team !== this.turn) {
+      return;
+    }
 
-  submitCode({ code, number }) {
     this.stage = "guessing";
     this.codes.push({ code, number, team: this.turn });
     this.guessesLeft = this.round === 1 ? number : number + 1;
   }
 
-  selectWord({ word }) {
+  selectWord({ word, playerID }) {
+    if (!this.players[playerID] || this.players[playerID].team !== this.turn) {
+      return;
+    }
+
     this.words = this.words.map((w) =>
       w.word === word ? { ...w, flipped: true } : w
     );
 
     if (this.guessesLeft === 1) {
-      this.endTurn();
+      this.endTurn({ playerID });
     } else {
       this.guessesLeft -= 1;
     }
   }
 
-  endTurn() {
+  endTurn({ playerID }) {
+    if (!this.players[playerID] || this.players[playerID].team !== this.turn) {
+      return;
+    }
+
     this.guessesLeft = null;
     if (this.turn === "B") {
       this.round += 1;
     }
     this.turn = this.turn === "A" ? "B" : "A";
+    this.stage = "writing";
+  }
+
+  _startGame() {
+    this.round = 1;
+    this.turn = "A";
     this.stage = "writing";
   }
 

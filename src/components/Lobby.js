@@ -20,7 +20,7 @@ const randomNameName = v4();
 const randomCodeName = v4();
 
 const Lobby = ({ codeIsInvalid, initialName, onCreateRoom, onJoinRoom }) => {
-  const [name, setName] = useState(initialName);
+  const [name, setName] = useState(initialName || "");
   const [isNew, setIsNew] = useState(true);
   const [isMissingName, setIsMissingName] = useState(false);
   const [code, setCode] = useState("");

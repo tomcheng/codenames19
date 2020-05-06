@@ -8,14 +8,14 @@ import DocumentSubmit from "./DocumentSubmit";
 
 const SelectSpymaster = ({
   chosenSpymaster,
-  users,
-  userID,
+  players,
+  playerID,
   onSelectSpymaster,
 }) => {
   const [error, setError] = useState(null);
   const [selectedUserID, setSelectedUserID] = useState(null);
-  const user = users.find((u) => u.id === userID);
-  const myTeam = users.filter((u) => u.team === user.team);
+  const player = players[playerID];
+  const myTeam = Object.values(players).filter((p) => p.team === player.team);
 
   return (
     <div>
@@ -53,7 +53,7 @@ const SelectSpymaster = ({
             return;
           }
           setError(null);
-          onSelectSpymaster({ userID: selectedUserID });
+          onSelectSpymaster({ playerID: selectedUserID });
         }}
       />
     </div>
@@ -61,8 +61,8 @@ const SelectSpymaster = ({
 };
 
 SelectSpymaster.propTypes = {
-  userID: PropTypes.string.isRequired,
-  users: PropTypes.arrayOf(
+  playerID: PropTypes.string.isRequired,
+  players: PropTypes.objectOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,

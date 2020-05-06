@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import keyBy from "lodash/keyBy";
 import GuesserView from "./GuesserView";
 import SpymasterView from "./SpymasterView";
 import { GameDimensionsProvider } from "./GameDimensions";
@@ -9,22 +8,21 @@ const Game = ({
   codes,
   guessesLeft,
   isYourTurn,
+  players,
+  playerID,
   spymasterA,
   spymasterB,
   stage,
-  users,
-  userID,
   words,
   onEndTurn,
   onSelectWord,
   onSubmitCode,
 }) => {
-  const usersByID = keyBy(users, "id");
-  const you = usersByID[userID];
+  const you = players[playerID];
   const isSpymaster = you.id === spymasterA || you.id === spymasterB;
-  const teamNames = users
-    .filter((u) => u.team === you.team && u.id !== userID)
-    .map((u) => u.name);
+  const teamNames = Object.values(players)
+    .filter((player) => player.team === you.team && player.id !== playerID)
+    .map((player) => player.name);
   const yourWordsLeft = words.filter((w) => w.type === you.team && !w.flipped)
     .length;
   const enemyWordsLeft = words.filter(
@@ -56,7 +54,7 @@ const Game = ({
           stage={stage}
           words={words}
           yourSpymasterName={
-            usersByID[you.team === "A" ? spymasterA : spymasterB]?.name
+            players[you.team === "A" ? spymasterA : spymasterB]?.name
           }
           yourTeam={you.team}
           onEndTurn={onEndTurn}
@@ -70,17 +68,17 @@ const Game = ({
 Game.propTypes = {
   codes: PropTypes.array.isRequired,
   isYourTurn: PropTypes.bool.isRequired,
-  spymasterA: PropTypes.string.isRequired,
-  spymasterB: PropTypes.string.isRequired,
-  stage: PropTypes.string.isRequired,
-  users: PropTypes.arrayOf(
+  players: PropTypes.objectOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       team: PropTypes.oneOf(["A", "B"]),
     })
   ).isRequired,
-  userID: PropTypes.string.isRequired,
+  playerID: PropTypes.string.isRequired,
+  spymasterA: PropTypes.string.isRequired,
+  spymasterB: PropTypes.string.isRequired,
+  stage: PropTypes.string.isRequired,
   words: PropTypes.arrayOf(
     PropTypes.shape({
       flipped: PropTypes.bool.isRequired,

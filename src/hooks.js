@@ -1,8 +1,13 @@
 import { useCallback, useState } from "react";
 
 export const useStoredState = (key, defaultValue = null) => {
-  const rawItem = localStorage.getItem(key);
-  const [item, setItem] = useState(rawItem ? JSON.parse(rawItem) : defaultValue);
+  let parsedItem;
+  try {
+    parsedItem = JSON.parse(localStorage.getItem(key));
+  } catch (e) {
+    parsedItem = defaultValue;
+  }
+  const [item, setItem] = useState(parsedItem);
 
   const setAndStore = useCallback(
     (newItem) => {

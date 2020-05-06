@@ -30,51 +30,32 @@ http.listen(PORT, () => {
 /*** ROOM LOGIC ***/
 
 const _ = require("lodash");
-const UserDB = require("./userDB");
 const RoomDB = require("./roomDB");
 
-const Users = new UserDB();
 const Rooms = new RoomDB();
 
-const getUsersInRoom = (roomID) => {
-  if (!io.sockets.adapter.rooms[roomID]) {
-    return [];
-  }
-
-  return _.compact(
-    _.uniq(
-      Object.keys(io.sockets.adapter.rooms[roomID].sockets).map(
-        (id) => io.sockets.connected[id].userID
-      )
-    ).map((userID) => Users.getUser(userID))
-  );
-};
-
-const joinRoom = ({ room, user }, socket) => {
-  socket.userID = user.id;
+const joinRoom = ({ room, player }, socket) => {
+  socket.playerID = player.id;
   socket.roomID = room.id;
 
   socket.join(room.id, () => {
-    const usersInRoom = getUsersInRoom(room.id);
     socket.emit("room joined", {
       room,
-      users: usersInRoom,
-      userID: user.id,
+      playerID: player.id,
     });
-    socket.to(room.id).emit("users updated", { users: usersInRoom });
+    socket.to(room.id).emit("room updated", { room });
   });
 };
 
 io.on("connection", (socket) => {
-  socket.on("create room", ({ name, userID }) => {
-    const user = Users.createUser({ name, userID });
+  socket.on("create room", ({ name, playerID }) => {
     const room = Rooms.createRoom();
+    const player = room.addPlayer({ name, playerID });
 
-    joinRoom({ room, user }, socket);
+    joinRoom({ room, player }, socket);
   });
 
-  socket.on("join room", ({ code, name, userID }) => {
-    const user = Users.createUser({ name, userID });
+  socket.on("join room", ({ code, name, playerID }) => {
     const room = Rooms.getRoomByCode(code);
 
     if (!room) {
@@ -82,89 +63,85 @@ io.on("connection", (socket) => {
       return;
     }
 
-    joinRoom({ room, user }, socket);
+    const player = room.addPlayer({ name, playerID });
+
+    joinRoom({ room, player }, socket);
   });
 
-  socket.on("rejoin room", ({ roomID, userID }) => {
-    const user = Users.getUser(userID);
+  socket.on("rejoin room", ({ roomID, playerID }) => {
     const room = Rooms.getRoom(roomID);
-
-    if (!user) {
-      socket.emit("user not found");
-      return;
-    }
 
     if (!room) {
       socket.emit("room not found");
       return;
     }
 
-    joinRoom({ room, user }, socket);
+    const player = room.getPlayer(playerID);
+
+    if (!player) {
+      socket.emit("user not found");
+      return;
+    }
+
+    joinRoom({ room, player }, socket);
   });
 
-  socket.on("select team", ({ userID, team }) => {
-    const user = Users.updateTeam({ userID, team });
-    const room = Rooms.getRoom(socket.roomID);
-
-    if (!user || !room) return;
-
-    io.in(room.id).emit("users updated", { users: getUsersInRoom(room.id) });
-  });
-
-  socket.on("set teams", () => {
+  socket.on("set team", ({ playerID, team }) => {
     const room = Rooms.getRoom(socket.roomID);
 
     if (!room) return;
 
-    room.setTeams();
+    room.setTeam({ playerID, team });
 
     io.in(room.id).emit("room updated", { room });
   });
 
-  socket.on("set spymaster", ({ userID }) => {
-    const user = Users.getUser(userID);
+  socket.on("lock teams", () => {
     const room = Rooms.getRoom(socket.roomID);
 
-    if (!user || !room) return;
+    if (!room || room.teamsLocked) return;
 
-    room.setSpymaster({ userID: user.id, team: user.team });
+    room.lockTeams();
 
-    if (room.spymasterA && room.spymasterB) {
-      room.startGame();
-    }
+    io.in(room.id).emit("room updated", { room });
+  });
+
+  socket.on("set spymaster", ({ playerID }) => {
+    const room = Rooms.getRoom(socket.roomID);
+
+    if (!room) return;
+
+    room.setSpymaster({ playerID });
 
     io.in(room.id).emit("room updated", { room });
   });
 
   socket.on("submit code", ({ code, number }) => {
-    const user = Users.getUser(socket.userID);
     const room = Rooms.getRoom(socket.roomID);
 
-    if (!room || user.team !== room.turn) return;
+    if (!room) return;
 
-    room.submitCode({ code, number });
+    room.submitCode({ code, number, playerID: socket.playerID });
 
     io.in(room.id).emit("room updated", { room });
   });
 
   socket.on("select word", ({ word }) => {
-    const user = Users.getUser(socket.userID);
     const room = Rooms.getRoom(socket.roomID);
 
-    if (!room || user.team !== room.turn) return;
+    if (!room) return;
 
-    room.selectWord({ word });
+    room.selectWord({ word, playerID: socket.playerID });
 
     io.in(room.id).emit("room updated", { room });
   });
 
   socket.on("end turn", () => {
-    const user = Users.getUser(socket.userID);
     const room = Rooms.getRoom(socket.roomID);
 
-    if (!room || user.team !== room.turn) return;
+    if (!room) return;
 
-    room.endTurn();
+    room.endTurn({ playerID: socket.playerID });
 
     io.in(room.id).emit("room updated", { room });
   });
@@ -172,13 +149,16 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     if (!socket.roomID) return;
 
-    const usersLeft = getUsersInRoom(socket.roomID);
+    const room = Rooms.getRoom(socket.roomID);
 
-    if (usersLeft.length) {
-      socket.to(socket.roomID).emit("users updated", { users: usersLeft });
+    if (!room) return;
+
+    room.removePlayer(socket.playerID);
+
+    if (Object.values(room.players).filter((player) => player.online).length) {
+      socket.to(socket.roomID).emit("room updated", { room });
     } else {
       Rooms.removeRoom(socket.roomID);
-      Users.removeUser(socket.userID);
     }
   });
 });

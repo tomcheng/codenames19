@@ -21,18 +21,17 @@ const StatelessApp = ({
   codeIsInvalid,
   name,
   room,
-  userID,
-  users,
+  playerID,
   onCreateRoom,
   onEndTurn,
   onJoinRoom,
-  onSetTeams,
+  onLockTeams,
   onSelectSpymaster,
-  onSelectTeam,
+  onSetTeam,
   onSelectWord,
   onSubmitCode,
 }) => {
-  const user = users?.find((u) => u.id === userID);
+  const player = room?.players[playerID];
   const gameStarted = !!room?.turn;
 
   if (gameStarted) {
@@ -40,13 +39,13 @@ const StatelessApp = ({
       <Game
         key={room.round}
         codes={room.codes}
-        isYourTurn={user?.team === room.turn}
+        isYourTurn={player?.team === room.turn}
         guessesLeft={room.guessesLeft}
         spymasterA={room.spymasterA}
         spymasterB={room.spymasterB}
         stage={room.stage}
-        users={users}
-        userID={userID}
+        players={room.players}
+        playerID={playerID}
         words={room.words}
         onEndTurn={onEndTurn}
         onSelectWord={onSelectWord}
@@ -65,25 +64,25 @@ const StatelessApp = ({
           onCreateRoom={onCreateRoom}
           onJoinRoom={onJoinRoom}
         />
-      ) : !room.teamsSet ? (
+      ) : !room.teamsLocked ? (
         <SelectTeams
-          users={users}
-          onSetTeams={onSetTeams}
-          onSelectTeam={onSelectTeam}
+          players={room.players}
+          onSetTeam={onSetTeam}
+          onLockTeams={onLockTeams}
         />
-      ) : !user.team ? (
+      ) : !player.team ? (
         <SelectTeamToJoin
-          userID={userID}
-          users={users}
-          onSelectTeam={onSelectTeam}
+          playerID={playerID}
+          players={room.players}
+          onSetTeam={onSetTeam}
         />
       ) : (
         <SelectSpymaster
           chosenSpymaster={
-            user.team === "A" ? room.spymasterA : room.spymasterB
+            player.team === "A" ? room.spymasterA : room.spymasterB
           }
-          users={users}
-          userID={userID}
+          players={room.players}
+          playerID={playerID}
           onSelectSpymaster={onSelectSpymaster}
         />
       )}
@@ -97,14 +96,15 @@ StatelessApp.propTypes = {
   onCreateRoom: PropTypes.func.isRequired,
   onEndTurn: PropTypes.func.isRequired,
   onJoinRoom: PropTypes.func.isRequired,
-  onSetTeams: PropTypes.func.isRequired,
+  onLockTeams: PropTypes.func.isRequired,
   onSelectSpymaster: PropTypes.func.isRequired,
-  onSelectTeam: PropTypes.func.isRequired,
+  onSetTeam: PropTypes.func.isRequired,
   onSubmitCode: PropTypes.func.isRequired,
   room: PropTypes.shape({
     codes: PropTypes.array.isRequired,
+    players: PropTypes.object.isRequired,
     roomCode: PropTypes.string.isRequired,
-    teamsSet: PropTypes.bool.isRequired,
+    teamsLocked: PropTypes.bool.isRequired,
     guessesLeft: PropTypes.number,
     spymasterA: PropTypes.string,
     spymasterB: PropTypes.string,
@@ -112,8 +112,7 @@ StatelessApp.propTypes = {
     turn: PropTypes.string,
     words: PropTypes.array,
   }),
-  userID: PropTypes.string,
-  users: PropTypes.array,
+  playerID: PropTypes.string,
 };
 
 let ReactDvrApp;
