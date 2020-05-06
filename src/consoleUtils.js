@@ -157,7 +157,7 @@ export const printConfirming = ({
     (youNominated || confirmed) &&
       `Awaiting confirmation from ${humanizeList(
         awaiting.map((p) => p.name)
-      )}.`,
+      )}...`,
   ];
 };
 
