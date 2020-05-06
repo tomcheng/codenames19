@@ -56,7 +56,7 @@ const printWordGroup = ({ title, words, lineLength }) => {
   return [`**${title.toUpperCase()}**`, ...lines, " "];
 };
 
-export const printSpymasterWords = ({ words, yourTeam, lineLength }) => {
+export const printSpyWords = ({ words, yourTeam, lineLength }) => {
   const allianceWords = words.filter((w) => w.type === yourTeam);
   const enemyWords = words.filter(
     (w) => w.type === (yourTeam === "A" ? "B" : "A")
@@ -134,7 +134,7 @@ export const printGuesserWords = ({ words, yourTeam, lineLength }) => {
   return lines;
 };
 
-export const printGuesserConfirming = ({
+export const printConfirming = ({
   awaiting,
   candidateWord,
   code,
@@ -161,7 +161,7 @@ export const printGuesserConfirming = ({
   ];
 };
 
-export const printGuesserGuessing = ({
+export const printGuessing = ({
   code,
   confirmation,
   confirmed,
@@ -224,7 +224,7 @@ export const printScore = ({ isYourTurn, lineLength, words, yourTeam }) => {
   ];
 };
 
-export const printSpymasterWriting = ({
+export const printSpyWriting = ({
   confirmation,
   confirmed,
   number,
@@ -245,7 +245,7 @@ export const printSpymasterWriting = ({
   ]);
 };
 
-export const printSpymasterGuessing = ({ codes, teamNames, yourTeam }) => {
+export const printSpyWaiting = ({ codes, teamNames, yourTeam }) => {
   const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
 
   return [

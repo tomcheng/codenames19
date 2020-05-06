@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import compact from "lodash/compact";
 import {
   printScore,
-  printSpymasterGuessing,
-  printSpymasterWriting,
-  printSpymasterWords,
+  printSpyWaiting,
+  printSpyWriting,
+  printSpyWords,
   printWaitingMessage,
 } from "../consoleUtils";
 import Box from "./Box";
@@ -74,13 +74,13 @@ const SpymasterView = ({ gameResult, playerID, room, onSubmitCode }) => {
                       words: room.words,
                       yourTeam: player.team,
                     }),
-                    ...printSpymasterWords({
+                    ...printSpyWords({
                       lineLength,
                       words: room.words,
                       yourTeam: player.team,
                     }),
                     ...(isYourTurn && room.stage === "writing"
-                      ? printSpymasterWriting({
+                      ? printSpyWriting({
                           confirmation,
                           confirmed,
                           number,
@@ -92,7 +92,7 @@ const SpymasterView = ({ gameResult, playerID, room, onSubmitCode }) => {
                         })
                       : []),
                     ...(isYourTurn && room.stage === "guessing"
-                      ? printSpymasterGuessing({
+                      ? printSpyWaiting({
                           codes: room.codes,
                           teamNames,
                           yourTeam: player.team,

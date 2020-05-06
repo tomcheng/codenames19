@@ -6,8 +6,8 @@ import Box from "./Box";
 import Console from "./Console";
 import { GameDimensionsConsumer } from "./GameDimensions";
 import {
-  printGuesserConfirming,
-  printGuesserGuessing,
+  printConfirming,
+  printGuessing,
   printGuesserWords,
   printScore,
   printWaitingMessage,
@@ -94,7 +94,7 @@ const GuesserView = ({
                     ...(isYourTurn &&
                     room.stage === "guessing" &&
                     !needsConfirmation
-                      ? printGuesserGuessing({
+                      ? printGuessing({
                           code: last(room.codes),
                           confirmation,
                           confirmed,
@@ -109,7 +109,7 @@ const GuesserView = ({
                         })
                       : []),
                     ...(isYourTurn && needsConfirmation
-                      ? printGuesserConfirming({
+                      ? printConfirming({
                           awaiting: room.awaitingConfirmation.map(
                             (id) => room.players[id]
                           ),
