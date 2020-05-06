@@ -13,6 +13,7 @@ import {
 } from "../consoleUtils";
 import NumericKeyboard from "./NumericKeyboard";
 import AlphabetKeyboard from "./AlphabetKeyboard";
+import { roomPropType } from "../utils";
 
 const validateNumber = ({ selectedWord }) => {
   if (!selectedWord) {
@@ -26,13 +27,9 @@ const validateNumber = ({ selectedWord }) => {
   return null;
 };
 const GuesserView = ({
-  codes,
   gameResult,
-  guessesLeft,
-  isYourTurn,
-  stage,
-  words,
-  yourTeam,
+  playerID,
+  room,
   onEndTurn,
   onSelectWord,
 }) => {
@@ -42,8 +39,11 @@ const GuesserView = ({
   const [selected, setSelected] = useState(false);
   const [confirmation, setConfirmation] = useState("");
   const [confirmed, setConfirmed] = useState(false);
-  const selectedWord = number ? words[parseInt(number) - 1] : null;
-  const disabled = !isYourTurn || stage === "writing" || confirmed;
+  const selectedWord = number ? room.words[parseInt(number) - 1] : null;
+
+  const player = room.players[playerID];
+  const isYourTurn = player.team === room.turn;
+  const disabled = !isYourTurn || room.stage === "writing" || confirmed;
 
   return (
     <Box flex flexDirection="column" height="100vh">
@@ -54,26 +54,38 @@ const GuesserView = ({
               gameResult
                 ? [gameResult]
                 : compact([
-                    ...printScore({ isYourTurn, lineLength, words, yourTeam }),
-                    ...printGuesserWords({ words, yourTeam, lineLength }),
+                    ...printScore({
+                      isYourTurn,
+                      lineLength,
+                      words: room.words,
+                      yourTeam: player.team,
+                    }),
+                    ...printGuesserWords({
+                      lineLength,
+                      words: room.words,
+                      yourTeam: player.team,
+                    }),
                     isYourTurn &&
-                      stage === "writing" &&
+                      room.stage === "writing" &&
                       "**Awaiting transmission...**",
-                    ...(isYourTurn && stage === "guessing"
+                    ...(isYourTurn && room.stage === "guessing"
                       ? printGuesserGuessing({
-                          code: last(codes),
+                          code: last(room.codes),
                           confirmation,
                           confirmed,
                           endTurn,
                           error,
-                          guessesLeft,
+                          guessesLeft: room.guessesLeft,
                           number,
                           selected,
-                          words,
+                          words: room.words,
                         })
                       : []),
                     ...(!isYourTurn
-                      ? printWaitingMessage({ stage, codes })
+                      ? printWaitingMessage({
+                          codes: room.codes,
+                          stage: room.stage,
+                        })
                       : []),
                   ])
             }
@@ -141,27 +153,10 @@ const GuesserView = ({
 };
 
 GuesserView.propTypes = {
-  codes: PropTypes.arrayOf(
-    PropTypes.shape({
-      code: PropTypes.string.isRequired,
-      number: PropTypes.number.isRequired,
-    })
-  ).isRequired,
-  isYourTurn: PropTypes.bool.isRequired,
-  stage: PropTypes.oneOf(["guessing", "writing"]).isRequired,
-  words: PropTypes.arrayOf(
-    PropTypes.shape({
-      flipped: PropTypes.bool.isRequired,
-      type: PropTypes.oneOf(["A", "B", "neutral", "bomb"]).isRequired,
-      word: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  yourTeam: PropTypes.oneOf(["A", "B"]).isRequired,
+  room: roomPropType.isRequired,
   onEndTurn: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
   gameResult: PropTypes.string,
-  guessesLeft: PropTypes.number,
-  yourSpymasterName: PropTypes.string,
 };
 
 export default GuesserView;

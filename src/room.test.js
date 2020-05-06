@@ -176,4 +176,63 @@ describe("room", () => {
     expect(room.turn).toEqual("B");
     expect(room.stage).toEqual("writing");
   });
+
+  it("requires confirmation with multiple guessers", () => {
+    const room = new Room({ usedCodes: [] });
+
+    room.addPlayer({ name: "Alice", playerID: "1000" });
+    room.addPlayer({ name: "Alex", playerID: "1001" });
+    room.addPlayer({ name: "Amy", playerID: "1002" });
+    room.addPlayer({ name: "Alan", playerID: "1003" });
+    room.addPlayer({ name: "Bob", playerID: "1004" });
+    room.addPlayer({ name: "Barb", playerID: "1005" });
+
+    room.setTeam({ playerID: "1000", team: "A" });
+    room.setTeam({ playerID: "1001", team: "A" });
+    room.setTeam({ playerID: "1002", team: "A" });
+    room.setTeam({ playerID: "1003", team: "A" });
+    room.setTeam({ playerID: "1004", team: "B" });
+    room.setTeam({ playerID: "1005", team: "B" });
+
+    room.lockTeams();
+
+    room.setSpymaster({ playerID: "1000" });
+    room.setSpymaster({ playerID: "1004" });
+
+    room.submitCode({ code: "baz", number: 2, playerID: "1000" });
+
+    expect(room.round).toEqual(1);
+    expect(room.turn).toEqual("A");
+    expect(room.stage).toEqual("guessing");
+    expect(room.codes).toEqual([{ code: "baz", number: 2, team: "A" }]);
+    expect(room.guessesLeft).toEqual(2);
+
+    const [first] = room.words
+      .filter((w) => w.type !== "bomb")
+      .map((w) => w.word);
+
+    room.selectWord({ word: first, playerID: "1001" });
+
+    expect(room.words.find((w) => w.word === first).flipped).toEqual(false);
+    expect(room.guessesLeft).toEqual(2);
+    expect(room.candidateWord).toEqual(first);
+    expect(room.nominator).toEqual("1001");
+    expect(room.awaitingConfirmation).toEqual(["1002", "1003"]);
+
+    room.confirmWord({ playerID: "1002" });
+
+    expect(room.words.find((w) => w.word === first).flipped).toEqual(false);
+    expect(room.guessesLeft).toEqual(2);
+    expect(room.candidateWord).toEqual(first);
+    expect(room.nominator).toEqual("1001");
+    expect(room.awaitingConfirmation).toEqual(["1003"]);
+
+    room.confirmWord({ playerID: "1003" });
+
+    expect(room.words.find((w) => w.word === first).flipped).toEqual(true);
+    expect(room.guessesLeft).toEqual(1);
+    expect(room.candidateWord).toEqual(null);
+    expect(room.nominator).toEqual(null);
+    expect(room.awaitingConfirmation).toEqual(null);
+  });
 });

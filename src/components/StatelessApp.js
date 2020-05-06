@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import background from "../assets/so-white.png";
+import {roomPropType} from "../utils";
 import AppHeader from "./AppHeader";
 import Game from "./Game";
 import Lobby from "./Lobby";
@@ -39,15 +40,8 @@ const StatelessApp = ({
     return (
       <Game
         key={room.round}
-        codes={room.codes}
-        isYourTurn={player?.team === room.turn}
-        guessesLeft={room.guessesLeft}
-        spymasterA={room.spymasterA}
-        spymasterB={room.spymasterB}
-        stage={room.stage}
-        players={room.players}
         playerID={playerID}
-        words={room.words}
+        room={room}
         onEndTurn={onEndTurn}
         onSelectWord={onSelectWord}
         onSubmitCode={onSubmitCode}
@@ -99,16 +93,7 @@ StatelessApp.propTypes = {
   onSelectSpymaster: PropTypes.func.isRequired,
   onSetTeam: PropTypes.func.isRequired,
   onSubmitCode: PropTypes.func.isRequired,
-  room: PropTypes.shape({
-    codes: PropTypes.array.isRequired,
-    players: PropTypes.object.isRequired,
-    roomCode: PropTypes.string.isRequired,
-    teamsLocked: PropTypes.bool.isRequired,
-    guessesLeft: PropTypes.number,
-    stage: PropTypes.string,
-    turn: PropTypes.string,
-    words: PropTypes.array,
-  }),
+  room: roomPropType,
   playerID: PropTypes.string,
   teamError: PropTypes.string,
 };

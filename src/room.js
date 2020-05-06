@@ -14,6 +14,9 @@ class Room {
     this.stage = null;
     this.codes = [];
     this.guessesLeft = null;
+    this.candidateWord = null;
+    this.nominator = null;
+    this.awaitingConfirmation = null;
     this.players = {};
   }
 
@@ -99,6 +102,7 @@ class Room {
 
   submitCode({ code, number, playerID }) {
     const player = this.players[playerID];
+
     if (
       !player ||
       player.team !== this.turn ||
@@ -115,6 +119,7 @@ class Room {
 
   selectWord({ word, playerID }) {
     const player = this.players[playerID];
+
     if (
       !player ||
       player.team !== this.turn ||
@@ -124,19 +129,45 @@ class Room {
       return;
     }
 
-    this.words = this.words.map((w) =>
-      w.word === word ? { ...w, flipped: true } : w
+    const otherGuessers = Object.values(this.players).filter(
+      (p) => p.team === player.team && !p.spymaster && p.id !== player.id
     );
 
-    if (this.guessesLeft === 1) {
-      this.endTurn({ playerID });
+    if (otherGuessers.length) {
+      this.candidateWord = word;
+      this.nominator = player.id;
+      this.awaitingConfirmation = otherGuessers.map((p) => p.id);
     } else {
-      this.guessesLeft -= 1;
+      this._flipWord({ word, playerID });
+    }
+  }
+
+  confirmWord({ playerID }) {
+    const player = this.players[playerID];
+
+    if (
+      !player ||
+      player.team !== this.turn ||
+      player.spymaster ||
+      !this.awaitingConfirmation.includes(player.id) ||
+      this.stage === "writing"
+    ) {
+      return;
+    }
+
+    this.awaitingConfirmation = this.awaitingConfirmation.filter(id => id !== playerID);
+
+    if (this.awaitingConfirmation.length === 0) {
+      this._flipWord({ word: this.candidateWord, playerID });
+      this.candidateWord = null;
+      this.nominator = null;
+      this.awaitingConfirmation = null;
     }
   }
 
   endTurn({ playerID }) {
     const player = this.players[playerID];
+
     if (
       !player ||
       player.team !== this.turn ||
@@ -158,6 +189,18 @@ class Room {
     this.round = 1;
     this.turn = "A";
     this.stage = "writing";
+  }
+
+  _flipWord({ word, playerID }) {
+    this.words = this.words.map((w) =>
+      w.word === word ? { ...w, flipped: true } : w
+    );
+
+    if (this.guessesLeft === 1) {
+      this.endTurn({ playerID });
+    } else {
+      this.guessesLeft -= 1;
+    }
   }
 
   _getUniqueRoomCode({ usedCodes }) {
