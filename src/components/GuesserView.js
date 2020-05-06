@@ -44,6 +44,18 @@ const GuesserView = ({
   const [confirmed, setConfirmed] = useState(false);
   const selectedWord = number ? room.words[parseInt(number) - 1] : null;
 
+  const player = room.players[playerID];
+  const isYourTurn = player.team === room.turn;
+  const yourSpymaster = Object.values(room.players).find(
+    (p) => p.team === player.team && p.spymaster
+  );
+  const needsConfirmation = !!room.candidateWord;
+  const disabled =
+    !isYourTurn ||
+    room.stage === "writing" ||
+    confirmed ||
+    (needsConfirmation && !room.awaitingConfirmation.includes(playerID));
+
   useEffect(() => {
     setNumber("");
     setEndTurn(false);
@@ -52,15 +64,6 @@ const GuesserView = ({
     setConfirmation("");
     setConfirmed(false);
   }, [room.candidateWord]);
-
-  const player = room.players[playerID];
-  const isYourTurn = player.team === room.turn;
-  const needsConfirmation = !!room.candidateWord;
-  const disabled =
-    !isYourTurn ||
-    room.stage === "writing" ||
-    confirmed ||
-    (needsConfirmation && !room.awaitingConfirmation.includes(playerID));
 
   return (
     <Box flex flexDirection="column" height="100vh">
@@ -90,7 +93,7 @@ const GuesserView = ({
                       : []),
                     isYourTurn &&
                       room.stage === "writing" &&
-                      "**Awaiting transmission...**",
+                      `Awaiting transmission from ${yourSpymaster.name}...`,
                     ...(isYourTurn &&
                     room.stage === "guessing" &&
                     !needsConfirmation

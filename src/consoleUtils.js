@@ -19,7 +19,11 @@ export const parseMarkdown = (str) => {
             .replace(/(\*\*)(.*?)\1/g, "<strong>$2</strong>")
             .replace(/(--)(.*?)\1/g, "<span class='strike-through'>$2</span>")
             .replace(/(__)(.*?)\1/g, "<span class='faded'>$2</span>")
-            .replace(/(~~)(.*?)\1/g, "<span class='red'>$2</span>"),
+            .replace(/(~~)(.*?)\1/g, "<span class='red'>$2</span>")
+            .replace(
+              /\.\.\./g,
+              "<span class='dot-1'>.</span><span class='dot-2'>.</span><span class='dot-3'>.</span>"
+            ),
         }}
       />
     ),
@@ -148,7 +152,7 @@ export const printConfirming = ({
     " ",
     `${
       youNominated ? "You have" : nominator.name + " has"
-    } selected **${candidateWord}**.`,
+    } selected "${candidateWord}".`,
     !youNominated &&
       `Do you agree with this selection? (Y/N) ${
         confirmed ? `**${confirmation}**` : ""

@@ -11,6 +11,24 @@ const blink = keyframes`
     100% { opacity: 1.0; }
 `;
 
+const dot1 = keyframes`
+    0% { opacity: 0.0; }
+    11.1% { opacity: 1.0; }
+    100% { opacity: 0.0; }
+`;
+
+const dot2 = keyframes`
+    0% { opacity: 0.0; }
+    22.2% { opacity: 1.0; }
+    100% { opacity: 0.0; }
+`;
+
+const dot3 = keyframes`
+    0% { opacity: 0.0; }
+    33.3% { opacity: 1.0; }
+    100% { opacity: 0.0; }
+`;
+
 const Blink = styled.span`
   animation: ${blink} 1s step-end infinite;
 `;
@@ -24,6 +42,15 @@ const Content = styled.div`
   }
   .red {
     color: red;
+  }
+  .dot-1 {
+     animation: ${dot1} 3s step-end infinite;
+  }
+  .dot-2 {
+    animation: ${dot2} 3s step-end infinite;
+  }
+  .dot-3 {
+    animation: ${dot3} 3s step-end infinite;
   }
 `;
 
