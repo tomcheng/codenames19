@@ -17,7 +17,7 @@ class Room {
     this.candidateWord = null;
     this.nominator = null;
     this.awaitingConfirmation = null;
-    this.rejector = null;
+    this.rejection = null;
     this.players = {};
   }
 
