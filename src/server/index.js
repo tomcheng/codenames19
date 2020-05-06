@@ -14,10 +14,10 @@ const PORT = process.env.PORT || 5000;
 
 if (isProduction) {
   console.log("=== RUNNING PRODUCTION MODE ===");
-  app.use(express.static(path.resolve(__dirname, "../build")));
+  app.use(express.static(path.resolve(__dirname, "../../build")));
 
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../build"));
+    res.sendFile(path.resolve(__dirname, "../../build"));
   });
 } else {
   console.log("=== RUNNING DEVELOPMENT MODE ===");
