@@ -69,8 +69,8 @@ class Room {
     }
 
     if (
-        Object.values(this.players).filter((player) => player.team === "B")
-            .length < 2
+      Object.values(this.players).filter((player) => player.team === "B")
+        .length < 2
     ) {
       throw new Error("Group B needs at least 2 players.");
     }
@@ -93,7 +93,11 @@ class Room {
   }
 
   submitCode({ code, number, playerID }) {
-    if (!this.players[playerID] || this.players[playerID].team !== this.turn) {
+    if (
+      !this.players[playerID] ||
+      this.players[playerID].team !== this.turn ||
+      this.stage === "guessing"
+    ) {
       return;
     }
 
@@ -103,7 +107,11 @@ class Room {
   }
 
   selectWord({ word, playerID }) {
-    if (!this.players[playerID] || this.players[playerID].team !== this.turn) {
+    if (
+      !this.players[playerID] ||
+      this.players[playerID].team !== this.turn ||
+      this.stage === "writing"
+    ) {
       return;
     }
 
@@ -119,7 +127,11 @@ class Room {
   }
 
   endTurn({ playerID }) {
-    if (!this.players[playerID] || this.players[playerID].team !== this.turn) {
+    if (
+      !this.players[playerID] ||
+      this.players[playerID].team !== this.turn ||
+      this.stage === "writing"
+    ) {
       return;
     }
 
