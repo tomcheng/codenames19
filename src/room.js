@@ -53,7 +53,27 @@ class Room {
   }
 
   lockTeams() {
-    if (Object.values(this.players).some((player) => !player.team)) return;
+    if (Object.values(this.players).length < 4) {
+      throw new Error("At least four players are required.");
+    }
+
+    if (Object.values(this.players).some((player) => !player.team)) {
+      throw new Error("Every player needs to be assigned a group.");
+    }
+
+    if (
+      Object.values(this.players).filter((player) => player.team === "A")
+        .length < 2
+    ) {
+      throw new Error("Group A needs at least 2 players.");
+    }
+
+    if (
+        Object.values(this.players).filter((player) => player.team === "B")
+            .length < 2
+    ) {
+      throw new Error("Group B needs at least 2 players.");
+    }
 
     this.teamsLocked = true;
   }

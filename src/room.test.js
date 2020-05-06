@@ -35,6 +35,48 @@ describe("room", () => {
     });
   });
 
+  it("validates locking in a team", () => {
+    const room = new Room({ usedCodes: [] });
+
+    expect(!room.teamsLocked);
+
+    room.addPlayer({ name: "Alice", playerID: "1000" });
+    room.addPlayer({ name: "Alex", playerID: "1001" });
+    room.addPlayer({ name: "Bob", playerID: "1002" });
+
+    expect(() => {
+      room.lockTeams();
+    }).toThrow(/four players/i);
+
+    room.addPlayer({ name: "Barb", playerID: "1003" });
+
+    expect(() => {
+      room.lockTeams();
+    }).toThrow(/assigned/i);
+
+    room.setTeam({ playerID: "1000", team: "A" });
+    room.setTeam({ playerID: "1001", team: "B" });
+    room.setTeam({ playerID: "1002", team: "B" });
+    room.setTeam({ playerID: "1003", team: "B" });
+
+    expect(() => {
+      room.lockTeams();
+    }).toThrow(/group a/i);
+
+    room.setTeam({ playerID: "1001", team: "A" });
+    room.setTeam({ playerID: "1002", team: "A" });
+
+    expect(() => {
+      room.lockTeams();
+    }).toThrow(/group b/i);
+
+    room.setTeam({ playerID: "1002", team: "B" });
+
+    room.lockTeams();
+
+    expect(room.teamsLocked);
+  });
+
   it("plays a game", () => {
     const room = new Room({ usedCodes: [] });
 
