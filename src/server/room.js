@@ -1,7 +1,7 @@
 const uuid = require("uuid");
 const _ = require("lodash");
-const utils = require("../server/utils");
-const { getWords } = require("../server/words");
+const utils = require("./utils");
+const { getWords } = require("./words");
 
 class Room {
   constructor({ usedCodes }) {
