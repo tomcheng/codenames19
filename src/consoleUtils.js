@@ -146,7 +146,7 @@ export const printGuesserGuessing = ({
   words,
 }) => {
   return [
-    `**Transmission received: ${code.code} / ${code.number}**`,
+    `**Transmission received: ${code.word} / ${code.number}**`,
     " ",
     error && `**${error}.**`,
     `You have ${plc(guessesLeft, "guess", "guesses")} remaining.`,
@@ -192,23 +192,23 @@ export const printScore = ({ isYourTurn, lineLength, words, yourTeam }) => {
 };
 
 export const printSpymasterWriting = ({
-  code,
-  codeDone,
-  codeError,
   confirmation,
   confirmed,
   number,
   numberDone,
   numberError,
+  word,
+  wordDone,
+  wordError,
 }) => {
   return compact([
-    (numberError || codeError) && `**${numberError || codeError}.**`,
-    `Enter code word: **${codeDone ? code : ""}**`,
-    codeDone && `Enter number:    **${numberDone ? number : ""}**`,
+    (numberError || wordError) && `**${numberError || wordError}.**`,
+    `Enter word:   **${wordDone ? word : ""}**`,
+    wordDone && `Enter number: **${numberDone ? number : ""}**`,
     numberDone &&
-      `Send code and number? (Y/N) **${confirmed ? confirmation : ""}**`,
+      `Send word and number? (Y/N) **${confirmed ? confirmation : ""}**`,
     confirmed && " ",
-    confirmed && `**Sending Transmission: ${code.trim()} / ${number}...**`,
+    confirmed && `**Sending Transmission: ${word.trim()} / ${number}...**`,
   ]);
 };
 
@@ -216,7 +216,7 @@ export const printSpymasterGuessing = ({ codes, teamNames, yourTeam }) => {
   const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
 
   return [
-    `**Transmission sent: ${yourLastCode.code} / ${yourLastCode.number}**`,
+    `**Transmission sent: ${yourLastCode.word} / ${yourLastCode.number}**`,
     " ",
     `Awaiting response from ${humanizeList(teamNames)}...`,
   ];
@@ -227,6 +227,6 @@ export const printWaitingMessage = ({ stage, codes }) => {
   return [
     stage === "writing"
       ? "**Monitoring enemy communication...**"
-      : `**Enemy transmission intercepted: ${lastCode.code} / ${lastCode.number}**`,
+      : `**Enemy transmission intercepted: ${lastCode.word} / ${lastCode.number}**`,
   ];
 };

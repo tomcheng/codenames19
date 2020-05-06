@@ -100,7 +100,7 @@ class Room {
     }
   }
 
-  submitCode({ code, number, playerID }) {
+  submitCode({ word, number, playerID }) {
     const player = this.players[playerID];
 
     if (
@@ -113,7 +113,7 @@ class Room {
     }
 
     this.stage = "guessing";
-    this.codes.push({ code, number, team: this.turn });
+    this.codes.push({ word, number });
     this.guessesLeft = this.round === 1 ? number : number + 1;
   }
 
@@ -155,7 +155,9 @@ class Room {
       return;
     }
 
-    this.awaitingConfirmation = this.awaitingConfirmation.filter(id => id !== playerID);
+    this.awaitingConfirmation = this.awaitingConfirmation.filter(
+      (id) => id !== playerID
+    );
 
     if (this.awaitingConfirmation.length === 0) {
       this._flipWord({ word: this.candidateWord, playerID });

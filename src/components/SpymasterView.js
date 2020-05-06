@@ -17,7 +17,7 @@ import { roomPropType } from "../utils";
 
 const validateCode = (code) => {
   if (code.trim().length === 0) {
-    return "A code is required";
+    return "A word is required";
   }
   if (code.trim().includes(" ")) {
     return "Only one word is permitted";
@@ -42,9 +42,9 @@ const validateNumber = (number) => {
 };
 
 const SpymasterView = ({ gameResult, playerID, room, onSubmitCode }) => {
-  const [code, setCode] = useState("");
-  const [codeDone, setCodeDone] = useState(false);
-  const [codeError, setCodeError] = useState(null);
+  const [word, setWord] = useState("");
+  const [wordDone, setWordDone] = useState(false);
+  const [wordError, setWordError] = useState(null);
   const [number, setNumber] = useState("");
   const [numberError, setNumberError] = useState(null);
   const [numberDone, setNumberDone] = useState(false);
@@ -81,14 +81,14 @@ const SpymasterView = ({ gameResult, playerID, room, onSubmitCode }) => {
                     }),
                     ...(isYourTurn && room.stage === "writing"
                       ? printSpymasterWriting({
-                          code,
-                          codeDone,
-                          codeError,
                           confirmation,
                           confirmed,
                           number,
                           numberDone,
                           numberError,
+                          word,
+                          wordDone,
+                          wordError,
                         })
                       : []),
                     ...(isYourTurn && room.stage === "guessing"
@@ -107,7 +107,7 @@ const SpymasterView = ({ gameResult, playerID, room, onSubmitCode }) => {
                   ])
             }
             showPrompt={!disabled}
-            typed={numberDone ? confirmation : codeDone ? number : code}
+            typed={numberDone ? confirmation : wordDone ? number : word}
           />
         )}
       </GameDimensionsConsumer>
@@ -127,11 +127,11 @@ const SpymasterView = ({ gameResult, playerID, room, onSubmitCode }) => {
           onSubmit={() => {
             if (confirmation === "Y") {
               setConfirmed(true);
-              onSubmitCode({ code: code.trim(), number: parseInt(number) });
+              onSubmitCode({ word: word.trim(), number: parseInt(number) });
             } else {
-              setCode("");
-              setCodeError(null);
-              setCodeDone(false);
+              setWord("");
+              setWordError(null);
+              setWordDone(false);
               setNumber("");
               setNumberError(null);
               setNumberDone(false);
@@ -139,13 +139,13 @@ const SpymasterView = ({ gameResult, playerID, room, onSubmitCode }) => {
             }
           }}
         />
-      ) : codeDone ? (
+      ) : wordDone ? (
         <NumericKeyboard
           disabled={disabled}
           onCancel={() => {
-            setCode("");
-            setCodeError(null);
-            setCodeDone(false);
+            setWord("");
+            setWordError(null);
+            setWordDone(false);
             setNumber("");
             setNumberError(null);
           }}
@@ -171,19 +171,19 @@ const SpymasterView = ({ gameResult, playerID, room, onSubmitCode }) => {
         <AlphabetKeyboard
           disabled={disabled}
           onDelete={() => {
-            setCode(code.length > 0 ? code.slice(0, code.length - 1) : code);
+            setWord(word.length > 0 ? word.slice(0, word.length - 1) : word);
           }}
           onType={(letter) => {
-            setCode(code + letter);
+            setWord(word + letter);
           }}
           onSubmit={() => {
-            const e = validateCode(code);
+            const e = validateCode(word);
             if (e) {
-              setCodeError(e);
-              setCode("");
+              setWordError(e);
+              setWord("");
               return;
             }
-            setCodeDone(true);
+            setWordDone(true);
           }}
         />
       )}

@@ -18,16 +18,25 @@ export const humanizeList = (list) => {
 };
 
 export const roomPropType = PropTypes.shape({
-  codes: PropTypes.array.isRequired,
+  id: PropTypes.string.isRequired,
+  codes: PropTypes.arrayOf(
+    PropTypes.shape({
+      word: PropTypes.string.isRequired,
+      number: PropTypes.number.isRequired,
+
+    })
+  ).isRequired,
   players: PropTypes.objectOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
+      online: PropTypes.bool.isRequired,
       spymaster: PropTypes.bool.isRequired,
       team: PropTypes.oneOf(["A", "B"]),
     })
   ).isRequired,
-  stage: PropTypes.string.isRequired,
+  roomCode: PropTypes.string.isRequired,
+  teamsLocked: PropTypes.bool.isRequired,
   words: PropTypes.arrayOf(
     PropTypes.shape({
       flipped: PropTypes.bool.isRequired,
@@ -35,4 +44,11 @@ export const roomPropType = PropTypes.shape({
       word: PropTypes.string.isRequired,
     })
   ).isRequired,
+  awaitingConfirmation: PropTypes.arrayOf(PropTypes.string),
+  candidateWord: PropTypes.string,
+  guessesLeft: PropTypes.number,
+  nominator: PropTypes.string,
+  round: PropTypes.number,
+  stage: PropTypes.oneOf(["guessing", "writing"]),
+  turn: PropTypes.oneOf(["A", "B"]),
 });

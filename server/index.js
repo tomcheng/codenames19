@@ -119,12 +119,12 @@ io.on("connection", (socket) => {
     updateRoom(room);
   });
 
-  socket.on("submit code", ({ code, number }) => {
+  socket.on("submit code", ({ word, number }) => {
     const room = Rooms.getRoom(socket.roomID);
 
     if (!room) return;
 
-    room.submitCode({ code, number, playerID: socket.playerID });
+    room.submitCode({ word, number, playerID: socket.playerID });
     updateRoom(room);
   });
 

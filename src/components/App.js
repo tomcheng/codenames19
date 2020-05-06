@@ -98,8 +98,8 @@ const App = ({ socket }) => {
   );
 
   const handleSubmitCode = useCallback(
-    ({ code, number }) => {
-      socket.emit("submit code", { code, number });
+    ({ word, number }) => {
+      socket.emit("submit code", { word, number });
     },
     [socket]
   );
