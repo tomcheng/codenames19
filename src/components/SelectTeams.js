@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import countBy from "lodash/countBy";
 import range from "lodash/range";
 import size from "lodash/size";
 import Box from "./Box";
@@ -9,13 +8,8 @@ import DocumentWrapper from "./DocumentWrapper";
 import Text from "./Text";
 import DocumentSubmit from "./DocumentSubmit";
 
-const SelectTeams = ({ players, onLockTeams, onSetTeam }) => {
-  const [error, setError] = useState(null);
+const SelectTeams = ({ players, teamError, onLockTeams, onSetTeam }) => {
   const playersNeeded = Math.max(4 - size(players), 0);
-  const counts = countBy(players, "team");
-  const usersWithNoTeams = Object.values(players).filter(
-    (player) => !player.team
-  );
 
   return (
     <div>
@@ -97,26 +91,9 @@ const SelectTeams = ({ players, onLockTeams, onSetTeam }) => {
         </Box>
       </DocumentWrapper>
       <DocumentSubmit
-        error={error}
+        error={teamError}
         disabled={playersNeeded > 0}
-        onSubmit={() => {
-          if ((counts.A || 0) < 2) {
-            setError("Insufficient numbers in Group A");
-            return;
-          }
-          if ((counts.B || 0) < 2) {
-            setError("Insufficient numbers in Group B");
-            return;
-          }
-          if (usersWithNoTeams.length) {
-            setError(
-              `${usersWithNoTeams[0].name} has not been assigned a group`
-            );
-            return;
-          }
-
-          onLockTeams();
-        }}
+        onSubmit={onLockTeams}
       />
     </div>
   );

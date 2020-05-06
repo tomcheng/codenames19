@@ -20,8 +20,9 @@ const AppContainer = styled.div`
 const StatelessApp = ({
   codeIsInvalid,
   name,
-  room,
   playerID,
+  room,
+  teamError,
   onCreateRoom,
   onEndTurn,
   onJoinRoom,
@@ -67,6 +68,7 @@ const StatelessApp = ({
       ) : !room.teamsLocked ? (
         <SelectTeams
           players={room.players}
+          teamError={teamError}
           onSetTeam={onSetTeam}
           onLockTeams={onLockTeams}
         />
@@ -113,6 +115,7 @@ StatelessApp.propTypes = {
     words: PropTypes.array,
   }),
   playerID: PropTypes.string,
+  teamError: PropTypes.string,
 };
 
 let ReactDvrApp;

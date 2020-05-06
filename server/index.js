@@ -101,9 +101,13 @@ io.on("connection", (socket) => {
 
     if (!room || room.teamsLocked) return;
 
-    room.lockTeams();
+    try {
+      room.lockTeams();
 
-    io.in(room.id).emit("room updated", { room });
+      io.in(room.id).emit("room updated", { room });
+    } catch (e) {
+      socket.emit("team error", { message: e.message });
+    }
   });
 
   socket.on("set spymaster", ({ playerID }) => {

@@ -13,6 +13,7 @@ const App = ({ socket }) => {
   const [roomID, setRoomID] = useStoredState(ROOM_ID_KEY);
   const [room, setRoom] = useState(null);
   const [codeIsInvalid, setCodeIsInvalid] = useState(false);
+  const [teamError, setTeamError] = useState(null);
 
   /*** EFFECTS ***/
 
@@ -39,7 +40,11 @@ const App = ({ socket }) => {
     socket.on("room code not found", () => {
       setCodeIsInvalid(true);
     });
-  }, [socket, setName, setRoomID, setPlayerID]);
+
+    socket.on("team error", ({ message }) => {
+      setTeamError(message);
+    });
+  }, [socket, setName, setRoomID, setPlayerID, setTeamError]);
 
   useEffect(() => {
     if (roomID && !room) {
@@ -105,6 +110,7 @@ const App = ({ socket }) => {
       name={name}
       room={room}
       playerID={playerID}
+      teamError={teamError}
       onCreateRoom={handleCreateRoom}
       onEndTurn={handleEndTurn}
       onJoinRoom={handleJoinRoom}
