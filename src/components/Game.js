@@ -10,8 +10,6 @@ const Game = ({
   isYourTurn,
   players,
   playerID,
-  spymasterA,
-  spymasterB,
   stage,
   words,
   onEndTurn,
@@ -19,7 +17,6 @@ const Game = ({
   onSubmitCode,
 }) => {
   const you = players[playerID];
-  const isSpymaster = you.id === spymasterA || you.id === spymasterB;
   const teamNames = Object.values(players)
     .filter((player) => player.team === you.team && player.id !== playerID)
     .map((player) => player.name);
@@ -33,7 +30,7 @@ const Game = ({
 
   return (
     <GameDimensionsProvider>
-      {isSpymaster ? (
+      {you.spymaster ? (
         <SpymasterView
           codes={codes}
           gameResult={gameResult}
@@ -54,7 +51,9 @@ const Game = ({
           stage={stage}
           words={words}
           yourSpymasterName={
-            players[you.team === "A" ? spymasterA : spymasterB]?.name
+            Object.values(players).find(
+              (p) => p.team === you.team && p.spymaster
+            )?.name
           }
           yourTeam={you.team}
           onEndTurn={onEndTurn}
@@ -72,12 +71,11 @@ Game.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
+      spymaster: PropTypes.bool.isRequired,
       team: PropTypes.oneOf(["A", "B"]),
     })
   ).isRequired,
   playerID: PropTypes.string.isRequired,
-  spymasterA: PropTypes.string.isRequired,
-  spymasterB: PropTypes.string.isRequired,
   stage: PropTypes.string.isRequired,
   words: PropTypes.arrayOf(
     PropTypes.shape({

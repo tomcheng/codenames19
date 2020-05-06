@@ -80,9 +80,6 @@ const StatelessApp = ({
         />
       ) : (
         <SelectSpymaster
-          chosenSpymaster={
-            player.team === "A" ? room.spymasterA : room.spymasterB
-          }
           players={room.players}
           playerID={playerID}
           onSelectSpymaster={onSelectSpymaster}
@@ -108,8 +105,6 @@ StatelessApp.propTypes = {
     roomCode: PropTypes.string.isRequired,
     teamsLocked: PropTypes.bool.isRequired,
     guessesLeft: PropTypes.number,
-    spymasterA: PropTypes.string,
-    spymasterB: PropTypes.string,
     stage: PropTypes.string,
     turn: PropTypes.string,
     words: PropTypes.array,

@@ -22,6 +22,7 @@ describe("room", () => {
       id: "1000",
       name: "Alice",
       online: true,
+      spymaster: false,
       team: null,
     });
 
@@ -31,6 +32,7 @@ describe("room", () => {
       id: "1000",
       name: "Alice",
       online: true,
+      spymaster: false,
       team: "A",
     });
   });
@@ -38,7 +40,7 @@ describe("room", () => {
   it("validates locking in a team", () => {
     const room = new Room({ usedCodes: [] });
 
-    expect(!room.teamsLocked);
+    expect(room.teamsLocked).toEqual(false);
 
     room.addPlayer({ name: "Alice", playerID: "1000" });
     room.addPlayer({ name: "Alex", playerID: "1001" });
@@ -74,7 +76,38 @@ describe("room", () => {
 
     room.lockTeams();
 
-    expect(room.teamsLocked);
+    expect(room.teamsLocked).toEqual(true);
+  });
+
+  it("validates setting spymaster", () => {
+    const room = new Room({ usedCodes: [] });
+
+    room.addPlayer({ name: "Alice", playerID: "1000" });
+    room.addPlayer({ name: "Alex", playerID: "1001" });
+    room.addPlayer({ name: "Bob", playerID: "1002" });
+    room.addPlayer({ name: "Barb", playerID: "1003" });
+
+    room.setTeam({ playerID: "1000", team: "A" });
+    room.setTeam({ playerID: "1001", team: "A" });
+    room.setTeam({ playerID: "1002", team: "B" });
+    room.setTeam({ playerID: "1003", team: "B" });
+
+    room.lockTeams();
+    room.setSpymaster({ playerID: "1000" });
+
+    expect(room.players["1000"].spymaster).toEqual(true);
+
+    expect(() => {
+      room.setSpymaster({ playerID: "1001" });
+    }).toThrow(/already/i);
+
+    room.setSpymaster({ playerID: "1002" });
+
+    expect(room.players["1002"].spymaster).toEqual(true);
+
+    expect(room.round).toEqual(1);
+    expect(room.turn).toEqual("A");
+    expect(room.stage).toEqual("writing");
   });
 
   it("plays a game", () => {
@@ -90,28 +123,10 @@ describe("room", () => {
     room.setTeam({ playerID: "1002", team: "B" });
     room.setTeam({ playerID: "1003", team: "B" });
 
-    expect(room.players).toEqual({
-      1000: { id: "1000", name: "Alice", online: true, team: "A" },
-      1001: { id: "1001", name: "Alex", online: true, team: "A" },
-      1002: { id: "1002", name: "Bob", online: true, team: "B" },
-      1003: { id: "1003", name: "Barb", online: true, team: "B" },
-    });
-
     room.lockTeams();
 
-    expect(room.teamsLocked).toEqual(true);
-
     room.setSpymaster({ playerID: "1000" });
-
-    expect(room.spymasterA).toEqual("1000");
-
     room.setSpymaster({ playerID: "1002" });
-
-    expect(room.spymasterB).toEqual("1002");
-
-    expect(room.round).toEqual(1);
-    expect(room.turn).toEqual("A");
-    expect(room.stage).toEqual("writing");
 
     room.submitCode({ code: "baz", number: 2, playerID: "1000" });
 

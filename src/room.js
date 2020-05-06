@@ -8,8 +8,6 @@ class Room {
     this.id = uuid.v4();
     this.roomCode = this._getUniqueRoomCode({ usedCodes });
     this.teamsLocked = false;
-    this.spymasterA = null;
-    this.spymasterB = null;
     this.words = this._getInitialWords();
     this.round = null;
     this.turn = null;
@@ -29,6 +27,7 @@ class Room {
         id: playerID || uuid.v4(),
         name,
         online: true,
+        spymaster: false,
         team: null,
       };
     }
@@ -79,15 +78,21 @@ class Room {
   }
 
   setSpymaster({ playerID }) {
-    if (!this.players[playerID] || !this.teamsLocked) return;
+    const player = this.players[playerID];
 
-    if (this.players[playerID].team === "A") {
-      this.spymasterA = playerID;
-    } else {
-      this.spymasterB = playerID;
+    if (!player || !this.teamsLocked) return;
+
+    if (
+      Object.values(this.players).some(
+        (p) => p.team === player.team && p.spymaster
+      )
+    ) {
+      throw new Error("This group already has a spymaster");
     }
 
-    if (this.spymasterA && this.spymasterB) {
+    this.players[playerID].spymaster = true;
+
+    if (Object.values(this.players).filter((p) => p.spymaster).length === 2) {
       this._startGame();
     }
   }
