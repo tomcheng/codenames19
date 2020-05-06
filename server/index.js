@@ -141,8 +141,6 @@ io.on("connection", (socket) => {
     const room = Rooms.getRoom(socket.roomID);
 
     if (!room) return;
-    
-    console.log("=== confirm ===");
 
     room.confirmWord({ playerID: socket.playerID });
     updateRoom(room);
