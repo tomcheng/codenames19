@@ -5,7 +5,15 @@ import GuesserView from "./GuesserView";
 import SpymasterView from "./SpymasterView";
 import { GameDimensionsProvider } from "./GameDimensions";
 
-const Game = ({ playerID, room, onEndTurn, onSelectWord, onSubmitCode }) => {
+const Game = ({
+  playerID,
+  room,
+  onConfirmWord,
+  onEndTurn,
+  onRejectWord,
+  onSelectWord,
+  onSubmitCode,
+}) => {
   const you = room.players[playerID];
   const yourWordsLeft = room.words.filter(
     (w) => w.type === you.team && !w.flipped
@@ -31,7 +39,9 @@ const Game = ({ playerID, room, onEndTurn, onSelectWord, onSubmitCode }) => {
           gameResult={gameResult}
           playerID={playerID}
           room={room}
+          onConfirmWord={onConfirmWord}
           onEndTurn={onEndTurn}
+          onRejectWord={onRejectWord}
           onSelectWord={onSelectWord}
         />
       )}
@@ -42,7 +52,9 @@ const Game = ({ playerID, room, onEndTurn, onSelectWord, onSubmitCode }) => {
 Game.propTypes = {
   playerID: PropTypes.string.isRequired,
   room: roomPropType,
+  onConfirmWord: PropTypes.func.isRequired,
   onEndTurn: PropTypes.func.isRequired,
+  onRejectWord: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
   onSubmitCode: PropTypes.func.isRequired,
   guessesLeft: PropTypes.number,

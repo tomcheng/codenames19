@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import compact from "lodash/compact";
 import last from "lodash/last";
@@ -6,6 +6,7 @@ import Box from "./Box";
 import Console from "./Console";
 import { GameDimensionsConsumer } from "./GameDimensions";
 import {
+  printGuesserConfirming,
   printGuesserGuessing,
   printGuesserWords,
   printScore,
@@ -30,7 +31,9 @@ const GuesserView = ({
   gameResult,
   playerID,
   room,
+  onConfirmWord,
   onEndTurn,
+  onRejectWord,
   onSelectWord,
 }) => {
   const [number, setNumber] = useState("");
@@ -41,9 +44,23 @@ const GuesserView = ({
   const [confirmed, setConfirmed] = useState(false);
   const selectedWord = number ? room.words[parseInt(number) - 1] : null;
 
+  useEffect(() => {
+    setNumber("");
+    setEndTurn(false);
+    setError(null);
+    setSelected(false);
+    setConfirmation("");
+    setConfirmed(false);
+  }, [room.candidateWord]);
+
   const player = room.players[playerID];
   const isYourTurn = player.team === room.turn;
-  const disabled = !isYourTurn || room.stage === "writing" || confirmed;
+  const needsConfirmation = !!room.candidateWord;
+  const disabled =
+    !isYourTurn ||
+    room.stage === "writing" ||
+    confirmed ||
+    (needsConfirmation && !room.awaitingConfirmation.includes(playerID));
 
   return (
     <Box flex flexDirection="column" height="100vh">
@@ -65,10 +82,18 @@ const GuesserView = ({
                       words: room.words,
                       yourTeam: player.team,
                     }),
+                    ...(!isYourTurn
+                      ? printWaitingMessage({
+                          codes: room.codes,
+                          stage: room.stage,
+                        })
+                      : []),
                     isYourTurn &&
                       room.stage === "writing" &&
                       "**Awaiting transmission...**",
-                    ...(isYourTurn && room.stage === "guessing"
+                    ...(isYourTurn &&
+                    room.stage === "guessing" &&
+                    !needsConfirmation
                       ? printGuesserGuessing({
                           code: last(room.codes),
                           confirmation,
@@ -77,24 +102,35 @@ const GuesserView = ({
                           error,
                           guessesLeft: room.guessesLeft,
                           number,
+                          players: room.players,
+                          rejection: room.rejection,
                           selected,
                           words: room.words,
                         })
                       : []),
-                    ...(!isYourTurn
-                      ? printWaitingMessage({
-                          codes: room.codes,
-                          stage: room.stage,
+                    ...(isYourTurn && needsConfirmation
+                      ? printGuesserConfirming({
+                          awaiting: room.awaitingConfirmation.map(
+                            (id) => room.players[id]
+                          ),
+                          candidateWord: room.candidateWord,
+                          confirmation,
+                          confirmed,
+                          code: last(room.codes),
+                          nominator: room.players[room.nominator],
+                          youNominated: room.nominator === playerID,
                         })
                       : []),
                   ])
             }
             showPrompt={!disabled}
-            typed={selected || endTurn ? confirmation : number}
+            typed={
+              selected || endTurn || needsConfirmation ? confirmation : number
+            }
           />
         )}
       </GameDimensionsConsumer>
-      {selected || endTurn ? (
+      {selected || endTurn || needsConfirmation ? (
         <AlphabetKeyboard
           disabled={disabled}
           onType={(letter) => {
@@ -104,6 +140,15 @@ const GuesserView = ({
             setConfirmation("");
           }}
           onSubmit={() => {
+            if (needsConfirmation) {
+              setConfirmed(true);
+              if (confirmation === "Y") {
+                onConfirmWord();
+              } else {
+                onRejectWord();
+              }
+              return;
+            }
             if (confirmation === "Y") {
               setConfirmed(true);
               if (endTurn) {
@@ -154,7 +199,9 @@ const GuesserView = ({
 
 GuesserView.propTypes = {
   room: roomPropType.isRequired,
+  onConfirmWord: PropTypes.func.isRequired,
   onEndTurn: PropTypes.func.isRequired,
+  onRejectWord: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
   gameResult: PropTypes.string,
 };

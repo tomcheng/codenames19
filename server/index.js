@@ -137,6 +137,26 @@ io.on("connection", (socket) => {
     updateRoom(room);
   });
 
+  socket.on("confirm word", () => {
+    const room = Rooms.getRoom(socket.roomID);
+
+    if (!room) return;
+    
+    console.log("=== confirm ===");
+
+    room.confirmWord({ playerID: socket.playerID });
+    updateRoom(room);
+  });
+
+  socket.on("reject word", () => {
+    const room = Rooms.getRoom(socket.roomID);
+
+    if (!room) return;
+
+    room.rejectWord({ playerID: socket.playerID });
+    updateRoom(room);
+  });
+
   socket.on("end turn", () => {
     const room = Rooms.getRoom(socket.roomID);
 

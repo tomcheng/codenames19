@@ -134,6 +134,33 @@ export const printGuesserWords = ({ words, yourTeam, lineLength }) => {
   return lines;
 };
 
+export const printGuesserConfirming = ({
+  awaiting,
+  candidateWord,
+  code,
+  confirmation,
+  confirmed,
+  nominator,
+  youNominated,
+}) => {
+  return [
+    `**Transmission received: ${code.word} / ${code.number}**`,
+    " ",
+    `${
+      youNominated ? "You have" : nominator.name + " has"
+    } selected **${candidateWord}**.`,
+    !youNominated &&
+      `Do you agree with this selection? (Y/N) ${
+        confirmed ? `**${confirmation}**` : ""
+      }`,
+    (youNominated || confirmed) && " ",
+    (youNominated || confirmed) &&
+      `Awaiting confirmation from ${humanizeList(
+        awaiting.map((p) => p.name)
+      )}.`,
+  ];
+};
+
 export const printGuesserGuessing = ({
   code,
   confirmation,
@@ -142,6 +169,8 @@ export const printGuesserGuessing = ({
   error,
   guessesLeft,
   number,
+  players,
+  rejection,
   selected,
   words,
 }) => {
@@ -149,6 +178,10 @@ export const printGuesserGuessing = ({
     `**Transmission received: ${code.word} / ${code.number}**`,
     " ",
     error && `**${error}.**`,
+    rejection &&
+      `**"${rejection.word}" was rejected by ${
+        players[rejection.playerID].name
+      }**.`,
     `You have ${plc(guessesLeft, "guess", "guesses")} remaining.`,
     `Enter selection: ${
       selected || endTurn

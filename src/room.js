@@ -17,6 +17,7 @@ class Room {
     this.candidateWord = null;
     this.nominator = null;
     this.awaitingConfirmation = null;
+    this.rejector = null;
     this.players = {};
   }
 
@@ -113,7 +114,7 @@ class Room {
     }
 
     this.stage = "guessing";
-    this.codes.push({ word, number });
+    this.codes.push({ word, number, team: player.team });
     this.guessesLeft = this.round === 1 ? number : number + 1;
   }
 
@@ -128,6 +129,8 @@ class Room {
     ) {
       return;
     }
+
+    this.rejection = null;
 
     const otherGuessers = Object.values(this.players).filter(
       (p) => p.team === player.team && !p.spymaster && p.id !== player.id
@@ -165,6 +168,13 @@ class Room {
       this.nominator = null;
       this.awaitingConfirmation = null;
     }
+  }
+
+  rejectWord({ playerID }) {
+    this.rejection = { playerID, word: this.candidateWord };
+    this.candidateWord = null;
+    this.nominator = null;
+    this.awaitingConfirmation = null;
   }
 
   endTurn({ playerID }) {

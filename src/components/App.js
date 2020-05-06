@@ -54,6 +54,10 @@ const App = ({ socket }) => {
 
   /*** CALLBACKS ***/
 
+  const handleConfirmWord = useCallback(() => {
+    socket.emit("confirm word");
+  }, [socket]);
+
   const handleCreateRoom = useCallback(
     ({ name }) => {
       socket.emit("create room", { name, playerID });
@@ -74,6 +78,10 @@ const App = ({ socket }) => {
 
   const handleLockTeams = useCallback(() => {
     socket.emit("lock teams");
+  }, [socket]);
+
+  const handleRejectWord = useCallback(() => {
+    socket.emit("reject word");
   }, [socket]);
 
   const handleSelectSpymaster = useCallback(
@@ -111,10 +119,12 @@ const App = ({ socket }) => {
       room={room}
       playerID={playerID}
       teamError={teamError}
+      onConfirmWord={handleConfirmWord}
       onCreateRoom={handleCreateRoom}
       onEndTurn={handleEndTurn}
       onJoinRoom={handleJoinRoom}
       onLockTeams={handleLockTeams}
+      onRejectWord={handleRejectWord}
       onSelectSpymaster={handleSelectSpymaster}
       onSelectWord={handleSelectWord}
       onSetTeam={handleSetTeam}

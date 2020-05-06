@@ -23,7 +23,7 @@ export const roomPropType = PropTypes.shape({
     PropTypes.shape({
       word: PropTypes.string.isRequired,
       number: PropTypes.number.isRequired,
-
+      team: PropTypes.oneOf(["A", "B"]).isRequired,
     })
   ).isRequired,
   players: PropTypes.objectOf(
@@ -48,6 +48,10 @@ export const roomPropType = PropTypes.shape({
   candidateWord: PropTypes.string,
   guessesLeft: PropTypes.number,
   nominator: PropTypes.string,
+  rejection: PropTypes.shape({
+    playerID: PropTypes.string.isRequired,
+    word: PropTypes.string.isRequired,
+  }),
   round: PropTypes.number,
   stage: PropTypes.oneOf(["guessing", "writing"]),
   turn: PropTypes.oneOf(["A", "B"]),

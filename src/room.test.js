@@ -128,12 +128,12 @@ describe("room", () => {
     room.setSpymaster({ playerID: "1000" });
     room.setSpymaster({ playerID: "1002" });
 
-    room.submitCode({ code: "baz", number: 2, playerID: "1000" });
+    room.submitCode({ word: "baz", number: 2, playerID: "1000" });
 
     expect(room.round).toEqual(1);
     expect(room.turn).toEqual("A");
     expect(room.stage).toEqual("guessing");
-    expect(room.codes).toEqual([{ code: "baz", number: 2, team: "A" }]);
+    expect(room.codes).toEqual([{ word: "baz", number: 2, team: "A" }]);
     expect(room.guessesLeft).toEqual(2);
 
     const [first, second, third] = room.words
@@ -152,7 +152,7 @@ describe("room", () => {
     expect(room.turn).toEqual("B");
     expect(room.stage).toEqual("writing");
 
-    room.submitCode({ code: "qux", number: 1, playerID: "1002" });
+    room.submitCode({ word: "qux", number: 1, playerID: "1002" });
 
     expect(room.round).toEqual(1);
     expect(room.turn).toEqual("B");
@@ -164,7 +164,7 @@ describe("room", () => {
     expect(room.turn).toEqual("A");
     expect(room.stage).toEqual("writing");
 
-    room.submitCode({ code: "blah", number: 3, playerID: "1000" });
+    room.submitCode({ word: "blah", number: 3, playerID: "1000" });
 
     expect(room.round).toEqual(2);
     expect(room.turn).toEqual("A");
@@ -199,15 +199,15 @@ describe("room", () => {
     room.setSpymaster({ playerID: "1000" });
     room.setSpymaster({ playerID: "1004" });
 
-    room.submitCode({ code: "baz", number: 2, playerID: "1000" });
+    room.submitCode({ word: "baz", number: 2, playerID: "1000" });
 
     expect(room.round).toEqual(1);
     expect(room.turn).toEqual("A");
     expect(room.stage).toEqual("guessing");
-    expect(room.codes).toEqual([{ code: "baz", number: 2, team: "A" }]);
+    expect(room.codes).toEqual([{ word: "baz", number: 2, team: "A" }]);
     expect(room.guessesLeft).toEqual(2);
 
-    const [first] = room.words
+    const [first, second] = room.words
       .filter((w) => w.type !== "bomb")
       .map((w) => w.word);
 
@@ -234,5 +234,16 @@ describe("room", () => {
     expect(room.candidateWord).toEqual(null);
     expect(room.nominator).toEqual(null);
     expect(room.awaitingConfirmation).toEqual(null);
+
+    room.selectWord({ word: second, playerID: "1001" });
+    room.rejectWord({ playerID: "1002" });
+
+    expect(room.candidateWord).toEqual(null);
+    expect(room.nominator).toEqual(null);
+    expect(room.awaitingConfirmation).toEqual(null);
+    expect(room.rejection).toEqual({ playerID: "1002", word: second });
+
+    room.selectWord({ word: second, playerID: "1001" });
+    expect(room.rejection).toEqual(null);
   });
 });
