@@ -47,11 +47,14 @@ const joinRoom = ({ room, player }, socket) => {
   });
 };
 
+const updateRoom = (room) => {
+  io.in(room.id).emit("room updated", { room });
+};
+
 io.on("connection", (socket) => {
   socket.on("create room", ({ name, playerID }) => {
     const room = Rooms.createRoom();
     const player = room.addPlayer({ name, playerID });
-
     joinRoom({ room, player }, socket);
   });
 
@@ -64,7 +67,6 @@ io.on("connection", (socket) => {
     }
 
     const player = room.addPlayer({ name, playerID });
-
     joinRoom({ room, player }, socket);
   });
 
@@ -92,8 +94,7 @@ io.on("connection", (socket) => {
     if (!room) return;
 
     room.setTeam({ playerID, team });
-
-    io.in(room.id).emit("room updated", { room });
+    updateRoom(room);
   });
 
   socket.on("lock teams", () => {
@@ -103,8 +104,7 @@ io.on("connection", (socket) => {
 
     try {
       room.lockTeams();
-
-      io.in(room.id).emit("room updated", { room });
+      updateRoom(room);
     } catch (e) {
       socket.emit("team error", { message: e.message });
     }
@@ -116,8 +116,7 @@ io.on("connection", (socket) => {
     if (!room) return;
 
     room.setSpymaster({ playerID });
-
-    io.in(room.id).emit("room updated", { room });
+    updateRoom(room);
   });
 
   socket.on("submit code", ({ code, number }) => {
@@ -126,8 +125,7 @@ io.on("connection", (socket) => {
     if (!room) return;
 
     room.submitCode({ code, number, playerID: socket.playerID });
-
-    io.in(room.id).emit("room updated", { room });
+    updateRoom(room);
   });
 
   socket.on("select word", ({ word }) => {
@@ -136,8 +134,7 @@ io.on("connection", (socket) => {
     if (!room) return;
 
     room.selectWord({ word, playerID: socket.playerID });
-
-    io.in(room.id).emit("room updated", { room });
+    updateRoom(room);
   });
 
   socket.on("end turn", () => {
@@ -146,8 +143,7 @@ io.on("connection", (socket) => {
     if (!room) return;
 
     room.endTurn({ playerID: socket.playerID });
-
-    io.in(room.id).emit("room updated", { room });
+    updateRoom(room);
   });
 
   socket.on("disconnect", () => {
