@@ -8,7 +8,7 @@ import { humanizeList, plc } from "./utils";
 export const parseMarkdown = (str) => {
   const text = str
     .replace(/(\*\*)(.*?)\1/g, "$2")
-    .replace(/(--)(.*?)\1/g, "$2")
+    .replace(/(==)(.*?)\1/g, "$2")
     .replace(/(__)(.*?)\1/g, "$2")
     .replace(/(~~)(.*?)\1/g, "$2");
   return {
@@ -17,7 +17,7 @@ export const parseMarkdown = (str) => {
         dangerouslySetInnerHTML={{
           __html: str
             .replace(/(\*\*)(.*?)\1/g, "<strong>$2</strong>")
-            .replace(/(--)(.*?)\1/g, "<span class='strike-through'>$2</span>")
+            .replace(/(==)(.*?)\1/g, "<span class='strike-through'>$2</span>")
             .replace(/(__)(.*?)\1/g, "<span class='faded'>$2</span>")
             .replace(/(~~)(.*?)\1/g, "<span class='red'>$2</span>")
             .replace(
@@ -37,9 +37,9 @@ const printWordGroup = ({ title, words, lineLength }) => {
   words.forEach((word, index) => {
     const isLast = index === words.length - 1;
     const wordPlus =
-      (word.flipped ? "__--" : "") +
+      (word.flipped ? "__==" : "") +
       word.word +
-      (word.flipped ? "--" : "") +
+      (word.flipped ? "==" : "") +
       (isLast ? "" : ",") +
       (word.flipped ? "__" : "");
 
@@ -89,7 +89,7 @@ export const printSpyWords = ({ words, yourTeam, lineLength }) => {
       words: [bomb],
       lineLength,
     }),
-    repeat("─", lineLength),
+    repeat("-", lineLength),
   ];
 };
 
@@ -109,7 +109,7 @@ const printGuesserWord = ({ word, number, yourTeam }) => {
     number,
     2,
     " "
-  )}. ${word.flipped ? "--" : ""}${word.word}${word.flipped ? "--__" : ""}`;
+  )}. ${word.flipped ? "==" : ""}${word.word}${word.flipped ? "==__" : ""}`;
 };
 
 export const printGuesserWords = ({ words, yourTeam, lineLength }) => {
@@ -125,7 +125,7 @@ export const printGuesserWords = ({ words, yourTeam, lineLength }) => {
     " ",
     "   99. End turn",
     " ",
-    repeat("─", lineLength),
+    repeat("-", lineLength),
   ];
 
   secondHalf.forEach((word, index) => {
@@ -223,7 +223,7 @@ export const printScore = ({ isYourTurn, lineLength, words, yourTeam }) => {
         parseMarkdown(yourScorePlus).length -
         parseMarkdown(theirScore).length
     )}${theirScore}`,
-    repeat("─", lineLength),
+    repeat("-", lineLength),
     " ",
   ];
 };
