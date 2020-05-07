@@ -263,7 +263,7 @@ export const printWaitingMessage = ({ stage, codes }) => {
   const lastCode = last(codes);
   return [
     stage === "writing"
-      ? "**Monitoring enemy communication...**"
-      : `**Enemy transmission intercepted: ${lastCode.word} / ${lastCode.number}**`,
+      ? "Monitoring enemy communication..."
+      : `Enemy transmission intercepted: ${lastCode.word} / ${lastCode.number}`,
   ];
 };
