@@ -15,9 +15,6 @@ const Game = ({
   onSubmitCode,
 }) => {
   const you = room.players[playerID];
-  console.log("you", you);
-  console.log("room.players", room.players);
-  console.log("playerID", playerID);
   const yourWordsLeft = room.words.filter(
     (w) => w.type === you.team && !w.flipped
   ).length;
@@ -26,7 +23,6 @@ const Game = ({
   ).length;
   const gameResult =
     yourWordsLeft === 0 ? "You won!" : enemyWordsLeft === 0 ? "You ded." : null;
-  console.log("room.words", room.words);
 
   return (
     <GameDimensionsProvider>
