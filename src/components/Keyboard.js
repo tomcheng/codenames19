@@ -10,6 +10,7 @@ const Container = styled.div`
   padding: 10px 0 8px;
   display: flex;
   justify-content: center;
+  user-select: none;
 `;
 
 const KeysWrapper = styled.div`
