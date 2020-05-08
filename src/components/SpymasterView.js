@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import compact from "lodash/compact";
+import flatten from "lodash/flatten";
 import {
   printScore,
   printSpyWaiting,
   printSpyWriting,
   printSpyWords,
   printWaitingMessage,
+  printResult,
 } from "../consoleUtils";
 import Box from "./Box";
 import { GameDimensionsConsumer } from "./GameDimensions";
@@ -41,7 +43,7 @@ const validateNumber = (number) => {
   return null;
 };
 
-const SpymasterView = ({ gameResult, playerID, room, onSubmitCode }) => {
+const SpymasterView = ({ playerID, room, onSubmitCode }) => {
   const [word, setWord] = useState("");
   const [wordDone, setWordDone] = useState(false);
   const [wordError, setWordError] = useState(null);
@@ -58,54 +60,60 @@ const SpymasterView = ({ gameResult, playerID, room, onSubmitCode }) => {
     .map((p) => p.name);
 
   const disabled = !isYourTurn || room.stage === "guessing" || confirmed;
+  const gameEnded = !!room.result;
 
   return (
     <Box flex flexDirection="column" height="100vh">
       <GameDimensionsConsumer>
         {({ lineLength }) => (
           <Console
-            lines={
-              gameResult
-                ? [gameResult]
-                : compact([
-                    ...printScore({
-                      isYourTurn,
-                      lineLength,
-                      words: room.words,
-                      yourTeam: player.team,
-                    }),
-                    ...printSpyWords({
-                      lineLength,
-                      words: room.words,
-                      yourTeam: player.team,
-                    }),
-                    ...(isYourTurn && room.stage === "writing"
-                      ? printSpyWriting({
-                          confirmation,
-                          confirmed,
-                          number,
-                          numberDone,
-                          numberError,
-                          word,
-                          wordDone,
-                          wordError,
-                        })
-                      : []),
-                    ...(isYourTurn && room.stage === "guessing"
-                      ? printSpyWaiting({
-                          codes: room.codes,
-                          teamNames,
-                          yourTeam: player.team,
-                        })
-                      : []),
-                    ...(!isYourTurn
-                      ? printWaitingMessage({
-                          codes: room.codes,
-                          stage: room.stage,
-                        })
-                      : []),
-                  ])
-            }
+            lines={compact(
+              flatten([
+                printScore({
+                  isYourTurn,
+                  lineLength,
+                  words: room.words,
+                  yourTeam: player.team,
+                }),
+                printSpyWords({
+                  lineLength,
+                  words: room.words,
+                  yourTeam: player.team,
+                }),
+                !gameEnded &&
+                  isYourTurn &&
+                  room.stage === "writing" &&
+                  printSpyWriting({
+                    confirmation,
+                    confirmed,
+                    number,
+                    numberDone,
+                    numberError,
+                    word,
+                    wordDone,
+                    wordError,
+                  }),
+                !gameEnded &&
+                  isYourTurn &&
+                  room.stage === "guessing" &&
+                  printSpyWaiting({
+                    codes: room.codes,
+                    teamNames,
+                    yourTeam: player.team,
+                  }),
+                !gameEnded &&
+                  !isYourTurn &&
+                  printWaitingMessage({
+                    codes: room.codes,
+                    stage: room.stage,
+                  }),
+                gameEnded &&
+                  printResult({
+                    result: room.result.winner === player.team ? "won" : "lost",
+                    bomb: room.result.bomb,
+                  }),
+              ])
+            )}
             showPrompt={!disabled}
             typed={numberDone ? confirmation : wordDone ? number : word}
           />
@@ -195,7 +203,6 @@ SpymasterView.propTypes = {
   room: roomPropType.isRequired,
   playerID: PropTypes.string.isRequired,
   onSubmitCode: PropTypes.func.isRequired,
-  gameResult: PropTypes.string,
 };
 
 export default SpymasterView;

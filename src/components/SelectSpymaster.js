@@ -17,7 +17,7 @@ const SelectSpymaster = ({ playerID, players, onSelectSpymaster }) => {
 
   return (
     <div>
-      <DocumentWrapper title="Spy Master Nomination Form">
+      <DocumentWrapper title="Spy Nomination Form">
         <Box border>
           <Box borderBottom pad="tight">
             <Text preset="label">Agents</Text>

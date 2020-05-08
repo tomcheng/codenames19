@@ -272,11 +272,11 @@ export const printResult = ({ result, bomb }) => {
   const message =
     result === "won"
       ? bomb
-        ? "The Enemy has selected the bomb. You win!"
-        : "You have uncovered all the codes. You win!"
+        ? "**The Enemy has selected the bomb. You win!**"
+        : "**You have uncovered all the codes. You win!**"
       : bomb
-      ? "You have selected the bomb. You ded."
-      : "The Enemy has uncovered all the codes. You ded.";
+      ? "**You have selected the bomb. You ded.**"
+      : "**The Enemy has uncovered all the codes. You ded.**";
 
   return [message];
 };

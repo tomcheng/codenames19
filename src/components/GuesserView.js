@@ -213,7 +213,6 @@ GuesserView.propTypes = {
   onEndTurn: PropTypes.func.isRequired,
   onRejectWord: PropTypes.func.isRequired,
   onSelectWord: PropTypes.func.isRequired,
-  gameResult: PropTypes.string,
 };
 
 export default GuesserView;
