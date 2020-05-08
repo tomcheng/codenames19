@@ -8,7 +8,7 @@ import Game from "./Game";
 import Lobby from "./Lobby";
 import SelectTeams from "./SelectTeams";
 import SelectTeamToJoin from "./SelectTeamToJoin";
-import SelectSpymaster from "./SelectSpymaster";
+import SelectSpy from "./SelectSpy";
 
 const AppContainer = styled.div`
   background-color: #fff;
@@ -77,7 +77,7 @@ const StatelessApp = ({
           onSetTeam={onSetTeam}
         />
       ) : (
-        <SelectSpymaster
+        <SelectSpy
           playerID={playerID}
           players={room.players}
           onSelectSpymaster={onSelectSpymaster}

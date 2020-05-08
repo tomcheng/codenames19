@@ -6,7 +6,7 @@ import DocumentWrapper from "./DocumentWrapper";
 import Text from "./Text";
 import DocumentSubmit from "./DocumentSubmit";
 
-const SelectSpymaster = ({ playerID, players, onSelectSpymaster }) => {
+const SelectSpy = ({ playerID, players, onSelectSpymaster }) => {
   const [error, setError] = useState(null);
   const [selectedUserID, setSelectedUserID] = useState(null);
   const player = players[playerID];
@@ -58,7 +58,7 @@ const SelectSpymaster = ({ playerID, players, onSelectSpymaster }) => {
   );
 };
 
-SelectSpymaster.propTypes = {
+SelectSpy.propTypes = {
   playerID: PropTypes.string.isRequired,
   players: PropTypes.objectOf(
     PropTypes.shape({
@@ -70,4 +70,4 @@ SelectSpymaster.propTypes = {
   onSelectSpymaster: PropTypes.func.isRequired,
 };
 
-export default SelectSpymaster;
+export default SelectSpy;
