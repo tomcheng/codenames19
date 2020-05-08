@@ -246,4 +246,32 @@ describe("room", () => {
     room.selectWord({ word: second, playerID: "1001" });
     expect(room.rejection).toEqual(null);
   });
+
+  it("handles selecting a bomb", () => {
+    const room = new Room({ usedCodes: [] });
+
+    room.addPlayer({ name: "Alice", playerID: "1000" });
+    room.addPlayer({ name: "Alex", playerID: "1001" });
+    room.addPlayer({ name: "Bob", playerID: "1002" });
+    room.addPlayer({ name: "Barb", playerID: "1003" });
+
+    room.setTeam({ playerID: "1000", team: "A" });
+    room.setTeam({ playerID: "1001", team: "A" });
+    room.setTeam({ playerID: "1002", team: "B" });
+    room.setTeam({ playerID: "1003", team: "B" });
+
+    room.lockTeams();
+
+    room.setSpymaster({ playerID: "1000" });
+    room.setSpymaster({ playerID: "1002" });
+
+    room.submitCode({ word: "baz", number: 2, playerID: "1000" });
+
+    const bomb = room.words.find((w) => w.type === "bomb");
+
+    room.selectWord({ word: bomb.word, playerID: "1001" });
+
+    expect(room.words.find((w) => w.word === bomb.word).flipped).toEqual(true);
+    expect(room.result).toEqual({ winner: "B", bomb: true });
+  });
 });

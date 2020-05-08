@@ -19,6 +19,7 @@ class Room {
     this.awaitingConfirmation = null;
     this.rejection = null;
     this.players = {};
+    this.result = null;
   }
 
   addPlayer({ name, playerID: existingID }) {
@@ -207,6 +208,10 @@ class Room {
     this.words = this.words.map((w) =>
       w.word === word ? { ...w, flipped: true } : w
     );
+
+    if (this.words.some((w) => w.flipped && w.type === "bomb")) {
+      this.result = { winner: this.turn === "A" ? "B" : "A", bomb: true };
+    }
 
     if (this.guessesLeft === 1) {
       this.endTurn({ playerID });
