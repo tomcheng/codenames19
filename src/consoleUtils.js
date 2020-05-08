@@ -10,7 +10,8 @@ export const parseMarkdown = (str) => {
     .replace(/(\*\*)(.*?)\1/g, "$2")
     .replace(/(==)(.*?)\1/g, "$2")
     .replace(/(__)(.*?)\1/g, "$2")
-    .replace(/(~~)(.*?)\1/g, "$2");
+    .replace(/(~~)(.*?)\1/g, "$2")
+    .replace(/(\^\^)(.*?)\1/g, "$2");
   return {
     html: (
       <span
@@ -20,6 +21,7 @@ export const parseMarkdown = (str) => {
             .replace(/(==)(.*?)\1/g, "<span class='strike-through'>$2</span>")
             .replace(/(__)(.*?)\1/g, "<span class='faded'>$2</span>")
             .replace(/(~~)(.*?)\1/g, "<span class='red'>$2</span>")
+            .replace(/(\^\^)(.*?)\1/g, "<span class='blink'>$2</span>")
             .replace(
               /\.\.\./g,
               "<span class='dot-1'>.</span><span class='dot-2'>.</span><span class='dot-3'>.</span>"
@@ -272,11 +274,11 @@ export const printResult = ({ result, bomb }) => {
   const message =
     result === "won"
       ? bomb
-        ? "**The Enemy has selected the bomb. You win!**"
-        : "**You have uncovered all the codes. You win!**"
+        ? "^^**The Enemy has selected the bomb. You win!**^^"
+        : "^^**You have uncovered all the codes. You win!**^^"
       : bomb
-      ? "**You have selected the bomb. You ded.**"
-      : "**The Enemy has uncovered all the codes. You ded.**";
+      ? "^^**You have selected the bomb. You ded.**^^"
+      : "^^**The Enemy has uncovered all the codes. You ded.**^^";
 
   return [message];
 };

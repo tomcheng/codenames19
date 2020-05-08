@@ -44,13 +44,16 @@ const Content = styled.div`
     color: red;
   }
   .dot-1 {
-     animation: ${dot1} 3s step-end infinite;
+    animation: ${dot1} 3s step-end infinite;
   }
   .dot-2 {
     animation: ${dot2} 3s step-end infinite;
   }
   .dot-3 {
     animation: ${dot3} 3s step-end infinite;
+  }
+  .blink {
+    animation: ${blink} 1s step-end 3;
   }
 `;
 
