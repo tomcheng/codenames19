@@ -203,28 +203,35 @@ export const printGuessing = ({
   ];
 };
 
-export const printScore = ({ isYourTurn, lineLength, words, yourTeam }) => {
-  const halfLine = Math.floor(lineLength / 2);
+export const printScore = ({
+  isYourTurn,
+  lineLength,
+  roomCode,
+  words,
+  yourTeam,
+}) => {
   const counts = countBy(
     words.filter((word) => !word.flipped),
     "type"
   );
   const yourWordsLeft = counts[yourTeam] ?? 0;
   const enemyWordsLeft = counts[yourTeam === "A" ? "B" : "A"] ?? 0;
-  const yourScore = `**Alliance:** ${yourWordsLeft} left`;
-  const turnIndicator = isYourTurn ? "**<<**" : "**>>**";
-  const yourScorePlus = `${yourScore}${repeat(
-    " ",
-    halfLine - parseMarkdown(yourScore).length - 1
-  )}${turnIndicator}`;
-  const theirScore = `**Enemy:** ${enemyWordsLeft} left`;
+  const yourScore = `${
+    isYourTurn ? "" : "__"
+  }**Alliance: ${yourWordsLeft} left**${isYourTurn ? "" : "__"}`;
+  const theirScore = `${
+    isYourTurn ? "__" : ""
+  }**Enemy: ${enemyWordsLeft} left**${isYourTurn ? "__" : ""}`;
+  const scores = `${yourScore}  ${theirScore}`;
+  const missionCode = `Mission Code: ${roomCode}`;
+
   return [
-    `${yourScorePlus}${repeat(
+    `${scores}${repeat(
       " ",
       lineLength -
-        parseMarkdown(yourScorePlus).length -
-        parseMarkdown(theirScore).length
-    )}${theirScore}`,
+        parseMarkdown(scores).length -
+        parseMarkdown(missionCode).length
+    )}${missionCode}`,
     repeat("-", lineLength),
     " ",
   ];

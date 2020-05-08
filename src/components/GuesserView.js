@@ -77,6 +77,7 @@ const GuesserView = ({
                 printScore({
                   isYourTurn,
                   lineLength,
+                  roomCode: room.roomCode,
                   words: room.words,
                   yourTeam: player.team,
                 }),

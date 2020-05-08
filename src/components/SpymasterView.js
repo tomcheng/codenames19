@@ -72,6 +72,7 @@ const SpymasterView = ({ playerID, room, onSubmitCode }) => {
                 printScore({
                   isYourTurn,
                   lineLength,
+                  roomCode: room.roomCode,
                   words: room.words,
                   yourTeam: player.team,
                 }),
