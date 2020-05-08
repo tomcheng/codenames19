@@ -15,20 +15,11 @@ const Game = ({
   onSubmitCode,
 }) => {
   const you = room.players[playerID];
-  const yourWordsLeft = room.words.filter(
-    (w) => w.type === you.team && !w.flipped
-  ).length;
-  const enemyWordsLeft = room.words.filter(
-    (w) => w.type === (you.team === "A" ? "B" : "A") && !w.flipped
-  ).length;
-  const gameResult =
-    yourWordsLeft === 0 ? "You won!" : enemyWordsLeft === 0 ? "You ded." : null;
 
   return (
     <GameDimensionsProvider>
       {you.spymaster ? (
         <SpymasterView
-          gameResult={gameResult}
           playerID={playerID}
           room={room}
           onSubmitCode={onSubmitCode}
@@ -36,7 +27,6 @@ const Game = ({
       ) : (
         <GuesserView
           key={room.guessesLeft}
-          gameResult={gameResult}
           playerID={playerID}
           room={room}
           onConfirmWord={onConfirmWord}

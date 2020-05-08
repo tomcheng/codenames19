@@ -52,6 +52,10 @@ export const roomPropType = PropTypes.shape({
     playerID: PropTypes.string.isRequired,
     word: PropTypes.string.isRequired,
   }),
+  result: PropTypes.shape({
+    winner: PropTypes.oneOf(["A", "B"]).isRequired,
+    bomb: PropTypes.bool.isRequired,
+  }),
   round: PropTypes.number,
   stage: PropTypes.oneOf(["guessing", "writing"]),
   turn: PropTypes.oneOf(["A", "B"]),
