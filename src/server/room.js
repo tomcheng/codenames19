@@ -211,6 +211,17 @@ class Room {
 
     if (this.words.some((w) => w.flipped && w.type === "bomb")) {
       this.result = { winner: this.turn === "A" ? "B" : "A", bomb: true };
+      return;
+    }
+
+    if (this.words.filter((w) => w.type === "A").every((w) => w.flipped)) {
+      this.result = { winner: "A", bomb: false };
+      return;
+    }
+
+    if (this.words.filter((w) => w.type === "B").every((w) => w.flipped)) {
+      this.result = { winner: "B", bomb: false };
+      return;
     }
 
     if (this.guessesLeft === 1) {
