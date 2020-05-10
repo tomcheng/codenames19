@@ -128,6 +128,13 @@ describe("room", () => {
     room.setSpymaster({ playerID: "1000" });
     room.setSpymaster({ playerID: "1002" });
 
+    expect(room.round).toEqual(1);
+    expect(room.turn).toEqual("A");
+    expect(room.stage).toEqual("writing");
+    expect(room.codes).toEqual([]);
+    expect(room.guessesLeft).toEqual(null);
+    expect(room.log).toEqual([]);
+
     room.submitCode({ word: "baz", number: 2, playerID: "1000" });
 
     expect(room.round).toEqual(1);
@@ -135,6 +142,14 @@ describe("room", () => {
     expect(room.stage).toEqual("guessing");
     expect(room.codes).toEqual([{ word: "baz", number: 2, team: "A" }]);
     expect(room.guessesLeft).toEqual(2);
+    expect(room.log).toEqual([
+      {
+        action: "submit-code",
+        playerID: "1000",
+        team: "A",
+        payload: { word: "baz", number: 2 },
+      },
+    ]);
 
     const [first, second] = room.words
       .filter((w) => w.type === "A")
@@ -144,6 +159,12 @@ describe("room", () => {
 
     expect(room.words.find((w) => w.word === first).flipped).toEqual(true);
     expect(room.guessesLeft).toEqual(1);
+    expect(room.log[1]).toEqual({
+      action: "select-word",
+      playerID: "1001",
+      team: "A",
+      payload: { word: first, needsConfirmation: false },
+    });
 
     room.selectWord({ word: second, playerID: "1001" });
 
@@ -151,37 +172,65 @@ describe("room", () => {
     expect(room.round).toEqual(1);
     expect(room.turn).toEqual("B");
     expect(room.stage).toEqual("writing");
+    expect(room.log[2]).toEqual({
+      action: "select-word",
+      playerID: "1001",
+      team: "A",
+      payload: { word: second, needsConfirmation: false },
+    });
 
     room.submitCode({ word: "qux", number: 1, playerID: "1002" });
 
     expect(room.round).toEqual(1);
     expect(room.turn).toEqual("B");
     expect(room.stage).toEqual("guessing");
+    expect(room.log[3]).toEqual({
+      action: "submit-code",
+      playerID: "1002",
+      team: "B",
+      payload: { word: "qux", number: 1 },
+    });
 
-    const [third] = room.words
-        .filter((w) => w.type === "B")
-        .map((w) => w.word);
+    const [third] = room.words.filter((w) => w.type === "B").map((w) => w.word);
 
     room.selectWord({ word: third, playerID: "1003" });
 
     expect(room.round).toEqual(2);
     expect(room.turn).toEqual("A");
     expect(room.stage).toEqual("writing");
+    expect(room.log[4]).toEqual({
+      action: "select-word",
+      playerID: "1003",
+      team: "B",
+      payload: { word: third, needsConfirmation: false },
+    });
 
     room.submitCode({ word: "blah", number: 3, playerID: "1000" });
 
     expect(room.round).toEqual(2);
     expect(room.turn).toEqual("A");
     expect(room.stage).toEqual("guessing");
+    expect(room.log[5]).toEqual({
+      action: "submit-code",
+      playerID: "1000",
+      team: "A",
+      payload: { word: "blah", number: 3 },
+    });
 
     room.endTurn({ playerID: "1001" });
 
     expect(room.round).toEqual(2);
     expect(room.turn).toEqual("B");
     expect(room.stage).toEqual("writing");
+    expect(room.log[6]).toEqual({
+      action: "end-turn",
+      playerID: "1001",
+      team: "A",
+      payload: null,
+    });
   });
 
-  it('ends the turn if a player guesses wrong', () => {
+  it("ends the turn if a player guesses wrong", () => {
     const room = new Room({ usedCodes: [] });
 
     room.addPlayer({ name: "Alice", playerID: "1000" });
@@ -207,9 +256,7 @@ describe("room", () => {
     expect(room.codes).toEqual([{ word: "baz", number: 2, team: "A" }]);
     expect(room.guessesLeft).toEqual(2);
 
-    const [first] = room.words
-        .filter((w) => w.type === "B")
-        .map((w) => w.word);
+    const [first] = room.words.filter((w) => w.type === "B").map((w) => w.word);
 
     room.selectWord({ word: first, playerID: "1001" });
 

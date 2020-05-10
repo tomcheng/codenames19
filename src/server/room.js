@@ -9,6 +9,7 @@ class Room {
     this.roomCode = this._getUniqueRoomCode({ usedCodes });
     this.teamsLocked = false;
     this.words = this._getInitialWords();
+    this.log = [];
     this.round = null;
     this.turn = null;
     this.stage = null;
@@ -114,8 +115,15 @@ class Room {
       return;
     }
 
-    this.stage = "guessing";
     this.codes.push({ word, number, team: player.team });
+    this.log.push({
+      action: "submit-code",
+      playerID,
+      team: this.turn,
+      payload: { word, number },
+    });
+
+    this.stage = "guessing";
     this.guessesLeft = this.round === 1 ? number : number + 1;
   }
 
@@ -131,13 +139,22 @@ class Room {
       return;
     }
 
-    this.rejection = null;
-
     const otherGuessers = Object.values(this.players).filter(
       (p) => p.team === player.team && !p.spymaster && p.id !== player.id
     );
 
-    if (otherGuessers.length) {
+    const needsConfirmation = otherGuessers.length > 0;
+
+    this.log.push({
+      action: "select-word",
+      playerID,
+      team: this.turn,
+      payload: { word, needsConfirmation },
+    });
+
+    this.rejection = null;
+
+    if (needsConfirmation) {
       this.candidateWord = word;
       this.nominator = player.id;
       this.awaitingConfirmation = otherGuessers.map((p) => p.id);
@@ -190,12 +207,14 @@ class Room {
       return;
     }
 
-    this.guessesLeft = null;
-    if (this.turn === "B") {
-      this.round += 1;
-    }
-    this.turn = this.turn === "A" ? "B" : "A";
-    this.stage = "writing";
+    this.log.push({
+      action: "end-turn",
+      playerID,
+      team: this.turn,
+      payload: null,
+    });
+
+    this._endTurn();
   }
 
   _startGame() {
@@ -228,10 +247,19 @@ class Room {
       this.guessesLeft === 1 ||
       this.words.find((w) => w.word === word).type !== this.turn
     ) {
-      this.endTurn({ playerID });
+      this._endTurn();
     } else {
       this.guessesLeft -= 1;
     }
+  }
+
+  _endTurn() {
+    this.guessesLeft = null;
+    if (this.turn === "B") {
+      this.round += 1;
+    }
+    this.turn = this.turn === "A" ? "B" : "A";
+    this.stage = "writing";
   }
 
   _getUniqueRoomCode({ usedCodes }) {
