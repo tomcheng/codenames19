@@ -223,7 +223,7 @@ export const printScore = ({
     isYourTurn ? "__" : ""
   }**Enemy: ${enemyWordsLeft} left**${isYourTurn ? "__" : ""}`;
   const scores = `${yourScore}  ${theirScore}`;
-  const missionCode = `Code: ${roomCode}`;
+  const missionCode = roomCode;
 
   return [
     `${scores}${repeat(
@@ -268,13 +268,24 @@ export const printSpyWaiting = ({ codes, teamNames, yourTeam }) => {
   ];
 };
 
-export const printWaitingMessage = ({ stage, codes }) => {
+export const printWaitingMessage = ({ codes, players, stage, yourTeam }) => {
   const lastCode = last(codes);
-  return [
-    stage === "writing"
-      ? "Monitoring enemy communication..."
-      : `Enemy transmission intercepted: ${lastCode.word} / ${lastCode.number}`,
-  ];
+  const otherSpy = Object.values(players).find(
+    (p) => p.team !== yourTeam && p.spymaster
+  );
+  const otherGuessers = Object.values(players).filter(
+    (p) => p.team !== yourTeam && !p.spymaster
+  );
+
+  return stage === "writing"
+    ? [`**Awaiting enemy transmission from ${otherSpy.name}...**`]
+    : [
+        `**Enemy transmission intercepted: ${lastCode.word} / ${lastCode.number}**`,
+        " ",
+        `Awaiting response from ${humanizeList(
+          otherGuessers.map((p) => p.name)
+        )}...`,
+      ];
 };
 
 export const printResult = ({ result, bomb }) => {

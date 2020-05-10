@@ -90,12 +90,14 @@ const GuesserView = ({
                   !isYourTurn &&
                   printWaitingMessage({
                     codes: room.codes,
+                    players: room.players,
                     stage: room.stage,
+                    yourTeam: player.team,
                   }),
                 !gameEnded &&
                   isYourTurn &&
                   room.stage === "writing" &&
-                  `Awaiting transmission from ${yourSpymaster.name}...`,
+                  `**Awaiting transmission from ${yourSpymaster.name}...**`,
                 !gameEnded &&
                   isYourTurn &&
                   room.stage === "guessing" &&

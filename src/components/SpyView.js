@@ -106,7 +106,9 @@ const SpyView = ({ playerID, room, onSubmitCode }) => {
                   !isYourTurn &&
                   printWaitingMessage({
                     codes: room.codes,
+                    players: room.players,
                     stage: room.stage,
+                    yourTeam: player.team,
                   }),
                 gameEnded &&
                   printResult({
