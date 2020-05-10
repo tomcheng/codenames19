@@ -176,6 +176,13 @@ class Room {
       return;
     }
 
+    this.log.push({
+      action: "confirm-word",
+      playerID,
+      team: this.turn,
+      payload: null,
+    });
+
     this.awaitingConfirmation = this.awaitingConfirmation.filter(
       (id) => id !== playerID
     );
@@ -189,6 +196,15 @@ class Room {
   }
 
   rejectWord({ playerID }) {
+    if (!this.awaitingConfirmation.includes(playerID)) return;
+
+    this.log.push({
+      action: "reject-word",
+      playerID,
+      team: this.turn,
+      payload: null,
+    });
+
     this.rejection = { playerID, word: this.candidateWord };
     this.candidateWord = null;
     this.nominator = null;

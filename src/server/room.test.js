@@ -266,7 +266,7 @@ describe("room", () => {
     expect(room.stage).toEqual("writing");
   });
 
-  it("requires confirmation with multiple guessers", () => {
+  it.only("requires confirmation with multiple guessers", () => {
     const room = new Room({ usedCodes: [] });
 
     room.addPlayer({ name: "Alice", playerID: "1000" });
@@ -295,6 +295,12 @@ describe("room", () => {
     expect(room.stage).toEqual("guessing");
     expect(room.codes).toEqual([{ word: "baz", number: 2, team: "A" }]);
     expect(room.guessesLeft).toEqual(2);
+    expect(room.log[0]).toEqual({
+      action: "submit-code",
+      playerID: "1000",
+      team: "A",
+      payload: { word: "baz", number: 2 },
+    });
 
     const [first, second] = room.words
       .filter((w) => w.type === "A")
@@ -307,6 +313,12 @@ describe("room", () => {
     expect(room.candidateWord).toEqual(first);
     expect(room.nominator).toEqual("1001");
     expect(room.awaitingConfirmation).toEqual(["1002", "1003"]);
+    expect(room.log[1]).toEqual({
+      action: "select-word",
+      playerID: "1001",
+      team: "A",
+      payload: { word: first, needsConfirmation: true },
+    });
 
     room.confirmWord({ playerID: "1002" });
 
@@ -315,6 +327,12 @@ describe("room", () => {
     expect(room.candidateWord).toEqual(first);
     expect(room.nominator).toEqual("1001");
     expect(room.awaitingConfirmation).toEqual(["1003"]);
+    expect(room.log[2]).toEqual({
+      action: "confirm-word",
+      playerID: "1002",
+      team: "A",
+      payload: null,
+    });
 
     room.confirmWord({ playerID: "1003" });
 
@@ -323,14 +341,34 @@ describe("room", () => {
     expect(room.candidateWord).toEqual(null);
     expect(room.nominator).toEqual(null);
     expect(room.awaitingConfirmation).toEqual(null);
+    expect(room.log[3]).toEqual({
+      action: "confirm-word",
+      playerID: "1003",
+      team: "A",
+      payload: null,
+    });
 
     room.selectWord({ word: second, playerID: "1001" });
+
+    expect(room.log[4]).toEqual({
+      action: "select-word",
+      playerID: "1001",
+      team: "A",
+      payload: { word: second, needsConfirmation: true },
+    });
+
     room.rejectWord({ playerID: "1002" });
 
     expect(room.candidateWord).toEqual(null);
     expect(room.nominator).toEqual(null);
     expect(room.awaitingConfirmation).toEqual(null);
     expect(room.rejection).toEqual({ playerID: "1002", word: second });
+    expect(room.log[5]).toEqual({
+      action: "reject-word",
+      playerID: "1002",
+      team: "A",
+      payload: null,
+    });
 
     room.selectWord({ word: second, playerID: "1001" });
     expect(room.rejection).toEqual(null);
