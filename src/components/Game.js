@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { roomPropType } from "../utils";
 import GuesserView from "./GuesserView";
-import SpymasterView from "./SpymasterView";
+import SpyView from "./SpyView";
 import { GameDimensionsProvider } from "./GameDimensions";
 
 const Game = ({
@@ -19,7 +19,7 @@ const Game = ({
   return (
     <GameDimensionsProvider>
       {you.spymaster ? (
-        <SpymasterView
+        <SpyView
           playerID={playerID}
           room={room}
           onSubmitCode={onSubmitCode}

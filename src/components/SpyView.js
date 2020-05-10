@@ -43,7 +43,7 @@ const validateNumber = (number) => {
   return null;
 };
 
-const SpymasterView = ({ playerID, room, onSubmitCode }) => {
+const SpyView = ({ playerID, room, onSubmitCode }) => {
   const [word, setWord] = useState("");
   const [wordDone, setWordDone] = useState(false);
   const [wordError, setWordError] = useState(null);
@@ -200,10 +200,10 @@ const SpymasterView = ({ playerID, room, onSubmitCode }) => {
   );
 };
 
-SpymasterView.propTypes = {
+SpyView.propTypes = {
   room: roomPropType.isRequired,
   playerID: PropTypes.string.isRequired,
   onSubmitCode: PropTypes.func.isRequired,
 };
 
-export default SpymasterView;
+export default SpyView;
