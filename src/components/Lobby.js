@@ -38,9 +38,9 @@ const Lobby = ({ hasInvalidCode, initialName, onCreateRoom, onJoinRoom }) => {
         setIsMissingName(false);
 
         if (isNew) {
-          onCreateRoom({ name });
+          onCreateRoom({ name: name.trim() });
         } else {
-          onJoinRoom({ code, name });
+          onJoinRoom({ code, name: name.trim() });
         }
       }}
     >
