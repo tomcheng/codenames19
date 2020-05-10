@@ -11,6 +11,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   user-select: none;
+  touch-action: manipulation;
 `;
 
 const KeysWrapper = styled.div`
