@@ -171,6 +171,7 @@ const GuesserView = ({
               }
             } else {
               setNumber("");
+              setEndTurn(false);
               setError(null);
               setSelected(false);
               setConfirmation("");
