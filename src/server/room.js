@@ -224,7 +224,10 @@ class Room {
       return;
     }
 
-    if (this.guessesLeft === 1) {
+    if (
+      this.guessesLeft === 1 ||
+      this.words.find((w) => w.word === word).type !== this.turn
+    ) {
       this.endTurn({ playerID });
     } else {
       this.guessesLeft -= 1;
