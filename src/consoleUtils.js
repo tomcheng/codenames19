@@ -223,7 +223,7 @@ export const printScore = ({
     isYourTurn ? "__" : ""
   }**Enemy: ${enemyWordsLeft} left**${isYourTurn ? "__" : ""}`;
   const scores = `${yourScore}  ${theirScore}`;
-  const missionCode = `Mission Code: ${roomCode}`;
+  const missionCode = `Code: ${roomCode}`;
 
   return [
     `${scores}${repeat(
