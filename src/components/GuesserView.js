@@ -105,7 +105,6 @@ const GuesserView = ({
 
     lines = lines.concat(
       printGuessing({
-        code: last(room.codes),
         confirmation,
         confirmed,
         endTurn,

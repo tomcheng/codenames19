@@ -3,6 +3,7 @@ import compact from "lodash/compact";
 import countBy from "lodash/countBy";
 import repeat from "lodash/repeat";
 import last from "lodash/last";
+import takeWhile from "lodash/takeWhile";
 import { humanizeList, plc } from "./utils";
 
 export const parseMarkdown = (str) => {
@@ -168,7 +169,6 @@ export const printConfirming = ({
 };
 
 export const printGuessing = ({
-  code,
   confirmation,
   confirmed,
   endTurn,
@@ -181,8 +181,6 @@ export const printGuessing = ({
   words,
 }) => {
   return [
-    `**Transmission received: ${code.word} / ${code.number}**`,
-    " ",
     error && `**${error}.**`,
     rejection &&
       `**"${rejection.word}" was rejected by ${
@@ -295,21 +293,61 @@ export const printResult = ({ result, bomb }) => {
   return [message];
 };
 
-export const printLog = ({ log, players, playerID }) => {
+export const printLog = ({ room, playerID }) => {
   const result = [];
+  const player = room.players[playerID];
+  let shortLog = room.log;
+  const currentSpy = Object.values(room.players).find(
+    (p) => p.spymaster && p.team === room.turn
+  );
 
-  log.forEach(({ action, playerID, team, payload }) => {
-    const actor = players[playerID];
+  if (
+    room.turn === player.team &&
+    room.stage === "guessing" &&
+    !player.spymaster
+  ) {
+    const { payload } = last(room.log);
+    return [`**Transmission received: ${payload.word} / ${payload.number}**`];
+  }
+
+  if (room.turn !== player.team && room.stage === "guessing") {
+    shortLog = takeWhile(
+      room.log.reverse(),
+      (entry) => entry.team === room.turn
+    ).reverse();
+  }
+
+  shortLog.forEach(({ action, playerID: logPlayerID, team, payload }) => {
+    const actor = room.players[logPlayerID];
     switch (action) {
       case "submit-code":
         result.push(
-          `${actor.name} submitted ${payload.word} / ${payload.number}`
+          `${actor.name} transmitted ${payload.word} / ${payload.number}.`
+        );
+        break;
+      case "select-word":
+        const wordObj = room.words.find((w) => w.word === payload.word);
+        const isCorrect = wordObj.type === actor.team;
+        const name =
+          team === player.team && !player.spymaster ? "You" : actor.name;
+        result.push(
+          `${name} selected ${payload.word}. ${
+            isCorrect ? "Correct" : "Wrong"
+          }.`
         );
         break;
       default:
         break;
     }
   });
+
+  if (room.turn !== player.team && room.stage === "writing") {
+    result.push("Monitoring enemy transmission...");
+  }
+
+  if (room.turn === player.team && room.stage === "writing") {
+    result.push(`Awaiting transmission from ${currentSpy.name}...`);
+  }
 
   return result;
 };
@@ -335,7 +373,7 @@ export const printCommonLines = ({ lineLength, player, room }) => {
         })
   );
 
-  lines = lines.concat(printLog({ player, room }));
+  lines = lines.concat(printLog({ room, playerID: player.id }));
 
   return lines;
 };
