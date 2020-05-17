@@ -295,6 +295,25 @@ export const printResult = ({ result, bomb }) => {
   return [message];
 };
 
+export const printLog = ({ log, players, playerID }) => {
+  const result = [];
+
+  log.forEach(({ action, playerID, team, payload }) => {
+    const actor = players[playerID];
+    switch (action) {
+      case "submit-code":
+        result.push(
+          `${actor.name} submitted ${payload.word} / ${payload.number}`
+        );
+        break;
+      default:
+        break;
+    }
+  });
+
+  return result;
+};
+
 export const printCommonLines = ({ lineLength, player, room }) => {
   let lines = printScore({
     lineLength,
@@ -315,6 +334,8 @@ export const printCommonLines = ({ lineLength, player, room }) => {
           yourTeam: player.team,
         })
   );
+
+  lines = lines.concat(printLog({ player, room }));
 
   return lines;
 };
