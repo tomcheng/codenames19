@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import compact from "lodash/compact";
-import flatten from "lodash/flatten";
 import last from "lodash/last";
 import Box from "./Box";
 import Console from "./Console";
@@ -56,7 +54,92 @@ const GuesserView = ({
     room.stage === "writing" ||
     confirmed ||
     (needsConfirmation && !room.awaitingConfirmation.includes(playerID));
-  const gameEnded = !!room.result;
+
+  const getConsoleLines = ({ lineLength }) => {
+    let lines = [];
+
+    lines = lines.concat(
+      printScore({
+        isYourTurn,
+        lineLength,
+        roomCode: room.roomCode,
+        words: room.words,
+        yourTeam: player.team,
+      })
+    );
+
+    lines = lines.concat(
+      printGuesserWords({
+        lineLength,
+        words: room.words,
+        yourTeam: player.team,
+      })
+    );
+
+    if (room.result) {
+      lines = lines.concat(
+        printResult({
+          result: room.result.winner === player.team ? "won" : "lost",
+          bomb: room.result.bomb,
+        })
+      );
+
+      return lines;
+    }
+
+    if (!isYourTurn) {
+      lines = lines.concat(
+        printWaitingMessage({
+          codes: room.codes,
+          players: room.players,
+          stage: room.stage,
+          yourTeam: player.team,
+        })
+      );
+
+      return lines;
+    }
+
+    if (room.stage === "writing") {
+      lines = lines.concat(
+        `**Awaiting transmission from ${yourSpymaster.name}...**`
+      );
+      return lines;
+    }
+
+    if (needsConfirmation) {
+      lines = lines.concat(
+        printConfirming({
+          awaiting: room.awaitingConfirmation.map((id) => room.players[id]),
+          candidateWord: room.candidateWord,
+          confirmation,
+          confirmed,
+          code: last(room.codes),
+          nominator: room.players[room.nominator],
+          youNominated: room.nominator === playerID,
+        })
+      );
+      return lines;
+    }
+
+    lines = lines.concat(
+      printGuessing({
+        code: last(room.codes),
+        confirmation,
+        confirmed,
+        endTurn,
+        error,
+        guessesLeft: room.guessesLeft,
+        number,
+        players: room.players,
+        rejection: room.rejection,
+        selected,
+        words: room.words,
+      })
+    );
+
+    return lines;
+  };
 
   useEffect(() => {
     setNumber("");
@@ -72,70 +155,7 @@ const GuesserView = ({
       <GameDimensionsConsumer>
         {({ lineLength }) => (
           <Console
-            lines={compact(
-              flatten([
-                printScore({
-                  isYourTurn,
-                  lineLength,
-                  roomCode: room.roomCode,
-                  words: room.words,
-                  yourTeam: player.team,
-                }),
-                printGuesserWords({
-                  lineLength,
-                  words: room.words,
-                  yourTeam: player.team,
-                }),
-                !gameEnded &&
-                  !isYourTurn &&
-                  printWaitingMessage({
-                    codes: room.codes,
-                    players: room.players,
-                    stage: room.stage,
-                    yourTeam: player.team,
-                  }),
-                !gameEnded &&
-                  isYourTurn &&
-                  room.stage === "writing" &&
-                  `**Awaiting transmission from ${yourSpymaster.name}...**`,
-                !gameEnded &&
-                  isYourTurn &&
-                  room.stage === "guessing" &&
-                  !needsConfirmation &&
-                  printGuessing({
-                    code: last(room.codes),
-                    confirmation,
-                    confirmed,
-                    endTurn,
-                    error,
-                    guessesLeft: room.guessesLeft,
-                    number,
-                    players: room.players,
-                    rejection: room.rejection,
-                    selected,
-                    words: room.words,
-                  }),
-                !gameEnded &&
-                  isYourTurn &&
-                  needsConfirmation &&
-                  printConfirming({
-                    awaiting: room.awaitingConfirmation.map(
-                      (id) => room.players[id]
-                    ),
-                    candidateWord: room.candidateWord,
-                    confirmation,
-                    confirmed,
-                    code: last(room.codes),
-                    nominator: room.players[room.nominator],
-                    youNominated: room.nominator === playerID,
-                  }),
-                gameEnded &&
-                  printResult({
-                    result: room.result.winner === player.team ? "won" : "lost",
-                    bomb: room.result.bomb,
-                  }),
-              ])
-            )}
+            lines={getConsoleLines({ lineLength })}
             showPrompt={!disabled}
             typed={
               selected || endTurn || needsConfirmation ? confirmation : number

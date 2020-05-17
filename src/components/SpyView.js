@@ -58,7 +58,6 @@ const SpyView = ({ playerID, room, onSubmitCode }) => {
     .map((p) => p.name);
 
   const disabled = !isYourTurn || room.stage === "guessing" || confirmed;
-  const gameEnded = !!room.result;
 
   const getConsoleLines = ({ lineLength }) => {
     let lines = printScore({
@@ -77,7 +76,7 @@ const SpyView = ({ playerID, room, onSubmitCode }) => {
       })
     );
 
-    if (gameEnded) {
+    if (room.result) {
       lines = lines.concat(
         printResult({
           result: room.result.winner === player.team ? "won" : "lost",

@@ -90,7 +90,7 @@ const Console = ({ lines, showPrompt, typed }) => {
 };
 
 Console.propTypes = {
-  lines: PropTypes.arrayOf(PropTypes.string).isRequired,
+  lines: PropTypes.arrayOf(PropTypes.any).isRequired,
   showPrompt: PropTypes.bool,
   typed: PropTypes.string,
 };
