@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import compact from "lodash/compact";
-import flatten from "lodash/flatten";
 import {
   printScore,
   printSpyWaiting,
@@ -62,61 +60,75 @@ const SpyView = ({ playerID, room, onSubmitCode }) => {
   const disabled = !isYourTurn || room.stage === "guessing" || confirmed;
   const gameEnded = !!room.result;
 
+  const getConsoleLines = ({ lineLength }) => {
+    let lines = printScore({
+      isYourTurn,
+      lineLength,
+      roomCode: room.roomCode,
+      words: room.words,
+      yourTeam: player.team,
+    });
+
+    lines = lines.concat(
+      printSpyWords({
+        lineLength,
+        words: room.words,
+        yourTeam: player.team,
+      })
+    );
+
+    if (gameEnded) {
+      lines = lines.concat(
+        printResult({
+          result: room.result.winner === player.team ? "won" : "lost",
+          bomb: room.result.bomb,
+        })
+      );
+
+      return lines;
+    }
+
+    if (!isYourTurn) {
+      lines = lines.concat(
+        printWaitingMessage({
+          codes: room.codes,
+          players: room.players,
+          stage: room.stage,
+          yourTeam: player.team,
+        })
+      );
+
+      return lines;
+    }
+
+    lines = lines.concat(
+      room.stage === "writing"
+        ? printSpyWriting({
+            confirmation,
+            confirmed,
+            number,
+            numberDone,
+            numberError,
+            word,
+            wordDone,
+            wordError,
+          })
+        : printSpyWaiting({
+            codes: room.codes,
+            teamNames,
+            yourTeam: player.team,
+          })
+    );
+
+    return lines;
+  };
+
   return (
     <Box flex flexDirection="column" height="100vh">
       <GameDimensionsConsumer>
         {({ lineLength }) => (
           <Console
-            lines={compact(
-              flatten([
-                printScore({
-                  isYourTurn,
-                  lineLength,
-                  roomCode: room.roomCode,
-                  words: room.words,
-                  yourTeam: player.team,
-                }),
-                printSpyWords({
-                  lineLength,
-                  words: room.words,
-                  yourTeam: player.team,
-                }),
-                !gameEnded &&
-                  isYourTurn &&
-                  room.stage === "writing" &&
-                  printSpyWriting({
-                    confirmation,
-                    confirmed,
-                    number,
-                    numberDone,
-                    numberError,
-                    word,
-                    wordDone,
-                    wordError,
-                  }),
-                !gameEnded &&
-                  isYourTurn &&
-                  room.stage === "guessing" &&
-                  printSpyWaiting({
-                    codes: room.codes,
-                    teamNames,
-                    yourTeam: player.team,
-                  }),
-                !gameEnded &&
-                  !isYourTurn &&
-                  printWaitingMessage({
-                    codes: room.codes,
-                    players: room.players,
-                    stage: room.stage,
-                    yourTeam: player.team,
-                  }),
-                gameEnded &&
-                  printResult({
-                    result: room.result.winner === player.team ? "won" : "lost",
-                    bomb: room.result.bomb,
-                  }),
-              ])
-            )}
+            lines={getConsoleLines({ lineLength })}
             showPrompt={!disabled}
             typed={numberDone ? confirmation : wordDone ? number : word}
           />

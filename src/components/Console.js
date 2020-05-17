@@ -1,6 +1,7 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
 import PropTypes from "prop-types";
+import compact from "lodash/compact";
 import { parseMarkdown } from "../consoleUtils";
 import Box from "./Box";
 import Text from "./Text";
@@ -58,6 +59,8 @@ const Content = styled.div`
 `;
 
 const Console = ({ lines, showPrompt, typed }) => {
+  const compactedLines = compact(lines);
+
   return (
     <Box
       pad="tight"
@@ -70,10 +73,10 @@ const Console = ({ lines, showPrompt, typed }) => {
       }}
     >
       <Text preset="code">
-        {lines.map((str, index) => (
+        {compactedLines.map((str, index) => (
           <Content key={index}>
             {parseMarkdown(str).html}
-            {index === lines.length - 1 && (
+            {index === compactedLines.length - 1 && (
               <>
                 {showPrompt && typed}
                 {showPrompt && <Blink>_</Blink>}
