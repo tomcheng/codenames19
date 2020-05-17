@@ -301,16 +301,7 @@ export const printLog = ({ room, playerID }) => {
     (p) => p.spymaster && p.team === room.turn
   );
 
-  if (
-    room.turn === player.team &&
-    room.stage === "guessing" &&
-    !player.spymaster
-  ) {
-    const { payload } = last(room.log);
-    return [`**Transmission received: ${payload.word} / ${payload.number}**`];
-  }
-
-  if (room.turn !== player.team && room.stage === "guessing") {
+  if (room.stage === "guessing") {
     shortLog = takeWhile(
       room.log.reverse(),
       (entry) => entry.team === room.turn
@@ -321,9 +312,15 @@ export const printLog = ({ room, playerID }) => {
     const actor = room.players[logPlayerID];
     switch (action) {
       case "submit-code":
-        result.push(
-          `${actor.name} transmitted ${payload.word} / ${payload.number}.`
-        );
+        if (!player.spymaster && player.team === team) {
+          result.push(
+            `**Transmission received: ${payload.word} / ${payload.number}**`
+          );
+        } else {
+          result.push(
+            `**${actor.name} transmitted ${payload.word} / ${payload.number}**`
+          );
+        }
         break;
       case "select-word":
         const wordObj = room.words.find((w) => w.word === payload.word);
@@ -341,8 +338,12 @@ export const printLog = ({ room, playerID }) => {
     }
   });
 
-  if (room.turn !== player.team && room.stage === "writing") {
-    result.push("Monitoring enemy transmission...");
+  if (room.turn !== player.team) {
+    result.push(
+      room.stage === "writing"
+        ? "Monitoring enemy transmission..."
+        : "Awaiting enemy's selection..."
+    );
   }
 
   if (room.turn === player.team && room.stage === "writing") {

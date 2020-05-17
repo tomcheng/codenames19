@@ -8,7 +8,6 @@ import {
   printConfirming,
   printGuessing,
   printResult,
-  printWaitingMessage,
   printCommonLines,
 } from "../consoleUtils";
 import NumericKeyboard from "./NumericKeyboard";
@@ -44,9 +43,6 @@ const GuesserView = ({
 
   const player = room.players[playerID];
   const isYourTurn = player.team === room.turn;
-  const yourSpymaster = Object.values(room.players).find(
-    (p) => p.team === player.team && p.spymaster
-  );
   const needsConfirmation = !!room.candidateWord;
   const disabled =
     !isYourTurn ||
@@ -68,23 +64,7 @@ const GuesserView = ({
       return lines;
     }
 
-    if (!isYourTurn) {
-      lines = lines.concat(
-        printWaitingMessage({
-          codes: room.codes,
-          players: room.players,
-          stage: room.stage,
-          yourTeam: player.team,
-        })
-      );
-
-      return lines;
-    }
-
-    if (room.stage === "writing") {
-      lines = lines.concat(
-        `**Awaiting transmission from ${yourSpymaster.name}...**`
-      );
+    if (room.stage === "writing" || !isYourTurn) {
       return lines;
     }
 

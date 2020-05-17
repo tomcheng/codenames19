@@ -91,6 +91,33 @@ describe("printLog", () => {
     ).toEqual(["**Transmission received: FLY / 2**"]);
   });
 
+  it("prints log for guesser guessing again", () => {
+    const log = [
+      {
+        action: "submit-code",
+        playerID: "d06efad0-8d95-4938-9445-2cf44cb11bb8",
+        team: "A",
+        payload: { word: "FLY", number: 2 },
+      },
+      {
+        action: "select-word",
+        playerID: "76714c37-4c0f-4bf0-8733-788fe96a285e",
+        team: "A",
+        payload: { word: "Locust", needsConfirmation: false },
+      },
+    ];
+
+    expect(
+      printLog({
+        room: { log, players, words, turn: "A", stage: "guessing" },
+        playerID,
+      })
+    ).toEqual([
+      "**Transmission received: FLY / 2**",
+      "You selected Locust. Correct.",
+    ]);
+  });
+
   it("prints log for guesser when enemy is writing", () => {
     const log = [
       {
@@ -119,7 +146,7 @@ describe("printLog", () => {
         playerID,
       })
     ).toEqual([
-      "Michelle transmitted FLY / 2.",
+      "**Transmission received: FLY / 2**",
       "You selected Locust. Correct.",
       "You selected Frost. Wrong.",
       "Monitoring enemy transmission...",
@@ -165,6 +192,10 @@ describe("printLog", () => {
         room: { log, players, words, turn: "B", stage: "guessing" },
         playerID,
       })
-    ).toEqual(["Avrum transmitted BAT / 2.", "Alda selected Club. Correct."]);
+    ).toEqual([
+      "**Avrum transmitted BAT / 2**",
+      "Alda selected Club. Correct.",
+      "Awaiting enemy's selection...",
+    ]);
   });
 });
