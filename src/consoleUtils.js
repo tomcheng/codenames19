@@ -62,7 +62,7 @@ const printWordGroup = ({ title, words, lineLength }) => {
   return [`**${title.toUpperCase()}**`, ...lines, " "];
 };
 
-export const printSpyWords = ({ words, yourTeam, lineLength }) => {
+const printSpyWords = ({ words, yourTeam, lineLength }) => {
   const allianceWords = words.filter((w) => w.type === yourTeam);
   const enemyWords = words.filter(
     (w) => w.type === (yourTeam === "A" ? "B" : "A")
@@ -114,7 +114,7 @@ const printGuesserWord = ({ word, number, yourTeam }) => {
   )}. ${word.flipped ? "==" : ""}${word.word}${word.flipped ? "==__" : ""}`;
 };
 
-export const printGuesserWords = ({ words, yourTeam, lineLength }) => {
+const printGuesserWords = ({ words, yourTeam, lineLength }) => {
   const half = Math.ceil(words.length / 2);
   const halfLineLength = Math.floor(lineLength / 2);
   const firstHalf = words.slice(0, half);
@@ -203,19 +203,14 @@ export const printGuessing = ({
   ];
 };
 
-export const printScore = ({
-  isYourTurn,
-  lineLength,
-  roomCode,
-  words,
-  yourTeam,
-}) => {
+const printScore = ({ lineLength, player, room }) => {
+  const isYourTurn = player.team === room.turn;
   const counts = countBy(
-    words.filter((word) => !word.flipped),
+    room.words.filter((word) => !word.flipped),
     "type"
   );
-  const yourWordsLeft = counts[yourTeam] ?? 0;
-  const enemyWordsLeft = counts[yourTeam === "A" ? "B" : "A"] ?? 0;
+  const yourWordsLeft = counts[player.team] ?? 0;
+  const enemyWordsLeft = counts[player.team === "A" ? "B" : "A"] ?? 0;
   const yourScore = `${
     isYourTurn ? "" : "__"
   }**Alliance: ${yourWordsLeft} left**${isYourTurn ? "" : "__"}`;
@@ -223,15 +218,14 @@ export const printScore = ({
     isYourTurn ? "__" : ""
   }**Enemy: ${enemyWordsLeft} left**${isYourTurn ? "__" : ""}`;
   const scores = `${yourScore}  ${theirScore}`;
-  const missionCode = roomCode;
 
   return [
     `${scores}${repeat(
       " ",
       lineLength -
         parseMarkdown(scores).length -
-        parseMarkdown(missionCode).length
-    )}${missionCode}`,
+        parseMarkdown(room.roomCode).length
+    )}${room.roomCode}`,
     repeat("-", lineLength),
     " ",
   ];
@@ -299,4 +293,28 @@ export const printResult = ({ result, bomb }) => {
       : "^^**The Enemy has uncovered all the codes. You ded.**^^";
 
   return [message];
+};
+
+export const printCommonLines = ({ lineLength, player, room }) => {
+  let lines = printScore({
+    lineLength,
+    player,
+    room,
+  });
+
+  lines = lines.concat(
+    player.spymaster
+      ? printSpyWords({
+          lineLength,
+          words: room.words,
+          yourTeam: player.team,
+        })
+      : printGuesserWords({
+          lineLength,
+          words: room.words,
+          yourTeam: player.team,
+        })
+  );
+
+  return lines;
 };

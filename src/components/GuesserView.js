@@ -7,10 +7,9 @@ import { GameDimensionsConsumer } from "./GameDimensions";
 import {
   printConfirming,
   printGuessing,
-  printGuesserWords,
   printResult,
-  printScore,
   printWaitingMessage,
+  printCommonLines,
 } from "../consoleUtils";
 import NumericKeyboard from "./NumericKeyboard";
 import AlphabetKeyboard from "./AlphabetKeyboard";
@@ -56,25 +55,7 @@ const GuesserView = ({
     (needsConfirmation && !room.awaitingConfirmation.includes(playerID));
 
   const getConsoleLines = ({ lineLength }) => {
-    let lines = [];
-
-    lines = lines.concat(
-      printScore({
-        isYourTurn,
-        lineLength,
-        roomCode: room.roomCode,
-        words: room.words,
-        yourTeam: player.team,
-      })
-    );
-
-    lines = lines.concat(
-      printGuesserWords({
-        lineLength,
-        words: room.words,
-        yourTeam: player.team,
-      })
-    );
+    let lines = printCommonLines({ lineLength, player, room });
 
     if (room.result) {
       lines = lines.concat(

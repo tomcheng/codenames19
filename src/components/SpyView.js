@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
-  printScore,
+  printCommonLines,
   printSpyWaiting,
   printSpyWriting,
-  printSpyWords,
   printWaitingMessage,
   printResult,
 } from "../consoleUtils";
@@ -60,21 +59,7 @@ const SpyView = ({ playerID, room, onSubmitCode }) => {
   const disabled = !isYourTurn || room.stage === "guessing" || confirmed;
 
   const getConsoleLines = ({ lineLength }) => {
-    let lines = printScore({
-      isYourTurn,
-      lineLength,
-      roomCode: room.roomCode,
-      words: room.words,
-      yourTeam: player.team,
-    });
-
-    lines = lines.concat(
-      printSpyWords({
-        lineLength,
-        words: room.words,
-        yourTeam: player.team,
-      })
-    );
+    let lines = printCommonLines({ lineLength, player, room });
 
     if (room.result) {
       lines = lines.concat(
