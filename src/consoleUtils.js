@@ -285,39 +285,41 @@ export const printLog = ({ room, playerID }) => {
     ).reverse();
   }
 
-  shortLog.forEach(({ action, playerID: logPlayerID, team, payload }) => {
-    const actor = room.players[logPlayerID];
-    switch (action) {
-      case "submit-code":
-        if (!player.spymaster && player.team === team) {
+  shortLog.forEach(
+    ({ action, playerID: logPlayerID, team, payload }, index) => {
+      const actor = room.players[logPlayerID];
+      switch (action) {
+        case "submit-code":
+          if (!player.spymaster && player.team === team) {
+            result.push(
+              `Transmission received: **${payload.word} / ${payload.number}**`
+            );
+          } else {
+            const name = player.id === logPlayerID ? "You" : actor.name;
+            result.push(
+              `${name} transmitted **${payload.word} / ${payload.number}**`
+            );
+          }
+          break;
+        case "select-word":
+          const wordObj = room.words.find((w) => w.word === payload.word);
+          const isCorrect = wordObj.type === actor.team;
+          const name =
+            team === player.team && !player.spymaster ? "You" : actor.name;
           result.push(
-            `**Transmission received: ${payload.word} / ${payload.number}**`
+            `${name} selected **${payload.word}** - ${
+              isCorrect ? "correct" : "incorrect"
+            }`
           );
-        } else if (player.id === logPlayerID) {
-          result.push(
-            `**You transmitted ${payload.word} / ${payload.number}**`
-          );
-        } else {
-          result.push(
-            `**${actor.name} transmitted ${payload.word} / ${payload.number}**`
-          );
-        }
-        break;
-      case "select-word":
-        const wordObj = room.words.find((w) => w.word === payload.word);
-        const isCorrect = wordObj.type === actor.team;
-        const name =
-          team === player.team && !player.spymaster ? "You" : actor.name;
-        result.push(
-          `${name} selected ${payload.word}. ${
-            isCorrect ? "Correct" : "Wrong"
-          }.`
-        );
-        break;
-      default:
-        break;
+          break;
+        default:
+          break;
+      }
+      if (index === shortLog.length - 1) {
+        result.push(" ");
+      }
     }
-  });
+  );
 
   if (room.turn !== player.team) {
     result.push(

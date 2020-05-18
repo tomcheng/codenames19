@@ -88,7 +88,7 @@ describe("printLog for guesser", () => {
         room: { log, players, words, turn: "A", stage: "guessing" },
         playerID,
       })
-    ).toEqual(["**Transmission received: FLY / 2**"]);
+    ).toEqual(["Transmission received: **FLY / 2**", " "]);
   });
 
   it("prints log for guesser guessing again", () => {
@@ -113,8 +113,9 @@ describe("printLog for guesser", () => {
         playerID,
       })
     ).toEqual([
-      "**Transmission received: FLY / 2**",
-      "You selected Locust. Correct.",
+      "Transmission received: **FLY / 2**",
+      "You selected **Locust** - correct",
+      " ",
     ]);
   });
 
@@ -146,9 +147,10 @@ describe("printLog for guesser", () => {
         playerID,
       })
     ).toEqual([
-      "**Transmission received: FLY / 2**",
-      "You selected Locust. Correct.",
-      "You selected Frost. Wrong.",
+      "Transmission received: **FLY / 2**",
+      "You selected **Locust** - correct",
+      "You selected **Frost** - incorrect",
+      " ",
       "Monitoring enemy transmission...",
     ]);
   });
@@ -193,8 +195,9 @@ describe("printLog for guesser", () => {
         playerID,
       })
     ).toEqual([
-      "**Avrum transmitted BAT / 2**",
-      "Alda selected Club. Correct.",
+      "Avrum transmitted **BAT / 2**",
+      "Alda selected **Club** - correct",
+      " ",
       "Awaiting enemy's selection...",
     ]);
   });
@@ -295,8 +298,9 @@ describe("printLog for spy", () => {
         playerID,
       })
     ).toEqual([
-      "**You transmitted SALT / 2**",
-      "Michelle selected Pepper. Correct.",
+      "You transmitted **SALT / 2**",
+      "Michelle selected **Pepper** - correct",
+      " ",
       "Awaiting your team's selection...",
     ]);
   });
