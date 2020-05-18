@@ -344,6 +344,13 @@ export const printLog = ({ room, playerID }) => {
           );
           break;
         }
+        case "end-turn":
+          result.push(
+            team === player.team
+              ? "You ended your turn."
+              : "The enemy ended their turn."
+          );
+          break;
         default:
           break;
       }

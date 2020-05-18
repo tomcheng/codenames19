@@ -432,4 +432,71 @@ describe("prints log for confirmation cases", () => {
       " ",
     ]);
   });
+
+  it("prints log for ending turn", () => {
+    const log = [
+      {
+        action: "submit-code",
+        playerID: "d06efad0-8d95-4938-9445-2cf44cb11bb8",
+        team: "A",
+        payload: { word: "SHOOT", number: 3 },
+      },
+      {
+        action: "select-word",
+        playerID: "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526",
+        team: "A",
+        payload: { word: "Pea", needsConfirmation: true },
+      },
+      {
+        action: "confirm-word",
+        playerID: "76714c37-4c0f-4bf0-8733-788fe96a285e",
+        team: "A",
+        payload: null,
+      },
+      {
+        action: "select-word",
+        playerID: "76714c37-4c0f-4bf0-8733-788fe96a285e",
+        team: "A",
+        payload: { word: "Beam", needsConfirmation: true },
+      },
+      {
+        action: "reject-word",
+        playerID: "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526",
+        team: "A",
+        payload: null,
+      },
+      {
+        action: "select-word",
+        playerID: "76714c37-4c0f-4bf0-8733-788fe96a285e",
+        team: "A",
+        payload: { word: "Beam", needsConfirmation: true },
+      },
+      {
+        action: "confirm-word",
+        playerID: "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526",
+        team: "A",
+        payload: null,
+      },
+      {
+        action: "end-turn",
+        playerID: "76714c37-4c0f-4bf0-8733-788fe96a285e",
+        team: "A",
+        payload: null,
+      },
+    ];
+
+    expect(
+      printLog({
+        room: { log, players, words, turn: "B", stage: "writing" },
+        playerID,
+      })
+    ).toEqual([
+      "Transmission received: **SHOOT / 3**",
+      "You selected **Pea** - correct",
+      "You selected **Beam** - correct",
+      "You ended your turn.",
+      " ",
+      "Monitoring enemy transmission...",
+    ]);
+  });
 });
