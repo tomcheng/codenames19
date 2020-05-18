@@ -500,3 +500,142 @@ describe("prints log for confirmation cases", () => {
     ]);
   });
 });
+
+describe("longer games", () => {
+  const playerID = "d06efad0-8d95-4938-9445-2cf44cb11bb8";
+  const players = {
+    "76714c37-4c0f-4bf0-8733-788fe96a285e": {
+      id: "76714c37-4c0f-4bf0-8733-788fe96a285e",
+      name: "Thomas",
+      online: true,
+      spymaster: true,
+      team: "A",
+    },
+    "d06efad0-8d95-4938-9445-2cf44cb11bb8": {
+      id: "d06efad0-8d95-4938-9445-2cf44cb11bb8",
+      name: "Michelle",
+      online: true,
+      spymaster: false,
+      team: "A",
+    },
+    "6a8f23a9-1e6a-4be6-8745-6d6664de0614": {
+      id: "6a8f23a9-1e6a-4be6-8745-6d6664de0614",
+      name: "Avrum",
+      online: true,
+      spymaster: true,
+      team: "B",
+    },
+    "378c641c-0087-4fdf-a16d-10b554598d43": {
+      id: "378c641c-0087-4fdf-a16d-10b554598d43",
+      name: "Alda",
+      online: true,
+      spymaster: false,
+      team: "B",
+    },
+    "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526": {
+      id: "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526",
+      name: "Harry",
+      online: true,
+      spymaster: false,
+      team: "A",
+    },
+  };
+  const words = [
+    { word: "Rip", type: "neutral", flipped: false },
+    { word: "Turtle", type: "A", flipped: true },
+    { word: "Spurs", type: "neutral", flipped: false },
+    { word: "Suit", type: "neutral", flipped: false },
+    { word: "Knot", type: "neutral", flipped: false },
+    { word: "Mummy", type: "A", flipped: false },
+    { word: "Ant", type: "B", flipped: true },
+    { word: "Scorpion", type: "A", flipped: false },
+    { word: "Clock", type: "A", flipped: false },
+    { word: "Sail", type: "B", flipped: false },
+    { word: "Fair", type: "A", flipped: false },
+    { word: "Hotel", type: "B", flipped: false },
+    { word: "Castle", type: "A", flipped: false },
+    { word: "Web", type: "A", flipped: false },
+    { word: "Salsa", type: "B", flipped: false },
+    { word: "Biscuit", type: "B", flipped: false },
+    { word: "Police", type: "B", flipped: false },
+    { word: "Mass", type: "A", flipped: false },
+    { word: "Europe", type: "neutral", flipped: false },
+    { word: "Scale", type: "A", flipped: false },
+    { word: "Bowler", type: "neutral", flipped: false },
+    { word: "Cast", type: "bomb", flipped: false },
+    { word: "Letter", type: "B", flipped: false },
+    { word: "Beat", type: "neutral", flipped: false },
+    { word: "Water", type: "B", flipped: false },
+  ];
+  it("only shows latest logs", () => {
+    const log = [
+      {
+        action: "submit-code",
+        playerID: "76714c37-4c0f-4bf0-8733-788fe96a285e",
+        team: "A",
+        payload: { word: "SLOW", number: 2 },
+      },
+      {
+        action: "select-word",
+        playerID: "d06efad0-8d95-4938-9445-2cf44cb11bb8",
+        team: "A",
+        payload: { word: "Turtle", needsConfirmation: true },
+      },
+      {
+        action: "reject-word",
+        playerID: "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526",
+        team: "A",
+        payload: null,
+      },
+      {
+        action: "select-word",
+        playerID: "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526",
+        team: "A",
+        payload: { word: "Turtle", needsConfirmation: true },
+      },
+      {
+        action: "confirm-word",
+        playerID: "d06efad0-8d95-4938-9445-2cf44cb11bb8",
+        team: "A",
+        payload: null,
+      },
+      {
+        action: "end-turn",
+        playerID: "d06efad0-8d95-4938-9445-2cf44cb11bb8",
+        team: "A",
+        payload: null,
+      },
+      {
+        action: "submit-code",
+        playerID: "6a8f23a9-1e6a-4be6-8745-6d6664de0614",
+        team: "B",
+        payload: { word: "SMALL", number: 2 },
+      },
+      {
+        action: "select-word",
+        playerID: "378c641c-0087-4fdf-a16d-10b554598d43",
+        team: "B",
+        payload: { word: "Ant", needsConfirmation: false },
+      },
+      {
+        action: "end-turn",
+        playerID: "378c641c-0087-4fdf-a16d-10b554598d43",
+        team: "B",
+        payload: null,
+      },
+    ];
+
+    expect(
+      printLog({
+        room: { log, players, words, turn: "A", stage: "writing" },
+        playerID,
+      })
+    ).toEqual([
+      "Avrum transmitted **SMALL / 2**",
+      "Alda selected **Ant** - correct",
+      "The enemy ended their turn.",
+      " ",
+      "Awaiting transmission from Thomas...",
+    ]);
+  });
+});

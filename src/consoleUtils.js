@@ -280,6 +280,11 @@ export const printLog = ({ room, playerID }) => {
       room.log.slice().reverse(),
       (entry) => entry.team === room.turn
     ).reverse();
+  } else {
+    shortLog = takeWhile(
+      room.log.slice().reverse(),
+      (entry) => entry.team !== room.turn
+    ).reverse();
   }
 
   shortLog.forEach(
