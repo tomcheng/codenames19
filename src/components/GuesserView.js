@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import last from "lodash/last";
 import Box from "./Box";
 import Console from "./Console";
 import { GameDimensionsConsumer } from "./GameDimensions";
@@ -75,7 +74,6 @@ const GuesserView = ({
           candidateWord: room.candidateWord,
           confirmation,
           confirmed,
-          code: last(room.codes),
           nominator: room.players[room.nominator],
           youNominated: room.nominator === playerID,
         })

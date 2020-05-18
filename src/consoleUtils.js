@@ -143,15 +143,12 @@ const printGuesserWords = ({ words, yourTeam, lineLength }) => {
 export const printConfirming = ({
   awaiting,
   candidateWord,
-  code,
   confirmation,
   confirmed,
   nominator,
   youNominated,
 }) => {
   return [
-    `**Transmission received: ${code.word} / ${code.number}**`,
-    " ",
     `${
       youNominated ? "You have" : nominator.name + " has"
     } selected "${candidateWord}".`,
@@ -301,7 +298,11 @@ export const printLog = ({ room, playerID }) => {
             );
           }
           break;
-        case "select-word":
+        case "select-word": {
+          if (payload.needsConfirmation) {
+            break;
+          }
+
           const wordObj = room.words.find((w) => w.word === payload.word);
           const isCorrect = wordObj.type === actor.team;
           const name =
@@ -312,6 +313,37 @@ export const printLog = ({ room, playerID }) => {
             }`
           );
           break;
+        }
+        case "confirm-word": {
+          const confirmationsNeeded =
+            Object.values(room.players).filter((p) => p.team === team).length -
+            2;
+          const actionsTilNow = shortLog.slice(0, index + 1);
+          const confirms = takeWhile(
+            actionsTilNow.slice().reverse(),
+            (e) => e.action === "confirm-word"
+          );
+          if (confirms.length < confirmationsNeeded) {
+            break;
+          }
+          const wordSelected = actionsTilNow
+            .slice()
+            .reverse()
+            .find((e) => e.action === "select-word");
+
+          const wordObj = room.words.find(
+            (w) => w.word === wordSelected.payload.word
+          );
+          const isCorrect = wordObj.type === actor.team;
+          const name =
+            team === player.team && !player.spymaster ? "You" : actor.name;
+          result.push(
+            `${name} selected **${wordSelected.payload.word}** - ${
+              isCorrect ? "correct" : "incorrect"
+            }`
+          );
+          break;
+        }
         default:
           break;
       }

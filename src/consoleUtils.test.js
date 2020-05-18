@@ -305,3 +305,131 @@ describe("printLog for spy", () => {
     ]);
   });
 });
+
+describe("prints log for confirmation cases", () => {
+  const players = {
+    "76714c37-4c0f-4bf0-8733-788fe96a285e": {
+      id: "76714c37-4c0f-4bf0-8733-788fe96a285e",
+      name: "Thomas",
+      online: true,
+      spymaster: false,
+      team: "A",
+    },
+    "d06efad0-8d95-4938-9445-2cf44cb11bb8": {
+      id: "d06efad0-8d95-4938-9445-2cf44cb11bb8",
+      name: "Michelle",
+      online: true,
+      spymaster: true,
+      team: "A",
+    },
+    "6a8f23a9-1e6a-4be6-8745-6d6664de0614": {
+      id: "6a8f23a9-1e6a-4be6-8745-6d6664de0614",
+      name: "Avrum",
+      online: true,
+      spymaster: true,
+      team: "B",
+    },
+    "378c641c-0087-4fdf-a16d-10b554598d43": {
+      id: "378c641c-0087-4fdf-a16d-10b554598d43",
+      name: "Alda",
+      online: true,
+      spymaster: false,
+      team: "B",
+    },
+    "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526": {
+      id: "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526",
+      name: "Harry",
+      online: true,
+      spymaster: false,
+      team: "A",
+    },
+  };
+
+  const playerID = "76714c37-4c0f-4bf0-8733-788fe96a285e";
+
+  const words = [
+    { word: "Army", type: "B", flipped: false },
+    { word: "Phoenix", type: "B", flipped: false },
+    { word: "Brass", type: "bomb", flipped: false },
+    { word: "Opera", type: "neutral", flipped: false },
+    { word: "Sign", type: "neutral", flipped: false },
+    { word: "Pea", type: "A", flipped: false },
+    { word: "Beam", type: "A", flipped: false },
+    { word: "Czech", type: "A", flipped: false },
+    { word: "Date", type: "neutral", flipped: false },
+    { word: "Minute", type: "A", flipped: false },
+    { word: "Stock", type: "neutral", flipped: false },
+    { word: "Genie", type: "B", flipped: false },
+    { word: "Sheet", type: "A", flipped: false },
+    { word: "Pizza", type: "A", flipped: false },
+    { word: "Ice Age", type: "neutral", flipped: false },
+    { word: "Hose", type: "A", flipped: false },
+    { word: "Fair", type: "B", flipped: false },
+    { word: "Ice Cream", type: "B", flipped: false },
+    { word: "Slug", type: "B", flipped: false },
+    { word: "Pen", type: "neutral", flipped: false },
+    { word: "Wagon", type: "B", flipped: false },
+    { word: "Floor", type: "B", flipped: false },
+    { word: "Pass", type: "neutral", flipped: false },
+    { word: "Wish", type: "A", flipped: false },
+    { word: "Scorpion", type: "A", flipped: false },
+  ];
+
+  it("prints log for guesser confirming", () => {
+    const log = [
+      {
+        action: "submit-code",
+        playerID: "d06efad0-8d95-4938-9445-2cf44cb11bb8",
+        team: "A",
+        payload: { word: "SHOOT", number: 3 },
+      },
+      {
+        action: "select-word",
+        playerID: "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526",
+        team: "A",
+        payload: { word: "Pea", needsConfirmation: true },
+      },
+    ];
+
+    expect(
+      printLog({
+        room: { log, players, words, turn: "A", stage: "guessing" },
+        playerID,
+      })
+    ).toEqual(["Transmission received: **SHOOT / 3**", " "]);
+  });
+
+  it("prints log for guesser confirmed", () => {
+    const log = [
+      {
+        action: "submit-code",
+        playerID: "d06efad0-8d95-4938-9445-2cf44cb11bb8",
+        team: "A",
+        payload: { word: "SHOOT", number: 3 },
+      },
+      {
+        action: "select-word",
+        playerID: "5ce1cf94-4c08-4d8c-b81c-7e58bae1a526",
+        team: "A",
+        payload: { word: "Pea", needsConfirmation: true },
+      },
+      {
+        action: "confirm-word",
+        playerID: "76714c37-4c0f-4bf0-8733-788fe96a285e",
+        team: "A",
+        payload: null,
+      },
+    ];
+
+    expect(
+      printLog({
+        room: { log, players, words, turn: "A", stage: "guessing" },
+        playerID,
+      })
+    ).toEqual([
+      "Transmission received: **SHOOT / 3**",
+      "You selected **Pea** - correct",
+      " ",
+    ]);
+  });
+});
