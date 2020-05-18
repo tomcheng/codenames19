@@ -149,14 +149,11 @@ export const printConfirming = ({
   youNominated,
 }) => {
   return [
-    `${
-      youNominated ? "You have" : nominator.name + " has"
-    } selected "${candidateWord}".`,
+    `${youNominated ? "You" : nominator.name} selected **${candidateWord}**.`,
     !youNominated &&
       `Do you agree with this selection? (Y/N) ${
         confirmed ? `**${confirmation}**` : ""
       }`,
-    (youNominated || confirmed) && " ",
     (youNominated || confirmed) &&
       `Awaiting confirmation from ${humanizeList(
         awaiting.map((p) => p.name)
@@ -179,9 +176,7 @@ export const printGuessing = ({
   return [
     error && `**${error}.**`,
     rejection &&
-      `**"${rejection.word}" was rejected by ${
-        players[rejection.playerID].name
-      }**.`,
+      `${players[rejection.playerID].name} rejected **${rejection.word}**.`,
     `You have ${plc(guessesLeft, "guess", "guesses")} remaining.`,
     `Enter selection: ${
       selected || endTurn
