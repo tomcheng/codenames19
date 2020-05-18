@@ -2,7 +2,6 @@ import React from "react";
 import compact from "lodash/compact";
 import countBy from "lodash/countBy";
 import repeat from "lodash/repeat";
-import last from "lodash/last";
 import takeWhile from "lodash/takeWhile";
 import { humanizeList, plc } from "./utils";
 
@@ -250,36 +249,6 @@ export const printSpyWriting = ({
   ]);
 };
 
-export const printSpyWaiting = ({ codes, teamNames, yourTeam }) => {
-  const yourLastCode = last(codes.filter((code) => code.team === yourTeam));
-
-  return [
-    `**Transmission sent: ${yourLastCode.word} / ${yourLastCode.number}**`,
-    " ",
-    `Awaiting response from ${humanizeList(teamNames)}...`,
-  ];
-};
-
-export const printWaitingMessage = ({ codes, players, stage, yourTeam }) => {
-  const lastCode = last(codes);
-  const otherSpy = Object.values(players).find(
-    (p) => p.team !== yourTeam && p.spymaster
-  );
-  const otherGuessers = Object.values(players).filter(
-    (p) => p.team !== yourTeam && !p.spymaster
-  );
-
-  return stage === "writing"
-    ? [`**Awaiting enemy transmission from ${otherSpy.name}...**`]
-    : [
-        `**Enemy transmission intercepted: ${lastCode.word} / ${lastCode.number}**`,
-        " ",
-        `Awaiting response from ${humanizeList(
-          otherGuessers.map((p) => p.name)
-        )}...`,
-      ];
-};
-
 export const printResult = ({ result, bomb }) => {
   const message =
     result === "won"
@@ -301,9 +270,17 @@ export const printLog = ({ room, playerID }) => {
     (p) => p.spymaster && p.team === room.turn
   );
 
+  if (
+    room.turn === player.team &&
+    room.stage === "writing" &&
+    player.spymaster
+  ) {
+    return [];
+  }
+
   if (room.stage === "guessing") {
     shortLog = takeWhile(
-      room.log.reverse(),
+      room.log.slice().reverse(),
       (entry) => entry.team === room.turn
     ).reverse();
   }
@@ -315,6 +292,10 @@ export const printLog = ({ room, playerID }) => {
         if (!player.spymaster && player.team === team) {
           result.push(
             `**Transmission received: ${payload.word} / ${payload.number}**`
+          );
+        } else if (player.id === logPlayerID) {
+          result.push(
+            `**You transmitted ${payload.word} / ${payload.number}**`
           );
         } else {
           result.push(
@@ -346,8 +327,20 @@ export const printLog = ({ room, playerID }) => {
     );
   }
 
-  if (room.turn === player.team && room.stage === "writing") {
+  if (
+    room.turn === player.team &&
+    room.stage === "writing" &&
+    !player.spymaster
+  ) {
     result.push(`Awaiting transmission from ${currentSpy.name}...`);
+  }
+
+  if (
+    room.turn === player.team &&
+    room.stage === "guessing" &&
+    player.spymaster
+  ) {
+    result.push(`Awaiting your team's selection...`);
   }
 
   return result;

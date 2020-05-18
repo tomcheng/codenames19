@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
   printCommonLines,
-  printSpyWaiting,
   printSpyWriting,
-  printWaitingMessage,
   printResult,
 } from "../consoleUtils";
 import Box from "./Box";
@@ -52,9 +50,6 @@ const SpyView = ({ playerID, room, onSubmitCode }) => {
 
   const player = room.players[playerID];
   const isYourTurn = player.team === room.turn;
-  const teamNames = Object.values(room.players)
-    .filter((p) => p.team === player.team && p.id !== player.id)
-    .map((p) => p.name);
 
   const disabled = !isYourTurn || room.stage === "guessing" || confirmed;
 
@@ -72,37 +67,20 @@ const SpyView = ({ playerID, room, onSubmitCode }) => {
       return lines;
     }
 
-    if (!isYourTurn) {
+    if (isYourTurn && room.stage === "writing") {
       lines = lines.concat(
-        printWaitingMessage({
-          codes: room.codes,
-          players: room.players,
-          stage: room.stage,
-          yourTeam: player.team,
+        printSpyWriting({
+          confirmation,
+          confirmed,
+          number,
+          numberDone,
+          numberError,
+          word,
+          wordDone,
+          wordError,
         })
       );
-
-      return lines;
     }
-
-    lines = lines.concat(
-      room.stage === "writing"
-        ? printSpyWriting({
-            confirmation,
-            confirmed,
-            number,
-            numberDone,
-            numberError,
-            word,
-            wordDone,
-            wordError,
-          })
-        : printSpyWaiting({
-            codes: room.codes,
-            teamNames,
-            yourTeam: player.team,
-          })
-    );
 
     return lines;
   };
